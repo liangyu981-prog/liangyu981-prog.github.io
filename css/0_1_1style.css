@@ -86,7 +86,7 @@ body {
   opacity: 0.45;
 }
 .turn-button:focus-visible {
-  outline: 3px solid #4a2a00;
+  outline: 3px solid #b70600;
   outline-offset: -3px;
 }
 .menu-transition {

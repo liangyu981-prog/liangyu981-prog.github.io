@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>煎起來成果回饋單</title>
+    <link rel="stylesheet" href="./css/Kend_feedback.css" />
+  </head>
+  <body>
+    <main class="game_stage feedback_stage">
+      <img class="feedback_background" src="./img/end_feedback.png" alt="成果回饋單底圖" />
+      <img class="feedback_pic" src="./img/end_feedback_pic.png" alt="人物相框" />
+      <canvas class="feedback_body" id="feedbackBody" width="1920" height="1080" aria-hidden="true"></canvas>
+      <canvas class="feedback_photo" id="feedbackPhoto" width="240" height="240" aria-label="拍攝的照片"></canvas>
+      <img class="feedback_hat" src="./img/end_feedback_hat.png" alt="" />
+      <div class="feedback_name" id="feedbackName"></div>
+      <div class="feedback_score" id="feedbackScore"></div>
+      <div class="decoration_hover_area" role="img" aria-label="餐具裝飾" tabindex="0"></div>
+      <div class="feedback_decoration_motion">
+        <img class="feedback_decoration" src="./img/end_feedback_decoration.png" alt="" />
+      </div>
+    </main>
+    <script src="./js/stage_scale.js"></script>
+    <script src="./js/Kend_feedback.js"></script>
+  </body>
+</html>

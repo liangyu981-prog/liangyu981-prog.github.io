@@ -1,0 +1,184 @@
+* {
+  box-sizing: border-box;
+}
+@font-face {
+  font-family: "iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2");
+  font-display: swap;
+}
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+body {
+  background: #b84100;
+  font-family: "iti", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+}
+.game_stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center;
+  background: #b84100;
+}
+.feedback_stage > img,
+.feedback_stage > canvas {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+}
+.feedback_background {
+  z-index: 0;
+}
+.feedback_pic {
+  z-index: 1;
+  opacity: 0;
+  animation: feedback-fade-in 650ms ease-out 1500ms forwards;
+}
+@keyframes feedback-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.feedback_name {
+  opacity: 0;
+  animation: feedback-fade-in 600ms ease-out 150ms forwards;
+}
+.feedback_score {
+  opacity: 0;
+  animation: feedback-fade-in 600ms ease-out 850ms forwards;
+}
+.feedback_body {
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  animation: feedback-fade-in 650ms ease-out 1500ms forwards;
+}
+.feedback_stage > .feedback_photo {
+  position: absolute;
+  z-index: 2;
+  inset: auto;
+  left: 828px;
+  top: 253px;
+  right: auto;
+  bottom: auto;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0;
+  transform-origin: center;
+  animation: feedback-fade-in 650ms ease-out 1500ms forwards;
+  transition: transform 180ms ease-out;
+}
+.feedback_stage > .feedback_photo:hover {
+  transform: scale(1.06);
+}
+.feedback_hat {
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  animation: feedback-fade-in 650ms ease-out 1500ms forwards;
+}
+.feedback_name,
+.feedback_score {
+  position: absolute;
+  z-index: 5;
+  color: #b70600;
+  font-weight: 800;
+  text-align: center;
+}
+.feedback_name {
+  left: 29%;
+  top: 57%;
+  width: 36%;
+  height: 76px;
+  font-size: 50px;
+  line-height: 76px;
+  letter-spacing: 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  transform: rotate(3deg);
+}
+.feedback_score {
+  left: 835px;
+  top: 770px;
+  width: 255px;
+  height: 100px;
+  font-size: 100px;
+  line-height: 100px;
+}
+.decoration_hover_area {
+  position: absolute;
+  z-index: 7;
+  left: 735px;
+  top: 430px;
+  width: 310px;
+  height: 180px;
+  cursor: pointer;
+}
+.feedback_decoration_motion {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: 50% 50%;
+  pointer-events: none;
+}
+.feedback_decoration {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  animation: feedback-fade-in 650ms ease-out 1500ms forwards;
+}
+@keyframes decoration-rock {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-7deg);
+  }
+  70% {
+    transform: rotate(7deg);
+  }
+}
+.decoration_hover_area:hover + .feedback_decoration_motion,
+.decoration_hover_area:focus-visible + .feedback_decoration_motion {
+  animation: decoration-rock 600ms ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .feedback_name,
+  .feedback_score,
+  .feedback_pic,
+  .feedback_body,
+  .feedback_stage > .feedback_photo,
+  .feedback_hat,
+  .feedback_decoration {
+    opacity: 1;
+    animation: none;
+  }
+  .feedback_stage > .feedback_photo {
+    transition: none;
+  }
+}
+@font-face {
+  font-family: "iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2"); /* 宣告為 opentype 格式 */
+}

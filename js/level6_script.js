@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     nextButton.addEventListener("click", (event) => {
       event.preventDefault();
       window.setTimeout(() => {
-        window.location.href = "./0_2.html";
+        window.location.href = "./0_8_0.html";
       }, 200);
     });
   }
