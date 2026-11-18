@@ -1,0 +1,181 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background-color: #ffc700;
+}
+.menu-scene {
+  position: relative;
+  width: 100vw;
+  aspect-ratio: 16 / 9;
+}
+.menu-art {
+  --menu-image-top: 30%;
+  --menu-image-left: 29%;
+  position: absolute;
+  top: 0;
+  left: 3%;
+  width: 100%;
+  height: 100%;
+}
+.menu-art > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.menu-background {
+  z-index: 0;
+}
+.menu-hover-target {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 3%;
+  top: calc(var(--menu-image-top) + 1.6938%);
+  left: calc(var(--menu-image-left) + 9.021%);
+  width: 43.9062%;
+  height: 56.5741%;
+}
+.menu-art > .menu-default,
+.menu-art > .menu-hover {
+  inset: auto;
+  top: var(--menu-image-top);
+  left: var(--menu-image-left);
+  width: 60.5603%;
+  height: 60.978%;
+  z-index: 1;
+  transition: opacity 150ms ease;
+}
+.menu-hover {
+  opacity: 0;
+}
+.turn-button {
+  position: absolute;
+  z-index: 4;
+  width: 10%;
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transform: translateY(-50%);
+  top: 50%;
+}
+.turn-button-right {
+  left: 85%;
+}
+.turn-button-left {
+  transform: translateY(-50%) scaleX(-1);
+}
+.turn-button img {
+  position: absolute;
+  inset: auto;
+  top: -50%;
+  left: -110%;
+  width: 400%;
+  max-width: none;
+  height: auto;
+}
+.turn-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.turn-button:focus-visible {
+  outline: 3px solid #4a2a00;
+  outline-offset: -3px;
+}
+.menu-transition {
+  z-index: 5;
+  display: none;
+}
+.menu-art.is-transitioning .menu-transition {
+  display: block;
+}
+.menu-art.is-transitioning > :not(.menu-transition) {
+  visibility: hidden;
+  pointer-events: none;
+}
+.make-link {
+  position: absolute;
+  z-index: 3;
+  left: 12.5%;
+  bottom: 12%;
+  padding: 10px 16px;
+  color: #b70600;
+  font-size: clamp(1px, 5vw, 70px);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  font-family: iti;
+  animation:
+    make-link-fade-in 1s ease-in-out both,
+    make-link-pulse 900ms ease-in-out infinite alternate;
+  transform-origin: center;
+}
+.make-link:hover,
+.make-link:focus-visible,
+.make-link:active {
+  animation: none;
+  transform: scale(1);
+}
+.make-link:hover {
+  text-decoration: underline;
+  color: #ffc700;
+}
+.make-link:focus-visible {
+  outline: 3px solid #ffc700;
+  outline-offset: 3px;
+}
+.menu-hover-target:hover ~ .menu-default {
+  opacity: 0;
+}
+.menu-hover-target:hover ~ .menu-hover {
+  opacity: 1;
+}
+body,
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.game_stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center;
+}
+@keyframes make-link-pulse {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+@keyframes make-link-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .make-link {
+    animation: none;
+  }
+}
+@font-face {
+  font-family: "iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2"); /* 宣告為 opentype 格式 */
+}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>卡啦卡啦煎起來！</title>
+    <link href="./css/index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <img
+      id="animation"
+      class="animation-frame is-active is-visible"
+      src="./img/begin_animation.gif"
+      alt="動畫"
+    />
+    <img
+      id="animation-buffer"
+      class="animation-frame"
+      alt=""
+      aria-hidden="true"
+    />
+    <button
+      id="begin-button"
+      class="begin-button"
+      type="button"
+      hidden
+      aria-label="循環"
+    >
+      <img src="./img/begin_button_default.png" alt="" />
+    </button>
+    <script src="./js/index.js"></script>
+    <script src="./js/scale.js"></script>
+  </body>
+</html>

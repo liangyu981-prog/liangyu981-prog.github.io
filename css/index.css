@@ -1,0 +1,85 @@
+img {
+  width: 100vw;
+}
+.animation-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  background-color: #e57b0b;
+}
+.animation-frame.is-active {
+  visibility: visible;
+}
+body {
+  background-color: #e57b0b;
+}
+body.is-opening-animation {
+  background-color: #ffc700;
+}
+body.is-opening-animation .animation-frame {
+  background-color: #ffc700;
+}
+body.is-opening-animation .animation-frame.is-active {
+  animation: opening-drift 3s ease-in-out var(--opening-drift-delay) forwards;
+}
+@keyframes opening-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(3%);
+  }
+}
+.begin-button {
+  position: absolute;
+  top: 75%;
+  left: 50%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  size: 100%;
+  opacity: 0;
+  z-index: 10;
+  transform: translateX(-50%);
+}
+.begin-button.is-visible {
+  animation: begin-button-fade-in 1.5s ease-in-out both;
+}
+@keyframes begin-button-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.begin-button img {
+  display: block;
+  width: 250px;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 遊戲畫面固定填滿視窗，避免背景或動畫出現捲軸。 */
+body,
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.game_stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center;
+}
