@@ -8,6 +8,7 @@ html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background-color: #ffc700;
 }
 .game_stage {
   position: absolute;
@@ -16,7 +17,7 @@ html {
   width: 1920px;
   height: 1080px;
   overflow: hidden;
-  transform: translate(-50%, -50%) scale(var(--stage_scale, 1));
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
   transform-origin: center;
 }
 /* 開頭視窗的動畫*/
@@ -99,7 +100,7 @@ html {
   left: 1187px;
   bottom: 184px;
   width: 180px;
-  height: 80px;
+  height: 94px;
   border: none;
   background-color: transparent;
   cursor: pointer;
@@ -116,8 +117,8 @@ html {
 }
 .camera_button {
   left: 929px;
-  width: 238px;
-  height: 75px;
+  width: 255px;
+  height: 90px;
   background-image: url("../img/camera_button_default.png");
 }
 .mouse_button:active {
@@ -209,15 +210,61 @@ html {
   background: rgba(255, 255, 255, 0.92);
 }
 
-.camera_detection_video {
-  display: block;
-  align-self: center;
+.camera_preview_wrap {
+  position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
-  transform: translateY(5px) scaleX(-1);
+  overflow: hidden;
   border-radius: 8px;
   background: #222;
+}
+
+.camera_detection_video {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+  background: #222;
   object-fit: cover;
+}
+
+.face_direction_guide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 72%;
+  aspect-ratio: 1;
+  height: 72%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 3px rgb(0 0 0 / 85%));
+  pointer-events: none;
+}
+
+.guide_crosshair,
+.guide_quadrant {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition:
+    stroke 180ms ease,
+    stroke-width 180ms ease;
+}
+
+.face_direction_guide.is_calibrated .guide_crosshair,
+.face_direction_guide.is_calibrated .guide_quadrant {
+  stroke: #55f17a;
+}
+
+.face_direction_guide.direction_up .guide_up,
+.face_direction_guide.direction_right .guide_right,
+.face_direction_guide.direction_down .guide_down,
+.face_direction_guide.direction_left .guide_left {
+  stroke: #00ff4c;
+  stroke-width: 8;
 }
 
 .camera_detection_status {

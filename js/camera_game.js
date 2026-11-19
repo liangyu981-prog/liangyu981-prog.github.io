@@ -9,6 +9,7 @@ const DIRECTION_NAMES = { up: "上", down: "下", left: "左", right: "右" };
 
 const video = document.getElementById("camera_preview");
 const statusMessage = document.getElementById("camera_status");
+const directionGuide = document.getElementById("face_direction_guide");
 const scoreDisplay = document.getElementById("score_display");
 const background = document.querySelector(".camera_game_background");
 const stopBackgroundImage = new Image();
@@ -27,8 +28,12 @@ let neutralPose;
 let candidateDirection;
 let candidateFrames = 0;
 let transitionStarted = false;
+let turnDetectionEnabled = false;
+let backgroundAnimationSource;
 
-stopBackgroundImage.src = background.dataset.stopImage;
+if (background.dataset.stopImage) {
+  stopBackgroundImage.src = background.dataset.stopImage;
+}
 
 if (scoreDisplay) {
   scoreDisplay.textContent = `本次得分：0 分｜累計積分：${score} 分`;
@@ -112,6 +117,80 @@ function classifyDirection(pose) {
   return horizontalChange > 0 ? "left" : "right";
 }
 
+function setGuideDirection(direction) {
+  directionGuide.classList.remove(
+    "direction_up",
+    "direction_right",
+    "direction_down",
+    "direction_left",
+  );
+  if (direction) directionGuide.classList.add(`direction_${direction}`);
+}
+
+function freezeCurrentBackground() {
+  const currentImage = background.querySelector("img");
+  if (!currentImage) return;
+
+  const bounds = background.getBoundingClientRect();
+  const imageBounds = currentImage.getBoundingClientRect();
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(bounds.width));
+  canvas.height = Math.max(1, Math.round(bounds.height));
+  canvas.className = "camera_game_frozen_frame";
+  canvas.setAttribute("aria-hidden", "true");
+  Object.assign(canvas.style, {
+    position: "absolute",
+    inset: "0",
+    width: "100%",
+    height: "100%",
+    pointerEvents: "none",
+  });
+
+  const context = canvas.getContext("2d");
+  if (!context) return;
+
+  try {
+    context.drawImage(
+      currentImage,
+      imageBounds.left - bounds.left,
+      imageBounds.top - bounds.top,
+      imageBounds.width,
+      imageBounds.height,
+    );
+    currentImage.remove();
+    background.appendChild(canvas);
+    return true;
+  } catch (error) {
+    console.warn("Could not freeze the background animation.", error);
+    return false;
+  }
+}
+
+async function pauseBackgroundAnimation() {
+  const currentImage = background.querySelector("img");
+  if (!currentImage) return;
+
+  backgroundAnimationSource = currentImage.getAttribute("src");
+  try {
+    await currentImage.decode();
+    freezeCurrentBackground();
+  } catch (error) {
+    console.warn("Could not pause the background animation.", error);
+  }
+}
+
+function resumeBackgroundAnimation() {
+  const frozenFrame = background.querySelector(".camera_game_frozen_frame");
+  if (!frozenFrame || !backgroundAnimationSource) return;
+
+  const image = document.createElement("img");
+  image.alt = "";
+  const animationUrl = new URL(backgroundAnimationSource, window.location.href);
+  animationUrl.searchParams.set("restart", String(Date.now()));
+  image.src = animationUrl.href;
+  frozenFrame.replaceWith(image);
+}
+
 function completeWithDirection(direction) {
   if (transitionStarted) {
     return;
@@ -126,24 +205,36 @@ function completeWithDirection(direction) {
 
   closeFaceLandmarker();
   statusMessage.textContent = `偵測到頭部向${DIRECTION_NAMES[direction]}。`;
+  setGuideDirection(direction);
 
-  stopBackgroundImage
-    .decode()
-    .then(() => {
-      const currentImage = background.querySelector("img");
-      stopBackgroundImage.alt = currentImage.alt;
-      background.replaceChild(stopBackgroundImage, currentImage);
+  const showEndFrame = stopBackgroundImage.src
+    ? stopBackgroundImage
+        .decode()
+        .then(() => {
+          const currentImage = background.querySelector("img");
+          if (currentImage) {
+            stopBackgroundImage.alt = currentImage.alt;
+            background.replaceChild(stopBackgroundImage, currentImage);
+          }
+        })
+        .catch(() => freezeCurrentBackground())
+    : Promise.resolve(freezeCurrentBackground());
 
-      setTimeout(() => {
-        stopCamera();
-        window.location.href = `${nextPage}?${SCORE_STORAGE_PARAM}=${score}`;
-      }, 2000);
-    })
-    .catch(showError);
+  showEndFrame.finally(() => {
+    setTimeout(() => {
+      stopCamera();
+      window.location.href = `${nextPage}?${SCORE_STORAGE_PARAM}=${score}`;
+    }, 2000);
+  });
 }
 
 function processFrame() {
   if (transitionStarted || !faceLandmarker) {
+    return;
+  }
+
+  if (neutralPose && !turnDetectionEnabled) {
+    frameRequest = requestAnimationFrame(processFrame);
     return;
   }
 
@@ -161,6 +252,7 @@ function processFrame() {
     if (!landmarks) {
       candidateDirection = undefined;
       candidateFrames = 0;
+      setGuideDirection(undefined);
       statusMessage.textContent = neutralPose
         ? "未偵測到人臉，請回到鏡頭畫面中央。"
         : "請將臉放在鏡頭畫面中央，並正面看鏡頭校準。";
@@ -169,6 +261,7 @@ function processFrame() {
       if (!pose) {
         candidateDirection = undefined;
         candidateFrames = 0;
+        setGuideDirection(undefined);
       } else if (!neutralPose) {
         if (calibrationStartedAt === undefined) {
           calibrationStartedAt = performance.now();
@@ -177,7 +270,14 @@ function processFrame() {
 
         if (performance.now() - calibrationStartedAt >= 1000 && calibrationSamples.length >= 10) {
           neutralPose = averagePose(calibrationSamples);
-          statusMessage.textContent = "校準完成，請向上、下、左或右轉頭。";
+          directionGuide.classList.add("is_calibrated");
+          statusMessage.textContent = "確認成功";
+          setTimeout(() => {
+            if (transitionStarted) return;
+            resumeBackgroundAnimation();
+            turnDetectionEnabled = true;
+            statusMessage.textContent = "請向上、下、左或右轉頭。";
+          }, 1200);
         } else {
           statusMessage.textContent = "請正面看鏡頭，保持不動。";
         }
@@ -186,6 +286,7 @@ function processFrame() {
         if (!direction) {
           candidateDirection = undefined;
           candidateFrames = 0;
+          setGuideDirection(undefined);
           statusMessage.textContent = "請向上、下、左或右轉頭。";
         } else if (direction === candidateDirection) {
           candidateFrames += 1;
@@ -195,6 +296,7 @@ function processFrame() {
         } else {
           candidateDirection = direction;
           candidateFrames = 1;
+          setGuideDirection(direction);
         }
       }
     }
@@ -210,6 +312,7 @@ async function startCameraGame() {
     throw new Error("請透過 localhost 或 HTTPS 開啟頁面，才能使用攝影機。");
   }
 
+  await pauseBackgroundAnimation();
   statusMessage.textContent = "等待攝影機權限...";
   cameraStream = await navigator.mediaDevices.getUserMedia({
     audio: false,

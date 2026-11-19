@@ -16,7 +16,7 @@ html {
   width: 1920px;
   height: 1080px;
   overflow: hidden;
-  transform: translate(-50%, -50%) scale(var(--stage_scale, 1));
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
   transform-origin: center;
 }
 /* 開頭視窗的動畫*/

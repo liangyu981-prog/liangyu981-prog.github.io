@@ -19,14 +19,28 @@
       <img src="./img/1_2_find_tea_Q2.gif" alt="" />
     </div>
     <section class="camera_detection_panel" aria-label="鏡頭頭部方向偵測">
-      <video
-        class="camera_detection_video"
-        id="camera_preview"
-        autoplay
-        muted
-        playsinline
-        aria-label="鏡頭預覽"
-      ></video>
+      <div class="camera_preview_wrap">
+        <video
+          class="camera_detection_video"
+          id="camera_preview"
+          autoplay
+          muted
+          playsinline
+          aria-label="鏡頭預覽"
+        ></video>
+        <svg
+          class="face_direction_guide"
+          id="face_direction_guide"
+          viewBox="0 0 200 200"
+          aria-hidden="true"
+        >
+          <path class="guide_crosshair" d="M100 18V182 M18 100H182" />
+          <path class="guide_quadrant guide_up" d="M42 42A82 82 0 0 1 158 42" />
+          <path class="guide_quadrant guide_right" d="M158 42A82 82 0 0 1 158 158" />
+          <path class="guide_quadrant guide_down" d="M158 158A82 82 0 0 1 42 158" />
+          <path class="guide_quadrant guide_left" d="M42 158A82 82 0 0 1 42 42" />
+        </svg>
+      </div>
       <p
         class="camera_detection_status"
         id="camera_status"
