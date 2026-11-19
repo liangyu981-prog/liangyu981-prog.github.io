@@ -118,6 +118,12 @@ html {
     transform: translateX(46px) rotate(12deg);
   }
 }
+body,
+body * {
+  cursor:
+    url("../img/cursor_default.png") 3 2,
+    auto !important;
+}
 
 @keyframes timerEchoRight {
   0%,
