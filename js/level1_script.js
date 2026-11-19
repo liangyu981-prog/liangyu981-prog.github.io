@@ -2,16 +2,68 @@
 document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById("startBtn");
   const nextBtn = document.getElementById("nextBtn");
+  const startButtonSound = new Audio("./audio/chicken_background_sound.mp3");
+  const startButtonClock = new Audio("./audio/clock.mp3");
+  const startButtonRing = new Audio("./audio/Gtimer_begin_ring.mp3");
+  startButtonSound.preload = "auto";
+  startButtonClock.preload = "auto";
+  startButtonRing.preload = "auto";
+  startButtonSound.load();
+  startButtonClock.load();
+  startButtonRing.load();
 
   if (startBtn) {
     startBtn.addEventListener("click", (e) => {
       // Prevent the default action so navigation can happen after the press feedback.
       e.preventDefault();
+      startButtonSound.currentTime = 0;
+      sessionStorage.setItem("chickenBackgroundResume", "1");
+      sessionStorage.setItem("chickenBackgroundTime", "0");
+      sessionStorage.setItem("startButtonClockResume", "1");
+      sessionStorage.setItem("startButtonClockTime", "0");
+      sessionStorage.setItem("startButtonRingResume", "1");
+      sessionStorage.setItem("startButtonRingTime", "0");
+      startButtonSound.play().catch((error) => {
+        console.error("Failed to play start button sound:", error);
+      });
+      startButtonClock.currentTime = 0;
+      startButtonClock.play().catch((error) => {
+        console.error("Failed to play start button clock:", error);
+      });
+      startButtonRing.currentTime = 0;
+      startButtonRing.play().catch((error) => {
+        console.error("Failed to play start button ring:", error);
+      });
+      const savePlaybackPosition = () => {
+        sessionStorage.setItem(
+          "chickenBackgroundTime",
+          String(startButtonSound.currentTime),
+        );
+        sessionStorage.setItem(
+          "startButtonClockTime",
+          String(startButtonClock.currentTime),
+        );
+        sessionStorage.setItem(
+          "startButtonRingTime",
+          String(startButtonRing.currentTime),
+        );
+      };
+      startButtonSound.addEventListener("timeupdate", savePlaybackPosition);
+      startButtonClock.addEventListener("timeupdate", savePlaybackPosition);
+      startButtonRing.addEventListener("timeupdate", savePlaybackPosition);
+      window.addEventListener("pagehide", savePlaybackPosition, { once: true });
 
       // Level 1 是新遊戲起點，從 0 分開始並記錄本關刷新時要恢復的起始分數。
       localStorage.setItem("level1ScoreBase", "0");
       localStorage.setItem("totalScore", "0");
-      ["level1Score", "level2Score", "level3Score", "level4Score", "level5Score", "level6Score"].forEach((key) => {
+      [
+        "level1Score",
+        "level2Score",
+        "level3Score",
+        "level4Score",
+        "level5Score",
+        "level6Score",
+      ].forEach((key) => {
         localStorage.removeItem(key);
       });
       console.log("[計分] 新遊戲開始，累計總分：0 分");
@@ -20,6 +72,89 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "./0_2_1.html";
       }, 200);
     });
+  }
+
+  if (!startBtn && sessionStorage.getItem("chickenBackgroundResume") === "1") {
+    const resumeEvents = ["pointerdown", "touchstart", "click", "keydown"];
+    const clearResumeEvents = () => {
+      resumeEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, resumePlayback, true);
+      });
+    };
+    const resumePlayback = async () => {
+      startButtonSound.currentTime = Number(
+        sessionStorage.getItem("chickenBackgroundTime") || 0,
+      );
+      try {
+        await startButtonSound.play();
+        sessionStorage.removeItem("chickenBackgroundResume");
+        sessionStorage.removeItem("chickenBackgroundTime");
+        clearResumeEvents();
+      } catch (error) {
+        console.warn(
+          "Waiting for a user gesture to resume chicken audio:",
+          error,
+        );
+        resumeEvents.forEach((eventName) => {
+          window.addEventListener(eventName, resumePlayback, {
+            once: true,
+            capture: true,
+          });
+        });
+      }
+    };
+    resumePlayback();
+  }
+
+  if (!startBtn && sessionStorage.getItem("startButtonClockResume") === "1") {
+    const resumeClock = async () => {
+      startButtonClock.currentTime = Number(
+        sessionStorage.getItem("startButtonClockTime") || 0,
+      );
+      try {
+        await startButtonClock.play();
+        sessionStorage.removeItem("startButtonClockResume");
+        sessionStorage.removeItem("startButtonClockTime");
+      } catch (error) {
+        console.warn(
+          "Waiting for a user gesture to resume clock audio:",
+          error,
+        );
+        ["pointerdown", "touchstart", "click", "keydown"].forEach(
+          (eventName) => {
+            window.addEventListener(eventName, resumeClock, {
+              once: true,
+              capture: true,
+            });
+          },
+        );
+      }
+    };
+    resumeClock();
+  }
+
+  if (!startBtn && sessionStorage.getItem("startButtonRingResume") === "1") {
+    const resumeRing = async () => {
+      startButtonRing.currentTime = Number(
+        sessionStorage.getItem("startButtonRingTime") || 0,
+      );
+      try {
+        await startButtonRing.play();
+        sessionStorage.removeItem("startButtonRingResume");
+        sessionStorage.removeItem("startButtonRingTime");
+      } catch (error) {
+        console.warn("Waiting for a user gesture to resume begin ring:", error);
+        ["pointerdown", "touchstart", "click", "keydown"].forEach(
+          (eventName) => {
+            window.addEventListener(eventName, resumeRing, {
+              once: true,
+              capture: true,
+            });
+          },
+        );
+      }
+    };
+    resumeRing();
   }
 
   if (nextBtn) {
@@ -37,6 +172,16 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
   const timer_intro = document.querySelector(".timer_intro");
   const game_timer = document.querySelector(".Gtimer");
+  const ending_countdown = new Audio("./audio/count_down.mp3");
+  const ending_countdown_duration = 5;
+  ending_countdown.preload = "auto";
+  ending_countdown.load();
+  let ending_countdown_playback = null;
+  let ending_countdown_timer = null;
+
+  const go_to_next_page = () => {
+    window.location.href = "./0_2_2.html";
+  };
 
   if (timer_intro && game_timer) {
     timer_intro.addEventListener(
@@ -92,6 +237,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 雞種計分：type 1 金雞 +1、type 2 普通雞 +3、type 3 壞雞 -1。
   const score_by_type = { 1: 1, 2: 3, 3: -1 };
+  const chicken_sounds = {
+    1: new Audio("./audio/catch_chicken.mp3"),
+    2: new Audio("./audio/goldG.mp3"),
+    3: new Audio("./audio/hurt_sound.mp3"),
+  };
+  Object.values(chicken_sounds).forEach((sound) => {
+    sound.preload = "auto";
+  });
   let current_wave_index = 0;
 
   // 清空所有洞口的雞
@@ -136,11 +289,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
           chicken.dataset.is_clicked = "true";
           chicken.classList.add("clicked");
+          const chicken_sound = chicken_sounds[type];
+          chicken_sound.currentTime = 0;
+          chicken_sound.play().catch((error) => {
+            console.error(`Failed to play chicken type ${type} sound:`, error);
+          });
           current_score += score_by_type[type];
           localStorage.setItem("totalScore", current_score);
           localStorage.setItem("level1Score", String(current_score));
           update_score_display();
-          console.log(`[Level 1] 本關目前 ${current_score} 分，累計總分 ${current_score} 分`);
+          console.log(
+            `[Level 1] 本關目前 ${current_score} 分，累計總分 ${current_score} 分`,
+          );
 
           setTimeout(() => {
             chicken.remove();
@@ -156,6 +316,57 @@ document.addEventListener("DOMContentLoaded", () => {
   function start_game_loop() {
     if (current_wave_index < wave_config.length) {
       const current_wave = wave_config[current_wave_index];
+      if (current_wave_index === wave_config.length - 2) {
+        // 在最後 5 秒播放 count_down 尾段，並於音效結束時切換頁面。
+        ending_countdown_playback = new Promise((resolve) => {
+          ending_countdown_timer = window.setTimeout(
+            async () => {
+              if (ending_countdown.readyState < 1) {
+                await Promise.race([
+                  new Promise((metadataReady) => {
+                    ending_countdown.addEventListener(
+                      "loadedmetadata",
+                      metadataReady,
+                      {
+                        once: true,
+                      },
+                    );
+                    ending_countdown.addEventListener("error", metadataReady, {
+                      once: true,
+                    });
+                  }),
+                  new Promise((timeout) => window.setTimeout(timeout, 2000)),
+                ]);
+              }
+              const duration = Number.isFinite(ending_countdown.duration)
+                ? ending_countdown.duration
+                : 11.064;
+              try {
+                ending_countdown.currentTime = Math.max(
+                  0,
+                  duration - ending_countdown_duration,
+                );
+                ending_countdown.addEventListener("ended", go_to_next_page, {
+                  once: true,
+                });
+                await ending_countdown.play();
+                resolve(true);
+              } catch (error) {
+                console.error("Failed to play ending countdown:", error);
+                resolve(false);
+              }
+            },
+            Math.max(
+              0,
+              wave_config
+                .slice(current_wave_index)
+                .reduce((total, wave) => total + wave.duration, 0) +
+                170 -
+                ending_countdown_duration * 1000,
+            ),
+          );
+        });
+      }
       spawn_wave(current_wave);
 
       current_wave_index++;
@@ -169,12 +380,18 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("totalScore", current_score);
       localStorage.setItem("level1Score", String(current_score));
       update_score_display();
-      console.log(`[Level 1 結算] 本關得分 ${current_score} 分，累計總分 ${current_score} 分`);
+      console.log(
+        `[Level 1 結算] 本關得分 ${current_score} 分，累計總分 ${current_score} 分`,
+      );
 
-      // GIF 全長約 16.17 秒；四波遊戲共 16 秒，等待剩餘時間後跳轉
-      setTimeout(() => {
-        window.location.href = "./0_2_2.html";
-      }, 170);
+      // 等倒數音效播完再切頁；播放失敗時保留原本 170 毫秒的轉場。
+      if (ending_countdown_timer !== null) {
+        Promise.resolve(ending_countdown_playback).then((didPlay) => {
+          if (!didPlay) window.setTimeout(go_to_next_page, 170);
+        });
+      } else {
+        window.setTimeout(go_to_next_page, 170);
+      }
     }
   }
 

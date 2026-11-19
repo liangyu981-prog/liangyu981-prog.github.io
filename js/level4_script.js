@@ -2,6 +2,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById("startBtn");
   const nextBtn = document.getElementById("nextBtn");
+  const start_sounds = [
+    { audio: new Audio("./audio/clock.mp3"), key: "level4Clock" },
+    { audio: new Audio("./audio/Gtimer_begin_ring.mp3"), key: "level4BeginRing" },
+  ];
+  start_sounds.forEach(({ audio }) => {
+    audio.preload = "auto";
+    audio.load();
+  });
 
   if (startBtn) {
     startBtn.addEventListener("click", (e) => {
@@ -9,10 +17,49 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
 
       localStorage.setItem("level4Score", "0");
+      const save_start_sound_positions = () => {
+        start_sounds.forEach(({ audio, key }) => {
+          sessionStorage.setItem(`${key}Resume`, "1");
+          sessionStorage.setItem(`${key}Time`, String(audio.currentTime));
+        });
+      };
+      start_sounds.forEach(({ audio, key }) => {
+        audio.currentTime = 0;
+        sessionStorage.setItem(`${key}Resume`, "1");
+        sessionStorage.setItem(`${key}Time`, "0");
+        audio.play().catch((error) => {
+          console.error("Failed to play Level 4 start sound:", error);
+        });
+        audio.addEventListener("timeupdate", save_start_sound_positions);
+      });
+      window.addEventListener("pagehide", save_start_sound_positions, {
+        once: true,
+      });
 
       setTimeout(() => {
         window.location.href = "./0_5_1.html";
       }, 200);
+    });
+  }
+
+  if (!startBtn && document.querySelector(".ans_button")) {
+    start_sounds.forEach(({ audio, key }) => {
+      if (sessionStorage.getItem(`${key}Resume`) !== "1") return;
+
+      const resume_start_sound = async () => {
+        audio.currentTime = Number(sessionStorage.getItem(`${key}Time`) || 0);
+        try {
+          await audio.play();
+          sessionStorage.removeItem(`${key}Resume`);
+          sessionStorage.removeItem(`${key}Time`);
+        } catch {
+          window.addEventListener("pointerdown", resume_start_sound, {
+            once: true,
+            capture: true,
+          });
+        }
+      };
+      resume_start_sound();
     });
   }
 
@@ -31,6 +78,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const buttons = document.querySelectorAll(".ans_button");
   const timer_intro = document.querySelector(".timer_intro");
   const game_timer = document.querySelector(".Gtimer");
+  const clock_sound = new Audio("./audio/clock.mp3");
+  clock_sound.preload = "auto";
+  const count_down_sound = new Audio("./audio/count_down.mp3");
+  count_down_sound.preload = "auto";
+  count_down_sound.load();
+  const answer_sounds = {
+    correct: new Audio("./audio/correct_answer_sound.mp3"),
+    wrong: new Audio("./audio/wrong_answer_sound.mp3"),
+  };
+  Object.values(answer_sounds).forEach((sound) => {
+    sound.preload = "auto";
+  });
   // GIF 計時器共 150 格，每格 30 毫秒，第一輪共 4500 毫秒。
   const timer_duration = 150 * 30;
   const transition_delay = 1000;
@@ -55,12 +114,51 @@ document.addEventListener("DOMContentLoaded", () => {
       "load",
       () => {
         if (isAnswered) return;
+        const play_count_down = async () => {
+          if (count_down_sound.readyState < 1) {
+            await new Promise((metadataReady) => {
+              count_down_sound.addEventListener("loadedmetadata", metadataReady, {
+                once: true,
+              });
+              count_down_sound.addEventListener("error", metadataReady, {
+                once: true,
+              });
+            });
+          }
+          const duration = Number.isFinite(count_down_sound.duration)
+            ? count_down_sound.duration
+            : 11.064;
+          count_down_sound.currentTime = Math.max(0, duration - 6);
+          // 把 6 秒音效配合 4.5 秒倒數與 1 秒轉場播完，不更動畫面計時。
+          count_down_sound.playbackRate =
+            6000 / (timer_duration + transition_delay);
+          count_down_sound.preservesPitch = true;
+          count_down_sound.play().catch((error) => {
+            console.error("Failed to play Level 4 countdown sound:", error);
+          });
+        };
+        play_count_down();
+
+        const current_path = window.location.pathname;
+        if (
+          current_path.endsWith("0_5_2.html") ||
+          current_path.endsWith("0_5_3.html")
+        ) {
+          clock_sound.currentTime = 0;
+          clock_sound.play().catch((error) => {
+            console.error("Failed to play Level 4 clock sound:", error);
+          });
+        }
         game_timer.classList.add("visible");
         setTimeout(() => {
           if (isAnswered) return;
           game_timer.classList.remove("visible");
           isAnswered = true;
           lock_answers();
+          answer_sounds.wrong.currentTime = 0;
+          answer_sounds.wrong.play().catch((error) => {
+            console.error("Failed to play unanswered question sound:", error);
+          });
           setTimeout(go_to_next_question, transition_delay);
         }, timer_duration);
       },
@@ -103,6 +201,13 @@ document.addEventListener("DOMContentLoaded", () => {
       button.classList.add("is_clicked");
 
       const resultType = button.getAttribute("data-answer");
+      const answer_sound = answer_sounds[resultType];
+      if (answer_sound) {
+        answer_sound.currentTime = 0;
+        answer_sound.play().catch((error) => {
+          console.error(`Failed to play ${resultType} answer sound:`, error);
+        });
+      }
       const earnedScore = resultType === "correct" ? 6 : 0;
       const levelScore = Number(localStorage.getItem("level4Score") ?? "0") + earnedScore;
       const currentTotal = Number(localStorage.getItem("totalScore") ?? "0");

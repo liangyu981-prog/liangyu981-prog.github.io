@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!photoData) {
     drawCrossedArms([224, 169, 137]);
+    signalFeedbackReady();
     return;
   }
   const photo = new Image();
@@ -89,8 +90,18 @@ document.addEventListener("DOMContentLoaded", () => {
     edgeShade.addColorStop(1, "rgba(0,0,0,0.62)");
     output.fillStyle = edgeShade;
     output.fillRect(0, 0, size, size);
+    signalFeedbackReady();
+  };
+  photo.onerror = () => {
+    drawCrossedArms([224, 169, 137]);
+    signalFeedbackReady();
   };
   photo.src = photoData;
+
+  function signalFeedbackReady() {
+    document.documentElement.dataset.feedbackReady = "true";
+    window.dispatchEvent(new Event("feedback-ready"));
+  }
 
   function sampleSkinTone(portrait) {
     const sampleCanvas = document.createElement("canvas");

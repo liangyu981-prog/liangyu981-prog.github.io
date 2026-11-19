@@ -4,6 +4,8 @@ const beginButton = document.querySelector("#begin-button");
 const beginButtonImage = beginButton.querySelector("img");
 const beginButtonAudio = new Audio("./audio/dooropen.mp3");
 beginButtonAudio.preload = "auto";
+const menuAudio = new Audio("./audio/menu.mp3");
+menuAudio.preload = "auto";
 const openingAnimation = "./img/begin_animation.gif";
 const buttonAnimation = "./img/opening_animation.gif";
 const buttonAnimationDuration = 7460;
@@ -11,7 +13,7 @@ const leverDropAnimation = "./img/door.gif";
 const leverLoopAnimation = "./img/door_animation.gif";
 const leverDropDuration = 1290;
 const leverLoopIdleDuration = 5000;
-const buttonDelay = 1500;
+const buttonDelay = 50;
 let sequenceRunning = false;
 let leverLoopActive = false;
 let leverLoopIdleTimer;
@@ -125,6 +127,12 @@ beginButton.addEventListener("click", () => {
   beginButtonAudio.play().catch((error) => {
     console.error("Failed to play begin button audio:", error);
   });
+  window.setTimeout(() => {
+    menuAudio.currentTime = 0;
+    menuAudio.play().catch((error) => {
+      console.error("Failed to play menu audio:", error);
+    });
+  }, 3000);
   hideBeginButton();
   clearTimeout(leverLoopIdleTimer);
   leverLoopActive = false;
@@ -140,7 +148,7 @@ beginButton.addEventListener("click", () => {
     () => {
       document.body.style.setProperty(
         "--opening-drift-delay",
-        `${buttonAnimationDuration - 3000}ms`,
+        `${buttonAnimationDuration - 1000}ms`,
       );
       document.body.classList.add("is-opening-animation");
       setTimeout(navigateToNextPage, buttonAnimationDuration);

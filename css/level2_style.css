@@ -253,7 +253,7 @@ html {
   width: 240px;
   height: 200px;
   object-fit: contain;
-  animation: scorePointerSweep 1.5s linear infinite alternate;
+  animation: scorePointerSweep 2s linear infinite alternate;
 }
 
 .score_pointer.is_stopped {

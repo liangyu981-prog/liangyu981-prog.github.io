@@ -315,7 +315,7 @@ html {
   height: 220px;
   transform: rotate(90deg);
   object-fit: contain;
-  animation: scorePointerSweep 1.3s linear infinite alternate;
+  animation: scorePointerSweep 1s linear infinite alternate;
 }
 
 .score_pointer.is_stopped {

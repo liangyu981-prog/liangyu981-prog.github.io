@@ -1,67 +1,97 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const animationStartedAt = performance.now();
-  const feedbackReady = preloadFeedbackPage();
-  let cycleDuration = 12410;
+  const feedbackPage = preloadFeedbackPage();
+  const animation = document.querySelector(".end_animation");
+  const animationUrl = "./img/end_animation_once.gif?v=4";
 
-  try {
-    const response = await fetch("./img/end_animation_once.gif?v=3");
-    if (response.ok) {
-      const bytes = new Uint8Array(await response.arrayBuffer());
-      let measuredDuration = 0;
-      for (let index = 0; index + 7 < bytes.length; index += 1) {
-        if (
-          bytes[index] === 0x21 &&
-          bytes[index + 1] === 0xf9 &&
-          bytes[index + 2] === 0x04
-        ) {
-          measuredDuration += (bytes[index + 4] | (bytes[index + 5] << 8)) * 10;
-          index += 7;
-        }
-      }
-      if (measuredDuration > 0) cycleDuration = measuredDuration;
-    }
-  } catch {
-    // Keep the measured 12.41 second duration if the GIF cannot be fetched.
-  }
+  const [cycleDuration] = await Promise.all([
+    measureGifDuration(animationUrl),
+    animation?.decode?.().catch(() => null),
+  ]);
 
-  const remainingTime = Math.max(
-    0,
-    cycleDuration - (performance.now() - animationStartedAt),
-  );
   window.setTimeout(async () => {
-    await feedbackReady;
-    // Keep the final GIF frame visible briefly while the decoded feedback page is ready.
+    const canShowPreloadedPage = await feedbackPage.ready;
+    // Hold the final animation frame briefly, then reveal the already-loaded page.
     await new Promise((resolve) => window.setTimeout(resolve, 350));
-    window.location.href = "./0_8_1.html";
-  }, remainingTime);
+    if (!canShowPreloadedPage) {
+      window.location.href = "./0_8_1.html";
+      return;
+    }
+
+    feedbackPage.frame.inert = false;
+    feedbackPage.frame.setAttribute("aria-hidden", "false");
+    feedbackPage.frame.classList.add("is_active");
+    feedbackPage.frame.contentDocument.documentElement.classList.remove(
+      "preload-transition",
+    );
+    document.querySelector(".game_stage")?.setAttribute("hidden", "");
+    window.history.replaceState(null, "", "./0_8_1.html");
+    document.title = feedbackPage.frame.contentDocument.title;
+  }, cycleDuration);
 });
 
+async function measureGifDuration(source) {
+  try {
+    const response = await fetch(source);
+    if (!response.ok) throw new Error("Could not load ending animation");
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    let duration = 0;
+    for (let index = 0; index + 7 < bytes.length; index += 1) {
+      if (
+        bytes[index] === 0x21 &&
+        bytes[index + 1] === 0xf9 &&
+        bytes[index + 2] === 0x04
+      ) {
+        duration += (bytes[index + 4] | (bytes[index + 5] << 8)) * 10;
+        index += 7;
+      }
+    }
+    return duration > 0 ? duration : 12410;
+  } catch {
+    return 12410;
+  }
+}
+
 function preloadFeedbackPage() {
-  const files = [
-    "./0_8_1.html",
-    "./css/Kend_feedback.css",
-    "./js/Kend_feedback.js",
-  ];
-  const fetchPageFiles = Promise.all(
-    files.map((file) => fetch(file, { cache: "force-cache" }).catch(() => null)),
-  );
-  const images = [
-    "./img/end_feedback.png",
-    "./img/end_feedback_pic.png",
-    "./img/end_feedback_hat.png",
-    "./img/end_feedback_decoration.png",
-  ];
-  const decodeImages = Promise.all(
-    images.map((source) => {
-      const image = new Image();
-      image.src = source;
-      return image.decode?.().catch(() => null) ?? new Promise((resolve) => {
-        image.onload = resolve;
-        image.onerror = resolve;
-      });
-    }),
-  );
-  const preload = Promise.all([fetchPageFiles, decodeImages]);
-  const timeout = new Promise((resolve) => window.setTimeout(resolve, 4000));
-  return Promise.race([preload, timeout]);
+  const frame = document.createElement("iframe");
+  frame.className = "feedback_transition_frame";
+  frame.title = "成果回饋單";
+  frame.setAttribute("aria-hidden", "true");
+  frame.inert = true;
+
+  const ready = new Promise((resolve) => {
+    const timeout = window.setTimeout(() => resolve(false), 10000);
+    frame.addEventListener("load", async () => {
+      try {
+        const innerDocument = frame.contentDocument;
+        if (innerDocument.documentElement.dataset.feedbackReady !== "true") {
+          await new Promise((feedbackReady) => {
+            innerDocument.defaultView.addEventListener(
+              "feedback-ready",
+              feedbackReady,
+              { once: true },
+            );
+          });
+        }
+        await Promise.all(
+          Array.from(innerDocument.images, (image) =>
+            image.decode?.().catch(() => null),
+          ),
+        );
+        await innerDocument.fonts?.ready;
+        window.clearTimeout(timeout);
+        resolve(true);
+      } catch {
+        window.clearTimeout(timeout);
+        resolve(false);
+      }
+    }, { once: true });
+    frame.addEventListener("error", () => {
+      window.clearTimeout(timeout);
+      resolve(false);
+    }, { once: true });
+  });
+
+  frame.src = "./0_8_1.html?preload-transition=1";
+  document.body.appendChild(frame);
+  return { frame, ready };
 }

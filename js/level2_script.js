@@ -35,6 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
     15: document.getElementById("feedbackGif15"),
   };
   const feedback_score = document.getElementById("feedbackScore");
+  // 修改音效延遲時間：調整此數值（毫秒）；2000 代表 2 秒，與切頁時間相同。
+  const stop_sound_delay_ms = 2000;
   let is_stopped = false;
 
   stop_button.addEventListener("click", (event) => {
@@ -65,13 +67,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const earned_score = Number(hit_zone.dataset.score);
-    const level_score = Number(localStorage.getItem("level2Score") ?? "0") + earned_score;
+    const level_score =
+      Number(localStorage.getItem("level2Score") ?? "0") + earned_score;
     const saved_total = Number(localStorage.getItem("totalScore") ?? "0");
     const current_total = Number.isFinite(saved_total) ? saved_total : 0;
     const new_score = current_total + earned_score;
     localStorage.setItem("level2Score", String(level_score));
     localStorage.setItem("totalScore", String(new_score));
-    console.log(`[Level 2] 本關得分 ${level_score} 分（本次 +${earned_score}），累計總分 ${new_score} 分`);
+    console.log(
+      `[Level 2] 本關得分 ${level_score} 分（本次 +${earned_score}），累計總分 ${new_score} 分`,
+    );
 
     if (feedback_score) {
       Object.values(feedback_gifs).forEach((image) => {
@@ -83,11 +88,15 @@ document.addEventListener("DOMContentLoaded", () => {
     feedback_container.classList.add("is_visible");
     feedback_container.setAttribute("aria-hidden", "false");
 
-    setTimeout(() => {
+    sessionStorage.setItem(
+      "level2EggCrackPlayAt",
+      String(Date.now() + stop_sound_delay_ms),
+    );
+    window.setTimeout(() => {
       feedback_container.classList.remove("is_visible");
       feedback_container.setAttribute("aria-hidden", "true");
     }, 2000);
-    setTimeout(() => {
+    window.setTimeout(() => {
       window.location.href = "./0_3_2.html";
     }, 2000);
   });
@@ -98,6 +107,47 @@ document.addEventListener("DOMContentLoaded", () => {
   const prev_bg = document.getElementById("prevBg");
   const ending_gif = document.getElementById("endingGif");
   if (!bg_container || !ending_gif) return;
+
+  const sound_play_at = Number(sessionStorage.getItem("level2EggCrackPlayAt"));
+  if (Number.isFinite(sound_play_at) && sound_play_at > 0) {
+    const sound_age = Date.now() - sound_play_at;
+    if (sound_age <= 10000) {
+      const egg_crack_sound = new Audio("./audio/egg_crack.mp3");
+      egg_crack_sound.preload = "auto";
+      egg_crack_sound.load();
+      // 修改音檔開頭跳過時間：調整此數值（秒）；0.8 代表跳過前 0.8 秒。
+      const egg_crack_start_offset_seconds = 0.8;
+      const play_egg_crack = () => {
+        if (egg_crack_sound.readyState < 1) {
+          egg_crack_sound.addEventListener("loadedmetadata", play_egg_crack, {
+            once: true,
+          });
+          return;
+        }
+
+        egg_crack_sound.currentTime = egg_crack_start_offset_seconds;
+        egg_crack_sound
+          .play()
+          .then(() => {
+            sessionStorage.removeItem("level2EggCrackPlayAt");
+          })
+          .catch(() => {
+            window.addEventListener("pointerdown", play_egg_crack, {
+              once: true,
+              capture: true,
+            });
+          });
+      };
+      const remaining_delay = Math.max(0, sound_play_at - Date.now());
+      if (remaining_delay === 0) {
+        play_egg_crack();
+      } else {
+        window.setTimeout(play_egg_crack, remaining_delay);
+      }
+    } else {
+      sessionStorage.removeItem("level2EggCrackPlayAt");
+    }
+  }
 
   const part1_duration = 500; // 第一段 GIF 長度（毫秒）
   const part2_duration = 2150; // 第二段 GIF 長度（毫秒）

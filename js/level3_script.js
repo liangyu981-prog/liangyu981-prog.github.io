@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const next_button = document.getElementById("nextBtn");
   const start_button = document.getElementById("startBtn");
   const stop_button = document.getElementById("stopBtn");
+  const jane_dan_sound = new Audio("./audio/janeDan.mp3");
+  jane_dan_sound.preload = "auto";
+  // 修改音檔開頭裁切秒數：調整此數值；0.8 代表跳過前 0.8 秒。
+  const jane_dan_start_offset_seconds = 0.8;
 
   if (next_button) {
     next_button.addEventListener("click", (event) => {
@@ -17,10 +21,40 @@ document.addEventListener("DOMContentLoaded", () => {
     start_button.addEventListener("click", (event) => {
       event.preventDefault();
       localStorage.setItem("level3Score", "0");
+      sessionStorage.setItem("playJaneDanAtLevel3Start", "1");
       setTimeout(() => {
         window.location.href = "./0_4_1.html";
       }, 200);
     });
+  }
+
+  if (
+    !start_button &&
+    stop_button &&
+    sessionStorage.getItem("playJaneDanAtLevel3Start") === "1"
+  ) {
+    const play_jane_dan = () => {
+      if (jane_dan_sound.readyState < 1) {
+        jane_dan_sound.addEventListener("loadedmetadata", play_jane_dan, {
+          once: true,
+        });
+        return;
+      }
+
+      jane_dan_sound.currentTime = jane_dan_start_offset_seconds;
+      jane_dan_sound
+        .play()
+        .then(() => {
+          sessionStorage.removeItem("playJaneDanAtLevel3Start");
+        })
+        .catch(() => {
+          window.addEventListener("pointerdown", play_jane_dan, {
+            once: true,
+            capture: true,
+          });
+        });
+    };
+    play_jane_dan();
   }
 
   if (!stop_button) return;

@@ -4,9 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>煎起來成果回饋單</title>
-    <link rel="stylesheet" href="./css/Kend_feedback.css" />
+    <script>
+      if (new URLSearchParams(window.location.search).has("preload-transition")) {
+        document.documentElement.classList.add("preload-transition");
+      }
+    </script>
+    <link rel="stylesheet" href="./css/Kend_style.css" />
   </head>
-  <body>
+  <body class="feedback-page">
     <main class="game_stage feedback_stage">
       <img class="feedback_background" src="./img/end_feedback.png" alt="成果回饋單底圖" />
       <img class="feedback_pic" src="./img/end_feedback_pic.png" alt="人物相框" />
