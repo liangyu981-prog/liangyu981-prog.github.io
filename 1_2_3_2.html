@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>鏡頭偵測模式－第三題</title>
+    <link href="./css/devel1_style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="score_display" id="score_display" aria-live="polite">
+      本次得分：0 分｜累計積分：0 分
+    </div>
+    <div
+      class="devel1_Q3_bg camera_game_background opacity_full"
+      data-correct-direction="down"
+      data-next-page="1_2_4.html"
+      data-stop-image="./img/devel1_Q3_stop_bg.png"
+    >
+      <img src="./img/1_2_find_tea_Q3.gif" alt="" />
+    </div>
+    <section class="camera_detection_panel" aria-label="鏡頭頭部方向偵測">
+      <video
+        class="camera_detection_video"
+        id="camera_preview"
+        autoplay
+        muted
+        playsinline
+        aria-label="鏡頭預覽"
+      ></video>
+      <p
+        class="camera_detection_status"
+        id="camera_status"
+        role="status"
+        aria-live="polite"
+      >
+        正在啟動鏡頭，請允許攝影機權限。
+      </p>
+    </section>
+    <script src="./js/stage_scale.js"></script>
+    <script type="module" src="./js/camera_game.js"></script>
+  </body>
+</html>

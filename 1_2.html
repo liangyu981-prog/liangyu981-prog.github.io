@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./css/devel1_style.css" rel="stylesheet" />
+    <title>開頭</title>
+  </head>
+  <body>
+    <main class="game_stage">
+      <!-- 最底層：你的背景的底色層 -->
+      <div class="bg_layer"></div>
+      <!-- 第二層：Level x 背景圖片（固定不動，不參與動畫） -->
+      <div class="devel1_bg opacity_half"></div>
+      <!-- 第二層：opacity_half 空格命名opacity_full -->
+      <!-- 最上層：彈跳視窗與按鈕的群組容器（套用掉落動畫，讓它們一起移動） -->
+      <div class="modal_container">
+        <!-- 彈跳視窗圖片 -->
+        <div class="popinfor1"></div>
+        <button
+          class="camera_button"
+          type="button"
+          aria-label="camera_button"
+        ></button>
+        <button
+          class="mouse_button"
+          id="mouseBtn"
+          type="button"
+          aria-label="mouse_button"
+        ></button>
+      </div>
+    </main>
+    <script src="./js/stage_scale.js"></script>
+    <script src="./js/devel1_script.js"></script>
+  </body>
+</html>

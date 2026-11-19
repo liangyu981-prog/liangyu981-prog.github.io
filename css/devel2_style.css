@@ -1,0 +1,139 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body,
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.game_stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--stage_scale, 1));
+  transform-origin: center;
+}
+/* 開頭視窗的動畫*/
+@keyframes dropDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-1080px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes buttonFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+/* 最底層：單色底色層 */
+.bg_layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #ffca00;
+  z-index: 0;
+}
+/* 背景圖片 */
+.devel2_bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(../img/devel2_mouse_bg.PNG);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  z-index: 1;
+}
+.opacity_full {
+  opacity: 1;
+}
+.opacity_half {
+  opacity: 0.5;
+}
+/* 同張圖片不同透明度的設定 */
+/* 彈跳視窗與按鈕的群組容器（套用動畫，讓它們一起掉落） */
+.modal_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 2;
+  /* 套用動畫：讓彈跳視窗與按鈕一起從上方掉落 */
+  animation: dropDownFade 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+.popinfor2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-image: url("../img/grind_tea_introduce_popupwindow.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  z-index: 1;
+}
+/* 圖片按鈕程式 */
+.mouse_button {
+  position: absolute;
+  /* 按鈕在彈跳視窗內的位置 */
+  left: 1187px;
+  bottom: 184px;
+  width: 180px;
+  height: 80px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+  background-image: url("../img/mouse_start_button_default.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 2;
+  /* 確保按鈕在彈跳視窗圖片之上 */
+  opacity: 0;
+  /* 套用按鈕淡入動畫：持續 0.8 秒、延遲 2 秒後才開始、forwards 讓動畫結束後保持不透明 */
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+.camera_button {
+  position: absolute;
+  left: 929px;
+  bottom: 184px;
+  width: 238px;
+  height: 75px;
+  border: none;
+  background-color: transparent;
+  background-image: url("../img/camera_button_default.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  outline: none;
+  z-index: 2;
+  opacity: 0;
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+.camera_button:active {
+  background-image: url("../img/camera_button_active.png");
+}
+.mouse_button:active {
+  background-image: url("../img/mouse_start_button_active.png");
+}

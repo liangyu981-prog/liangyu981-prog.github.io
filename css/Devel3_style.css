@@ -1,0 +1,481 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 遊戲畫面固定填滿視窗，避免背景或動畫出現捲軸。 */
+body,
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.game_stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center;
+}
+
+/* 讓彈窗與按鈕一起由畫面上方落下，並在中央淡入、回彈定位。 */
+@keyframes dropDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-1080px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 控制開始按鈕延遲淡入。 */
+@keyframes buttonFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 最底層的黃色底色，填滿彈窗背景以外的區域。 */
+.bg_layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #ffc700;
+  z-index: 0;
+}
+
+/* 背景等比例填滿視窗；靜態開場圖與遊戲 GIF 共用版面設定。 */
+.Devel3_bg,
+.Devel3_bg_animated {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  z-index: 1;
+}
+
+.Devel3_bg {
+  background-image: url("../img/tea_bg.gif");
+  opacity: 0.5;
+}
+
+.Devel3_bg_animated {
+  background-image: url("../img/boilingTea_bg.gif");
+}
+
+/* 全畫面彈窗容器；與彈窗圖片、按鈕一起播放落下動畫。 */
+.modal3_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 2;
+  animation: dropDownFade 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Level 2 說明彈窗圖片；完整置中顯示且不裁切。 */
+.popinfor3 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-image: url("../img/boiltea_introduce_popupwindow_3.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  z-index: 1;
+}
+
+/* 開始按鈕覆蓋在彈窗圖片上，定位、大小與 0.2 的彈窗按鈕一致。 */
+.start_button {
+  position: absolute;
+  left: 1187px;
+  bottom: 184px;
+  width: 180px;
+  height: 80px;
+  border: none;
+  background-color: transparent;
+  background-image: url("../img/start_button_default.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  outline: none;
+  z-index: 2;
+  opacity: 0;
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+
+/* 按住開始按鈕時切換成按下狀態圖片，提供操作回饋。 */
+.start_button:active {
+  background-image: url("../img/start_button_active.png");
+}
+
+.camera_button {
+  position: absolute;
+  left: 970px;
+  bottom: 163px;
+  width: 220px;
+  height: 120px;
+  border: none;
+  background-color: transparent;
+  background-image: url("../img/camera_button_default.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  outline: none;
+  z-index: 3;
+  opacity: 0;
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+
+.camera_button:active {
+  background-image: url("../img/camera_button_active.png");
+}
+
+.camera_mode .bg_layer {
+  background-color: transparent;
+}
+
+.camera_mode .camera_video {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 1920px;
+  height: 1080px;
+  object-fit: cover;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+.camera_mode .Devel3_bg_animated {
+  z-index: 1;
+  background-image: none;
+}
+
+.camera_mode .camera_tea_overlay {
+  opacity: 1;
+}
+
+.camera_mode .stop_button {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.camera_mode.camera_unavailable .stop_button {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.camera_status {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  z-index: 20;
+  max-width: 90%;
+  padding: 12px 24px;
+  transform: translateX(-50%);
+  border-radius: 12px;
+  background: rgb(0 0 0 / 65%);
+  color: #fff;
+  font: 24px/1.4 sans-serif;
+  text-align: center;
+  pointer-events: none;
+}
+
+.camera_mode.camera_unavailable .camera_status {
+  background: rgb(120 20 0 / 85%);
+}
+
+.camera_mode.camera_finished .camera_video {
+  display: none;
+}
+
+.camera_mode.camera_finished .camera_tea_overlay {
+  display: none;
+}
+
+.camera_mode.camera_finished .bg_layer {
+  background-color: #ffc700;
+}
+
+.stop_button {
+  position: absolute;
+  left: 860px;
+  bottom: 45px;
+  width: 220px;
+  height: 120px;
+  border: none;
+  background-color: transparent;
+  background-image: url("../img/stop_button_default%20.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  outline: none;
+  z-index: 3;
+  transition:
+    transform 100ms ease,
+    filter 100ms ease;
+}
+
+.stop_button:active {
+  background-image: url("../img/stop_button_active.png");
+  transform: translateY(4px) scale(0.96);
+  filter: brightness(0.9);
+}
+
+.stop_button:disabled {
+  cursor: default;
+}
+/* 外層容器：負責控制「位置」與「圖層順序」 */
+.fired_container {
+  position: absolute;
+  top: 800px; /* 👈 調整上下位置（數字越大越往下） */
+  left: 100px; /* 👈 調整左右位置（數字越大越往右） */
+  z-index: 17; /* 位於箭頭前方 */
+}
+
+/* 內層圖片：負責維持「原始比例」與微調「大小」 */
+.fired_img {
+  display: block; /* 消除圖片底部預設的微小空白 */
+  width: 180px;
+  height: auto; /* 👈 維持圖片原本的高度，不強制變形 */
+  max-width: none; /* 防止被其他全域樣式限制最大寬度 */
+}
+
+.score_bar_area {
+  position: absolute;
+  top: 0px;
+  left: 100px;
+  width: 1920px;
+  height: 1080px;
+  pointer-events: none;
+}
+
+.score_bar {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 1;
+  background-image: url(../img/boiltea_line.gif);
+  background-repeat: no-repeat;
+  background-size: 1920px 1080px;
+  background-position: left top;
+}
+
+.score_zone {
+  position: absolute;
+  left: 50px;
+  width: 100px;
+  pointer-events: none;
+}
+
+.score_zone_1 {
+  top: 68px;
+  height: 235px;
+}
+
+.score_zone_2 {
+  top: 303px;
+  height: 75px;
+}
+
+.score_zone_3 {
+  top: 378px;
+  height: 237px;
+}
+
+.score_zone_4 {
+  top: 615px;
+  height: 397px;
+}
+
+.score_pointer {
+  position: absolute;
+  top: -26px;
+  left: 110px;
+  width: 240px;
+  height: 200px;
+  object-fit: contain;
+  transform: rotate(90deg);
+  z-index: 16;
+  animation: scorePointerSweep 1.5s linear infinite alternate;
+}
+
+.score_pointer.is_stopped {
+  background-image: url(../img/trangle.png);
+  animation-play-state: paused;
+}
+
+.game_stage.is_transitioning .score_bar_area,
+.game_stage.is_transitioning .score_pointer,
+.game_stage.is_transitioning .stop_button,
+.game_stage.is_transitioning .fired_container,
+.game_stage.is_transitioning .feedback_gif_container {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@keyframes scorePointerSweep {
+  from {
+    top: -26px;
+  }
+  to {
+    top: 912px;
+  }
+}
+
+.visually_hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* 讓畫面全螢幕 */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* 背景容器：預設第一段的背景顏色（可自行修改顏色） */
+.ending_bg_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #ffc700;
+  background-image: url(../img/catchEgg.gif);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+/* 透明 GIF 樣式 */
+.transparent_gif {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  object-fit: contain; /* 確保透明 GIF 不變形 */
+}
+
+.feedback_gif_container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.feedback_pair {
+  display: none;
+}
+
+.feedback_pair.is_active {
+  display: block;
+}
+
+.feedback_gif_container img.fb_top_left {
+  position: absolute;
+  top: 80px;
+  left: 20%;
+  width: 60vw;
+  height: auto;
+  object-fit: contain;
+  z-index: 11;
+  max-width: 700px;
+}
+
+/* 🟢 Good (原 15 分：最高分/極佳回饋) */
+#feedbackGoodTop {
+  width: 700px;
+  height: auto;
+  top: 60px;
+  left: 250px;
+  transform: rotate(-15deg);
+}
+#feedbackGoodBottom {
+  width: 320px;
+  height: auto;
+  top: 700px;
+  left: 1500px;
+  transform: rotate(5deg);
+}
+
+/* 🟡 Normal (原 10 分：一般回饋) */
+#feedbackNormalTop {
+  width: 450px;
+  height: auto;
+  top: 60px;
+  left: 350px;
+  transform: rotate(5deg);
+}
+#feedbackNormalBottom {
+  width: 320px;
+  height: auto;
+  top: 700px;
+  left: 1500px;
+  transform: rotate(10deg);
+}
+
+/* 🔴 Bad (原 5 分 / 0 分：較低分回饋) */
+#feedbackBadTop {
+  width: 450px;
+  height: auto;
+  top: 60px;
+  left: 200px;
+  transform: rotate(10deg);
+}
+#feedbackBadBottom {
+  width: 350px;
+  height: auto;
+  top: 700px;
+  left: 1400px;
+  transform: rotate(10deg);
+}
+
+.feedback_gif_container img.fb_bottom_right {
+  position: absolute;
+  top: auto;
+  bottom: 80px;
+  left: auto;
+  right: 80px;
+  width: 400px;
+  height: auto;
+  object-fit: contain;
+  z-index: 11;
+}
