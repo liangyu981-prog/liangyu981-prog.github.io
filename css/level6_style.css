@@ -241,7 +241,6 @@ html {
   --level6-end-hold: 1s;
   --level6-flash-duration: 3s;
   --level6-fini-hold: 3s;
-  --level6-decorations-delay: 0.5s;
 }
 
 .transition_scene,

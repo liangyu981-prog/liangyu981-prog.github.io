@@ -32,6 +32,15 @@ document.addEventListener("DOMContentLoaded", () => {
       return value.endsWith("ms") ? duration : duration * 1000;
     };
     const flash = stage.querySelector(".transition_flash");
+    const finishShineSound = new Audio("./audio/egg_pancake_finish_shine.mp3");
+    finishShineSound.preload = "auto";
+    flash.addEventListener("animationstart", (event) => {
+      if (event.animationName !== "transitionWhiteFlash") return;
+      finishShineSound.currentTime = 0;
+      finishShineSound.play().catch((error) => {
+        console.error("Failed to play Level 6 finish shine sound:", error);
+      });
+    }, { once: true });
     window.setTimeout(
       () => {
         stage.querySelector(".transition_fini").classList.add("is_visible");
@@ -44,11 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       (event) => {
         if (event.animationName !== "transitionWhiteFlash") return;
         flash.hidden = true;
-        window.setTimeout(() => {
-          stage
-            .querySelector(".transition_decorations")
-            .classList.add("is_visible");
-        }, getDurationMs("--level6-decorations-delay"));
+        stage.querySelector(".transition_decorations").classList.add("is_visible");
         window.setTimeout(() => {
           window.location.href = "./0_7_3.html";
         }, getDurationMs("--level6-fini-hold"));

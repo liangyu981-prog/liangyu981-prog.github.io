@@ -11,11 +11,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const nameInput = document.getElementById("playerName");
   const signInSound = new Audio("./audio/sign_in.mp3");
   signInSound.preload = "auto";
+  const cameraSound = new Audio("./audio/canmera_sound.mp3");
+  cameraSound.preload = "auto";
 
   if (
-    !modal || !video || !canvas || !frame || !guide || !shutter ||
-    !countdown || !status || !nameForm || !nameInput
-  ) return;
+    !modal ||
+    !video ||
+    !canvas ||
+    !frame ||
+    !guide ||
+    !shutter ||
+    !countdown ||
+    !status ||
+    !nameForm ||
+    !nameInput
+  )
+    return;
 
   let cameraStream;
   let faceDetector;
@@ -64,9 +75,10 @@ document.addEventListener("DOMContentLoaded", () => {
       status.textContent = "正在載入臉部偵測…";
       await loadDetectors();
     } catch (error) {
-      status.textContent = error.name === "NotAllowedError"
-        ? "需要允許使用鏡頭，才能拍照。"
-        : "無法啟動鏡頭，請確認裝置有可用的相機。";
+      status.textContent =
+        error.name === "NotAllowedError"
+          ? "需要允許使用鏡頭，才能拍照。"
+          : "無法啟動鏡頭，請確認裝置有可用的相機。";
     }
   }
 
@@ -74,9 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (loadingDetectors) return loadingDetectors;
     loadingDetectors = (async () => {
       try {
-        const { FilesetResolver, FaceDetector, GestureRecognizer } = await import(
-          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/+esm"
-        );
+        const { FilesetResolver, FaceDetector, GestureRecognizer } =
+          await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/+esm");
         const vision = await FilesetResolver.forVisionTasks(
           "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm",
         );
@@ -91,18 +102,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         try {
-          gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
-            baseOptions: {
-              modelAssetPath:
-                "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/latest/gesture_recognizer.task",
-              delegate: "GPU",
+          gestureRecognizer = await GestureRecognizer.createFromOptions(
+            vision,
+            {
+              baseOptions: {
+                modelAssetPath:
+                  "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/latest/gesture_recognizer.task",
+                delegate: "GPU",
+              },
+              runningMode: "VIDEO",
+              numHands: 2,
+              minHandDetectionConfidence: 0.55,
+              minHandPresenceConfidence: 0.55,
+              minTrackingConfidence: 0.5,
             },
-            runningMode: "VIDEO",
-            numHands: 2,
-            minHandDetectionConfidence: 0.55,
-            minHandPresenceConfidence: 0.55,
-            minTrackingConfidence: 0.5,
-          });
+          );
         } catch (error) {
           console.error("Gesture recognition could not be loaded:", error);
           status.textContent = "手勢偵測載入失敗，仍可使用拍照鍵";
@@ -121,7 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function detectionLoop() {
-    if (!faceDetector || video.hidden || !video.srcObject || capturedPhoto) return;
+    if (!faceDetector || video.hidden || !video.srcObject || capturedPhoto)
+      return;
 
     const now = performance.now();
     if (
@@ -167,9 +182,10 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     const cropX = (video.videoWidth * scale - previewWidth) / 2;
     const cropY = (video.videoHeight * scale - previewHeight) / 2;
-    const zoom = Number.parseFloat(
-      getComputedStyle(video).getPropertyValue("--camera-zoom"),
-    ) || 1;
+    const zoom =
+      Number.parseFloat(
+        getComputedStyle(video).getPropertyValue("--camera-zoom"),
+      ) || 1;
     const mirroredCenterX = video.videoWidth - (box.originX + box.width / 2);
     const unzoomedX = mirroredCenterX * scale - cropX;
     const unzoomedY = (box.originY + box.height / 2) * scale - cropY;
@@ -240,9 +256,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     countdown.textContent = "📸";
-    const zoom = Number.parseFloat(
-      getComputedStyle(video).getPropertyValue("--camera-zoom"),
-    ) || 1;
+    cameraSound.currentTime = 0;
+    cameraSound.play().catch((error) => {
+      console.error("Failed to play camera shutter sound:", error);
+    });
+    const zoom =
+      Number.parseFloat(
+        getComputedStyle(video).getPropertyValue("--camera-zoom"),
+      ) || 1;
     const cropSize = Math.min(video.videoWidth, video.videoHeight) / zoom;
     const cropX = (video.videoWidth - cropSize) / 2;
     const cropY = (video.videoHeight - cropSize) / 2;
@@ -280,6 +301,36 @@ document.addEventListener("DOMContentLoaded", () => {
     const playerName = nameInput.value.trim();
     if (playerName === "黃偉綸") {
       window.alert("這個名字不是你能使用的，請重新輸入！");
+      nameInput.focus();
+      nameInput.select();
+      return;
+    }
+    if (playerName === "周新婷") {
+      window.alert("你觸犯了零食大總統的權威，請重新輸入！");
+      nameInput.focus();
+      nameInput.select();
+      return;
+    }
+    if (playerName === "張良瑀") {
+      window.alert("你在干擾我的生活，請重新輸入！");
+      nameInput.focus();
+      nameInput.select();
+      return;
+    }
+    if (playerName === "陳湘穎") {
+      window.alert("你叉叉，請重新輸入！");
+      nameInput.focus();
+      nameInput.select();
+      return;
+    }
+    if (playerName === "林昱萱") {
+      window.alert("你黑眼豆豆，請重新輸入！");
+      nameInput.focus();
+      nameInput.select();
+      return;
+    }
+    if (playerName === "聶永真") {
+      window.alert("耳耳耳，耳耳耳耳耳！");
       nameInput.focus();
       nameInput.select();
       return;
