@@ -9,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const status = document.getElementById("cameraStatus");
   const nameForm = document.getElementById("nameForm");
   const nameInput = document.getElementById("playerName");
+  const signInSound = new Audio("./audio/sign_in.mp3");
+  signInSound.preload = "auto";
 
   if (
     !modal || !video || !canvas || !frame || !guide || !shutter ||
@@ -287,7 +289,31 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("playerPhoto", canvas.toDataURL("image/jpeg", 0.88));
     const nextPage = localStorage.getItem("cameraReturnHref") || "./0_8_1.html";
     localStorage.removeItem("cameraReturnHref");
-    window.location.href = nextPage;
+
+    nameForm.querySelector('button[type="submit"]').disabled = true;
+    cameraStream?.getTracks().forEach((track) => track.stop());
+    cameraStream = null;
+
+    let navigationStarted = false;
+    const continueToNextPage = () => {
+      if (navigationStarted) return;
+      navigationStarted = true;
+      window.location.href = nextPage;
+    };
+    const soundTimeout = window.setTimeout(continueToNextPage, 2500);
+    signInSound.addEventListener(
+      "ended",
+      () => {
+        window.clearTimeout(soundTimeout);
+        continueToNextPage();
+      },
+      { once: true },
+    );
+    signInSound.currentTime = 0;
+    signInSound.play().catch(() => {
+      window.clearTimeout(soundTimeout);
+      continueToNextPage();
+    });
   });
 
   window.addEventListener("pagehide", () => {
