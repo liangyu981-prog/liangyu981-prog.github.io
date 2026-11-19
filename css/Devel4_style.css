@@ -128,7 +128,7 @@ html {
   left: 1187px;
   bottom: 184px;
   width: 180px;
-  height: 80px;
+  height: 94px;
   border: none;
   background-color: transparent;
   background-image: url("../img/start_button_default.png");
@@ -149,10 +149,10 @@ html {
 
 .camera_button {
   position: absolute;
-  left: 970px;
-  bottom: 163px;
-  width: 220px;
-  height: 120px;
+  left: 925px;
+  bottom: 183px;
+  width: 255px;
+  height: 90px;
   border: none;
   background-color: transparent;
   background-image: url("../img/camera_button_default.png");

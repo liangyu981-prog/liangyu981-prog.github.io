@@ -15,6 +15,7 @@
       data-correct-direction="left"
       data-next-page="1_2_3_2.html"
       data-stop-image="./img/devel1_Q2_stop_bg.png"
+      data-animation-duration-ms="2160"
     >
       <img src="./img/1_2_find_tea_Q2.gif" alt="" />
     </div>
@@ -34,7 +35,11 @@
           viewBox="0 0 200 200"
           aria-hidden="true"
         >
-          <path class="guide_crosshair" d="M100 18V182 M18 100H182" />
+          <path class="guide_region guide_up" d="M100 100L42 42A82 82 0 0 1 158 42Z" />
+          <path class="guide_region guide_right" d="M100 100L158 42A82 82 0 0 1 158 158Z" />
+          <path class="guide_region guide_down" d="M100 100L158 158A82 82 0 0 1 42 158Z" />
+          <path class="guide_region guide_left" d="M100 100L42 158A82 82 0 0 1 42 42Z" />
+          <path class="guide_crosshair" d="M42 42L158 158 M158 42L42 158" />
           <path class="guide_quadrant guide_up" d="M42 42A82 82 0 0 1 158 42" />
           <path class="guide_quadrant guide_right" d="M158 42A82 82 0 0 1 158 158" />
           <path class="guide_quadrant guide_down" d="M158 158A82 82 0 0 1 42 158" />

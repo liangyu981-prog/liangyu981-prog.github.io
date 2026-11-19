@@ -6,6 +6,9 @@ const FACE_LANDMARKER_MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
 const SCORE_STORAGE_PARAM = "score";
 const DIRECTION_NAMES = { up: "上", down: "下", left: "左", right: "右" };
+const FISHEYE_PREVIEW_WIDTH = 320;
+const FISHEYE_PREVIEW_HEIGHT = 240;
+const FISHEYE_STRENGTH = 0.8;
 
 const video = document.getElementById("camera_preview");
 const statusMessage = document.getElementById("camera_status");
@@ -18,6 +21,8 @@ const nextPage = background.dataset.nextPage;
 const scoreParam = new URLSearchParams(window.location.search).get(SCORE_STORAGE_PARAM);
 const parsedScore = Number(scoreParam);
 let score = scoreParam !== null && Number.isFinite(parsedScore) ? parsedScore : 0;
+const animationDurationMs =
+  Number(background.dataset.animationDurationMs) || 2160;
 let cameraStream;
 let faceLandmarker;
 let frameRequest;
@@ -28,8 +33,17 @@ let neutralPose;
 let candidateDirection;
 let candidateFrames = 0;
 let transitionStarted = false;
+let noMovementTimeout;
 let turnDetectionEnabled = false;
 let backgroundAnimationSource;
+let fisheyeCanvas;
+let fisheyeContext;
+let fisheyeSourceCanvas;
+let fisheyeSourceContext;
+let fisheyeSourceMap;
+let fisheyeOutputFrame;
+let previewFrameRequest;
+let lastPreviewRenderAt = 0;
 
 if (background.dataset.stopImage) {
   stopBackgroundImage.src = background.dataset.stopImage;
@@ -40,10 +54,146 @@ if (scoreDisplay) {
 }
 
 function stopCamera() {
+  if (previewFrameRequest !== undefined) {
+    cancelAnimationFrame(previewFrameRequest);
+    previewFrameRequest = undefined;
+  }
+
   if (cameraStream) {
     cameraStream.getTracks().forEach((track) => track.stop());
     cameraStream = null;
   }
+}
+
+function createFisheyeSourceMap() {
+  const map = new Int32Array(FISHEYE_PREVIEW_WIDTH * FISHEYE_PREVIEW_HEIGHT);
+  const centerX = (FISHEYE_PREVIEW_WIDTH - 1) / 2;
+  const centerY = (FISHEYE_PREVIEW_HEIGHT - 1) / 2;
+
+  for (let y = 0; y < FISHEYE_PREVIEW_HEIGHT; y += 1) {
+    for (let x = 0; x < FISHEYE_PREVIEW_WIDTH; x += 1) {
+      const normalizedX = (x - centerX) / centerX;
+      const normalizedY = (y - centerY) / centerY;
+      const radiusSquared = normalizedX ** 2 + normalizedY ** 2;
+      const distortion = 1 + FISHEYE_STRENGTH * radiusSquared;
+      const sourceX = Math.round(centerX + normalizedX * distortion * centerX);
+      const sourceY = Math.round(centerY + normalizedY * distortion * centerY);
+      const destinationIndex = y * FISHEYE_PREVIEW_WIDTH + x;
+
+      map[destinationIndex] =
+        sourceX >= 0 &&
+        sourceX < FISHEYE_PREVIEW_WIDTH &&
+        sourceY >= 0 &&
+        sourceY < FISHEYE_PREVIEW_HEIGHT
+          ? (sourceY * FISHEYE_PREVIEW_WIDTH + sourceX) * 4
+          : -1;
+    }
+  }
+
+  return map;
+}
+
+function renderFisheyePreview(timestamp) {
+  if (
+    video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+    timestamp - lastPreviewRenderAt >= 1000 / 24
+  ) {
+    lastPreviewRenderAt = timestamp;
+
+    try {
+      const targetAspect = FISHEYE_PREVIEW_WIDTH / FISHEYE_PREVIEW_HEIGHT;
+      let cropX = 0;
+      let cropY = 0;
+      let cropWidth = video.videoWidth;
+      let cropHeight = video.videoHeight;
+
+      if (cropWidth / cropHeight > targetAspect) {
+        cropWidth = cropHeight * targetAspect;
+        cropX = (video.videoWidth - cropWidth) / 2;
+      } else {
+        cropHeight = cropWidth / targetAspect;
+        cropY = (video.videoHeight - cropHeight) / 2;
+      }
+
+      fisheyeSourceContext.drawImage(
+        video,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        FISHEYE_PREVIEW_WIDTH,
+        FISHEYE_PREVIEW_HEIGHT,
+      );
+
+      const sourcePixels = fisheyeSourceContext.getImageData(
+        0,
+        0,
+        FISHEYE_PREVIEW_WIDTH,
+        FISHEYE_PREVIEW_HEIGHT,
+      ).data;
+      const outputPixels = fisheyeOutputFrame.data;
+
+      for (let pixel = 0; pixel < fisheyeSourceMap.length; pixel += 1) {
+        const destinationOffset = pixel * 4;
+        const sourceOffset = fisheyeSourceMap[pixel];
+
+        if (sourceOffset === -1) {
+          outputPixels[destinationOffset] = 0;
+          outputPixels[destinationOffset + 1] = 0;
+          outputPixels[destinationOffset + 2] = 0;
+          outputPixels[destinationOffset + 3] = 255;
+        } else {
+          outputPixels[destinationOffset] = sourcePixels[sourceOffset];
+          outputPixels[destinationOffset + 1] = sourcePixels[sourceOffset + 1];
+          outputPixels[destinationOffset + 2] = sourcePixels[sourceOffset + 2];
+          outputPixels[destinationOffset + 3] = sourcePixels[sourceOffset + 3];
+        }
+      }
+
+      fisheyeContext.putImageData(fisheyeOutputFrame, 0, 0);
+    } catch (error) {
+      showError(error);
+      return;
+    }
+  }
+
+  previewFrameRequest = requestAnimationFrame(renderFisheyePreview);
+}
+
+function startFisheyePreview() {
+  const previewWrapper = video.parentElement;
+  if (!previewWrapper) {
+    throw new Error("找不到鏡頭預覽容器。");
+  }
+
+  fisheyeCanvas = document.createElement("canvas");
+  fisheyeCanvas.className = "camera_fisheye_preview";
+  fisheyeCanvas.width = FISHEYE_PREVIEW_WIDTH;
+  fisheyeCanvas.height = FISHEYE_PREVIEW_HEIGHT;
+  fisheyeCanvas.setAttribute("role", "img");
+  fisheyeCanvas.setAttribute("aria-label", "鏡頭預覽（魚眼效果）");
+  previewWrapper.insertBefore(fisheyeCanvas, directionGuide);
+
+  fisheyeSourceCanvas = document.createElement("canvas");
+  fisheyeSourceCanvas.width = FISHEYE_PREVIEW_WIDTH;
+  fisheyeSourceCanvas.height = FISHEYE_PREVIEW_HEIGHT;
+  fisheyeContext = fisheyeCanvas.getContext("2d");
+  fisheyeSourceContext = fisheyeSourceCanvas.getContext("2d", {
+    willReadFrequently: true,
+  });
+  if (!fisheyeContext || !fisheyeSourceContext) {
+    throw new Error("瀏覽器無法建立魚眼預覽畫布。");
+  }
+
+  fisheyeSourceMap = createFisheyeSourceMap();
+  fisheyeOutputFrame = fisheyeContext.createImageData(
+    FISHEYE_PREVIEW_WIDTH,
+    FISHEYE_PREVIEW_HEIGHT,
+  );
+  video.hidden = true;
+  previewFrameRequest = requestAnimationFrame(renderFisheyePreview);
 }
 
 function closeFaceLandmarker() {
@@ -196,6 +346,7 @@ function completeWithDirection(direction) {
     return;
   }
   transitionStarted = true;
+  window.clearTimeout(noMovementTimeout);
 
   const earnedPoints = direction === correctDirection ? 8 : 0;
   score += earnedPoints;
@@ -226,6 +377,23 @@ function completeWithDirection(direction) {
       window.location.href = `${nextPage}?${SCORE_STORAGE_PARAM}=${score}`;
     }, 2000);
   });
+}
+
+function completeWithoutMovement() {
+  if (transitionStarted) return;
+  transitionStarted = true;
+  candidateDirection = undefined;
+  candidateFrames = 0;
+  setGuideDirection(undefined);
+  closeFaceLandmarker();
+  if (frameRequest) cancelAnimationFrame(frameRequest);
+  freezeCurrentBackground();
+  statusMessage.textContent = "你太慢了";
+
+  window.setTimeout(() => {
+    stopCamera();
+    window.location.href = `${nextPage}?${SCORE_STORAGE_PARAM}=${score}`;
+  }, 1200);
 }
 
 function processFrame() {
@@ -277,6 +445,10 @@ function processFrame() {
             resumeBackgroundAnimation();
             turnDetectionEnabled = true;
             statusMessage.textContent = "請向上、下、左或右轉頭。";
+            noMovementTimeout = window.setTimeout(
+              completeWithoutMovement,
+              animationDurationMs,
+            );
           }, 1200);
         } else {
           statusMessage.textContent = "請正面看鏡頭，保持不動。";
@@ -324,6 +496,7 @@ async function startCameraGame() {
   });
   video.srcObject = cameraStream;
   await video.play();
+  startFisheyePreview();
 
   statusMessage.textContent = "正在載入頭部偵測模型...";
   const { FaceLandmarker, FilesetResolver } = await import(MEDIA_PIPE_MODULE_URL);

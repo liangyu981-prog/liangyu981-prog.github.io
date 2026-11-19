@@ -4,9 +4,11 @@ const VISION_WASM_URL =
   "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.3/wasm";
 const HAND_MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task";
+const FIST_CONFIRMATION_MS = 1200;
 
 const stage = document.getElementById("gameStage");
 const video = document.getElementById("cameraFeed");
+const tea = document.querySelector(".tea");
 const status = document.getElementById("cameraStatus");
 const track = document.getElementById("track");
 const cow = document.getElementById("cow");
@@ -15,13 +17,13 @@ const pestle = document.getElementById("pestle");
 const scoreDisplay = document.getElementById("score");
 const timerDisplay = document.getElementById("timer");
 const feedback = document.getElementById("feedback");
-const result = document.getElementById("result");
-const finalScore = document.getElementById("finalScore");
-const restart = document.getElementById("restart");
 
 const durationSeconds = 15;
 const minScore = 10;
 const maxScore = 25;
+const initialCowSpeed = 400; // 牛剛開始的速度，單位為舞台像素／秒。
+const cowAcceleration = 80; // 每秒增加的速度。
+const maxCowSpeed = 1500; // 牛的最高速度。
 const followDistance = 150;
 let score = minScore;
 let secondsLeft = durationSeconds;
@@ -30,16 +32,68 @@ let handY = null;
 let markerX = 0;
 let direction = 1;
 let lastFrame = 0;
+let gameStartedAt = 0;
 let lastVideoTime = -1;
 let running = false;
+let gameHasStarted = false;
+let fistHoldStartedAt = null;
+let teaAnimationSource = tea?.getAttribute("src") || "";
 let handLandmarker;
 let cameraStream;
 let animationId;
 let timerId;
 let scoreId;
 
+function distanceBetween(first, second) {
+  return Math.hypot(first.x - second.x, first.y - second.y);
+}
+
+function isClosedFist(landmarks) {
+  const wrist = landmarks[0];
+  return [
+    [8, 6],
+    [12, 10],
+    [16, 14],
+    [20, 18],
+  ].every(
+    ([tipIndex, jointIndex]) =>
+      distanceBetween(landmarks[tipIndex], wrist) <
+      distanceBetween(landmarks[jointIndex], wrist),
+  );
+}
+
+async function pauseTeaAnimation() {
+  if (!tea || !teaAnimationSource) return;
+  try {
+    await tea.decode();
+    const frozenTea = document.createElement("canvas");
+    frozenTea.className = "tea tea_frozen";
+    frozenTea.width = tea.naturalWidth;
+    frozenTea.height = tea.naturalHeight;
+    frozenTea.setAttribute("aria-hidden", "true");
+    const context = frozenTea.getContext("2d");
+    if (!context) return;
+    context.drawImage(tea, 0, 0);
+    tea.replaceWith(frozenTea);
+  } catch (error) {
+    console.warn("Could not pause the tea animation before the game.", error);
+  }
+}
+
+function resumeTeaAnimation() {
+  const frozenTea = document.querySelector(".tea_frozen");
+  if (!frozenTea || !teaAnimationSource) return;
+  const animatedTea = document.createElement("img");
+  animatedTea.className = "tea";
+  animatedTea.alt = "茶葉";
+  const animationUrl = new URL(teaAnimationSource, window.location.href);
+  animationUrl.searchParams.set("restart", String(Date.now()));
+  animatedTea.src = animationUrl.href;
+  frozenTea.replaceWith(animatedTea);
+}
+
 function renderScore() {
-  scoreDisplay.textContent = `分數：${score}`;
+  if (scoreDisplay) scoreDisplay.textContent = `分數：${score}`;
 }
 
 function animateMarker(now) {
@@ -47,7 +101,11 @@ function animateMarker(now) {
   if (lastFrame) {
     const elapsed = Math.min((now - lastFrame) / 1000, 0.05);
     const maxX = Math.max(0, track.clientWidth - cow.clientWidth);
-    markerX += direction * 430 * elapsed;
+    const currentSpeed = Math.min(
+      maxCowSpeed,
+      initialCowSpeed + ((now - gameStartedAt) / 1000) * cowAcceleration,
+    );
+    markerX += direction * currentSpeed * elapsed;
     if (markerX >= maxX) {
       markerX = maxX;
       direction = -1;
@@ -69,15 +127,22 @@ function updateScore() {
   const trackBounds = track.getBoundingClientRect();
   const stageBounds = stage.getBoundingClientRect();
   const scaleX = stageBounds.width / 1920;
-  const targetX = (trackBounds.left - stageBounds.left) / scaleX + markerX + cow.clientWidth / 2;
-  const onTarget = handX !== null && Math.abs(handX - targetX) <= followDistance;
+  const targetX =
+    (trackBounds.left - stageBounds.left) / scaleX +
+    markerX +
+    cow.clientWidth / 2;
+  const onTarget =
+    handX !== null && Math.abs(handX - targetX) <= followDistance;
+  cowGuide.classList.toggle("is_following", onTarget);
+  cowGuide.classList.toggle("is_missing", !onTarget);
   score = Math.max(minScore, Math.min(maxScore, score + (onTarget ? 1 : -1)));
   renderScore();
-  feedback.textContent = handX === null
-    ? "請將手掌放進鏡頭畫面"
-    : onTarget
-      ? "跟上了，繼續保持！"
-      : "跟著牛移動手掌！";
+  feedback.textContent =
+    handX === null
+      ? "請將手掌放進鏡頭畫面"
+      : onTarget
+        ? "跟上了，繼續保持！"
+        : "跟著牛移動手掌！";
 }
 
 function stopGame() {
@@ -85,11 +150,9 @@ function stopGame() {
   cancelAnimationFrame(animationId);
   clearInterval(timerId);
   clearInterval(scoreId);
-  timerDisplay.textContent = "時間到！";
+  if (timerDisplay) timerDisplay.textContent = "時間到！";
   feedback.textContent = "遊戲結束";
-  finalScore.textContent = `你的分數：${score} 分`;
-  result.hidden = false;
-  restart.focus();
+  window.location.href = "./1_3_2.html";
 }
 
 function startGame() {
@@ -100,17 +163,17 @@ function startGame() {
   markerX = 0;
   direction = 1;
   lastFrame = 0;
+  gameStartedAt = performance.now();
   running = true;
-  result.hidden = true;
   renderScore();
-  timerDisplay.textContent = `剩餘時間：${secondsLeft} 秒`;
+  if (timerDisplay) timerDisplay.textContent = `剩餘時間：${secondsLeft} 秒`;
   cow.style.left = "0px";
   cow.style.transform = "scaleX(-1)";
   cowGuide.style.left = `${cow.clientWidth / 2}px`;
   animationId = requestAnimationFrame(animateMarker);
   timerId = setInterval(() => {
     secondsLeft -= 1;
-    timerDisplay.textContent = `剩餘時間：${secondsLeft} 秒`;
+    if (timerDisplay) timerDisplay.textContent = `剩餘時間：${secondsLeft} 秒`;
     if (secondsLeft <= 0) stopGame();
   }, 1000);
   scoreId = setInterval(updateScore, 1000);
@@ -123,13 +186,19 @@ function mapHandToStage(sourceX, sourceY) {
   const visibleWidth = Math.min(1, viewportAspect / sourceAspect);
   const visibleHeight = Math.min(1, sourceAspect / viewportAspect);
   // The camera image is mirrored for the player, so reverse the landmark's x coordinate.
-  const cameraX = Math.min(1, Math.max(0, (1 - sourceX - (1 - visibleWidth) / 2) / visibleWidth));
+  const cameraX = Math.min(
+    1,
+    Math.max(0, (1 - sourceX - (1 - visibleWidth) / 2) / visibleWidth),
+  );
   const screenX = cameraBounds.left + cameraX * cameraBounds.width;
   const stageBounds = stage.getBoundingClientRect();
   const scaleX = stageBounds.width / 1920;
   const scaleY = stageBounds.height / 1080;
   // The preview mirrors the image horizontally, not vertically.
-  const cameraY = Math.min(1, Math.max(0, (sourceY - (1 - visibleHeight) / 2) / visibleHeight));
+  const cameraY = Math.min(
+    1,
+    Math.max(0, (sourceY - (1 - visibleHeight) / 2) / visibleHeight),
+  );
   const screenY = cameraBounds.top + cameraY * cameraBounds.height;
   return {
     x: Math.min(1920, Math.max(0, (screenX - stageBounds.left) / scaleX)),
@@ -139,15 +208,50 @@ function mapHandToStage(sourceX, sourceY) {
 
 function detectHands() {
   if (!handLandmarker) return;
-  if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && video.currentTime !== lastVideoTime) {
+  if (
+    video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+    video.currentTime !== lastVideoTime
+  ) {
     lastVideoTime = video.currentTime;
     try {
       const detection = handLandmarker.detectForVideo(video, performance.now());
       const landmarks = detection.landmarks?.[0];
       if (landmarks) {
+        if (!gameHasStarted) {
+          if (isClosedFist(landmarks)) {
+            if (fistHoldStartedAt === null) fistHoldStartedAt = performance.now();
+            const heldFor = performance.now() - fistHoldStartedAt;
+            const remaining = Math.max(0, (FIST_CONFIRMATION_MS - heldFor) / 1000);
+            if (heldFor >= FIST_CONFIRMATION_MS) {
+              gameHasStarted = true;
+              status.textContent = "握拳確認完成，遊戲開始！";
+              feedback.textContent = "左右移動手掌，跟著牛移動杵子。";
+              resumeTeaAnimation();
+              startGame();
+            } else {
+              status.textContent = "請保持握拳以確認開始";
+              feedback.textContent = `確認中 ${remaining.toFixed(1)} 秒`;
+            }
+          } else {
+            fistHoldStartedAt = null;
+            status.textContent = "偵測到手掌，請握拳並保持 1.2 秒開始";
+            feedback.textContent = "握拳確認後才會開始遊戲";
+          }
+          requestAnimationFrame(detectHands);
+          return;
+        }
+
         // Average wrist and palm-base landmarks to reduce fingertip jitter.
-        const palmX = [0, 5, 9, 13, 17].reduce((sum, index) => sum + landmarks[index].x, 0) / 5;
-        const palmY = [0, 5, 9, 13, 17].reduce((sum, index) => sum + landmarks[index].y, 0) / 5;
+        const palmX =
+          [0, 5, 9, 13, 17].reduce(
+            (sum, index) => sum + landmarks[index].x,
+            0,
+          ) / 5;
+        const palmY =
+          [0, 5, 9, 13, 17].reduce(
+            (sum, index) => sum + landmarks[index].y,
+            0,
+          ) / 5;
         const target = mapHandToStage(palmX, palmY);
         handX = handX === null ? target.x : handX * 0.72 + target.x * 0.28;
         handY = handY === null ? target.y : handY * 0.72 + target.y * 0.28;
@@ -157,7 +261,13 @@ function detectHands() {
       } else {
         handX = null;
         handY = null;
-        status.textContent = "請將一隻手掌放進鏡頭畫面";
+        if (!gameHasStarted) {
+          fistHoldStartedAt = null;
+          status.textContent = "請將一隻手掌放進鏡頭畫面，再握拳確認開始";
+          feedback.textContent = "等待握拳確認";
+        } else {
+          status.textContent = "請將一隻手掌放進鏡頭畫面";
+        }
       }
     } catch (error) {
       status.textContent = `手部偵測失敗：${error.message}`;
@@ -171,10 +281,15 @@ async function startCamera() {
   if (!navigator.mediaDevices?.getUserMedia) {
     throw new Error("請使用 HTTPS 或 localhost 開啟，並允許鏡頭權限。");
   }
+  await pauseTeaAnimation();
   status.textContent = "正在請求鏡頭權限…";
   cameraStream = await navigator.mediaDevices.getUserMedia({
     audio: false,
-    video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+    video: {
+      facingMode: "user",
+      width: { ideal: 1280 },
+      height: { ideal: 720 },
+    },
   });
   video.srcObject = cameraStream;
   await video.play();
@@ -190,24 +305,25 @@ async function startCamera() {
     minHandPresenceConfidence: 0.55,
     minTrackingConfidence: 0.5,
   });
-  status.textContent = "請將一隻手掌放進鏡頭畫面";
-  startGame();
+  status.textContent = "請握拳並保持 1.2 秒以開始遊戲";
+  feedback.textContent = "確認期間牛和茶葉會保持不動";
   detectHands();
 }
 
 function cleanup() {
   cancelAnimationFrame(animationId);
-  if (cameraStream) cameraStream.getTracks().forEach((cameraTrack) => cameraTrack.stop());
+  if (cameraStream)
+    cameraStream.getTracks().forEach((cameraTrack) => cameraTrack.stop());
   handLandmarker?.close();
 }
 
-restart.addEventListener("click", startGame);
 window.addEventListener("pagehide", cleanup);
 renderScore();
 startCamera().catch((error) => {
-  status.textContent = error.name === "NotAllowedError"
-    ? "鏡頭權限遭拒，請允許鏡頭後重新整理。"
-    : `無法啟動鏡頭：${error.message}`;
+  status.textContent =
+    error.name === "NotAllowedError"
+      ? "鏡頭權限遭拒，請允許鏡頭後重新整理。"
+      : `無法啟動鏡頭：${error.message}`;
   feedback.textContent = "請確認鏡頭權限後重新整理";
   console.error("Camera hand tracking could not start.", error);
 });
