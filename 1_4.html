@@ -1,0 +1,33 @@
+<!doctype html>
+<!-- Level 2 開場頁：呈現關卡背景、說明彈窗與開始按鈕。 -->
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>（開頭）</title>
+    <link href="./css/Devel3_style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main class="game_stage">
+      <div class="bg_layer" aria-hidden="true"></div>
+      <div class="Devel3_bg" aria-hidden="true"></div>
+      <section class="modal3_container" aria-label="關卡說明">
+        <div class="popinfor3" aria-hidden="true"></div>
+        <button
+          class="start_button"
+          id="startBtn"
+          type="button"
+          aria-label="開始"
+        ></button>
+      </section>
+      <button
+        class="camera_button"
+        id="cameraBtn"
+        type="button"
+        aria-label="鏡頭偵測模式"
+      ></button>
+    </main>
+    <script src="./js/stage_script.js"></script>
+    <script src="./js/Devel3_script.js"></script>
+  </body>
+</html>

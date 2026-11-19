@@ -1,0 +1,364 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 遊戲畫面固定填滿視窗，避免背景或動畫出現捲軸。 */
+body,
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.game_stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center;
+}
+
+/* 讓彈窗與按鈕一起由畫面上方落下，並在中央淡入、回彈定位。 */
+@keyframes dropDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-1080px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 控制開始按鈕延遲淡入。 */
+@keyframes buttonFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes popendBounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(0.94);
+  }
+  82% {
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 最底層的黃色底色，填滿彈窗背景以外的區域。 */
+.bg_layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #ffc700;
+  z-index: 0;
+}
+
+/* 背景等比例填滿視窗；靜態開場圖與遊戲 GIF 共用版面設定。 */
+.Devel4_bg,
+.Devel4_bg_animated {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  z-index: 1;
+}
+
+.Devel4_bg {
+  background-image: url("../img/cow_bg.gif");
+  opacity: 0.5;
+}
+
+.Devel4_bg_animated {
+  background-image: url("../img/cow_animation.gif");
+}
+
+/* 全畫面彈窗容器；與彈窗圖片、按鈕一起播放落下動畫。 */
+.modal4_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 2;
+  animation: dropDownFade 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Level 2 說明彈窗圖片；完整置中顯示且不裁切。 */
+.popinfor4 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-image: url("../img/milking_introduce_popupwindow_4.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  z-index: 1;
+}
+
+/* 開始按鈕覆蓋在彈窗圖片上，定位、大小與 0.2 的彈窗按鈕一致。 */
+.start_button {
+  position: absolute;
+  left: 1187px;
+  bottom: 184px;
+  width: 180px;
+  height: 80px;
+  border: none;
+  background-color: transparent;
+  background-image: url("../img/start_button_default.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  outline: none;
+  z-index: 2;
+  opacity: 0;
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+
+/* 按住開始按鈕時切換成按下狀態圖片，提供操作回饋。 */
+.start_button:active {
+  background-image: url("../img/start_button_active.png");
+}
+
+.camera_button {
+  position: absolute;
+  left: 970px;
+  bottom: 163px;
+  width: 220px;
+  height: 120px;
+  border: none;
+  background-color: transparent;
+  background-image: url("../img/camera_button_default.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  outline: none;
+  z-index: 3;
+  opacity: 0;
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+
+.camera_button:active {
+  background-image: url("../img/camera_button_active.png");
+}
+
+/* 接牛奶遊戲頁：沿用共用 1920×1080 舞台，並啟用拖曳操作。 */
+.game_stage.game_mode {
+  background: #f6a900;
+  touch-action: none;
+  user-select: none;
+}
+
+.game_mode .game_background,
+.game_mode .milk_layer,
+.game_mode .cow_art,
+.game_mode .teat_markers {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+}
+
+.game_mode .game_background {
+  z-index: 0;
+  background: #f6a900;
+}
+
+.game_mode .camera_video,
+.game_mode .camera_cow_overlay {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  pointer-events: none;
+}
+
+.game_mode .camera_video {
+  z-index: 0;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.game_mode .camera_cow_overlay {
+  z-index: 1;
+  object-fit: fill;
+  opacity: 1;
+}
+
+/* 牛奶位於牛動畫後方，穿過牛身時會被遮住。 */
+.game_mode .milk_layer {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.game_mode .cow_art {
+  z-index: 3;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.game_mode .teat_markers {
+  z-index: 4;
+  pointer-events: none;
+}
+
+.game_mode .teat_anchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.game_mode .milk_drop {
+  position: absolute;
+  width: 200px;
+  height: 300px;
+  object-fit: contain;
+  will-change: transform;
+}
+
+.game_mode .milk_drop--small {
+  width: 100px;
+  height: 150px;
+}
+
+/* 瓶子 GIF 是完整舞台畫布；此容器只裁出瓶子圖案供拖曳。 */
+.game_mode .bottle_drag {
+  position: absolute;
+  z-index: 5;
+  width: 390px;
+  height: 430px;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+}
+
+.game_mode .bottle_drag:active {
+  cursor: grabbing;
+}
+
+.game_mode.camera_mode .bottle_drag {
+  cursor: default;
+  pointer-events: none;
+}
+
+.game_stage.camera_mode {
+  overflow: visible;
+}
+
+.game_mode.camera_mode.camera_unavailable .bottle_drag {
+  cursor: grab;
+  pointer-events: auto;
+}
+
+.game_mode .bottle_drag img {
+  position: absolute;
+  top: -650px;
+  left: -630px;
+  width: 1920px;
+  height: 1080px;
+  max-width: none;
+  pointer-events: none;
+}
+
+.camera_status {
+  position: absolute;
+  z-index: 6;
+  top: 24px;
+  left: 50%;
+  max-width: 90%;
+  padding: 12px 24px;
+  transform: translateX(-50%);
+  border-radius: 12px;
+  background: rgb(0 0 0 / 65%);
+  color: #fff;
+  font: 24px/1.4 sans-serif;
+  text-align: center;
+  pointer-events: none;
+}
+
+.camera_mode.camera_unavailable .camera_status {
+  background: rgb(120 20 0 / 85%);
+}
+
+/* 結束頁以最後遊戲畫面作半透明底圖，結束彈窗在其上回彈淡入。 */
+.ending_stage {
+  background: #f6a900;
+}
+
+.ending_background,
+.ending_popup {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.ending_background {
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.ending_background {
+  background-image: url("../img/cow_animation.gif");
+}
+
+.ending_popup {
+  z-index: 1;
+  background-image: url("../img/end_popupwindow4.png");
+  background-size: 85% auto;
+  transform-origin: center;
+  animation: popendBounceIn 0.75s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+.ending_next_button {
+  position: absolute;
+  left: 1400px;
+  bottom: 264px;
+  width: 153px;
+  height: 77px;
+  padding: 0;
+  border: 0;
+  background: transparent url("../img/next_button_default.png") center / contain
+    no-repeat;
+  cursor: pointer;
+  outline: none;
+  z-index: 2;
+  opacity: 0;
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+
+.ending_next_button:active {
+  background-image: url("../img/next_button_active.png");
+}

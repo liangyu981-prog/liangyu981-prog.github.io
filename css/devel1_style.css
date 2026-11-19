@@ -1,0 +1,372 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body,
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.game_stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--stage_scale, 1));
+  transform-origin: center;
+}
+/* 開頭視窗的動畫*/
+@keyframes dropDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-1080px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes buttonFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+/* 最底層：單色底色層 */
+.bg_layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #ffca00;
+  z-index: 0;
+}
+/* 背景圖片 */
+.devel1_bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(../img/findTea_bg.gif);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  z-index: 1;
+}
+.opacity_full {
+  opacity: 1;
+}
+.opacity_half {
+  opacity: 0.5;
+}
+/* 同張圖片不同透明度的設定 */
+/* 彈跳視窗與按鈕的群組容器（套用動畫，讓它們一起掉落） */
+.modal_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 2;
+  /* 套用動畫：讓彈跳視窗與按鈕一起從上方掉落 */
+  animation: dropDownFade 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+.popinfor1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-image: url("../img/find_tea_introduce_popupwindow.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  z-index: 1;
+}
+/* 圖片按鈕程式 */
+.mouse_button,
+.camera_button {
+  position: absolute;
+  /* 按鈕在彈跳視窗內的位置 */
+  left: 1187px;
+  bottom: 184px;
+  width: 180px;
+  height: 80px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+  background-image: url("../img/mouse_start_button_default.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 2;
+  /* 確保按鈕在彈跳視窗圖片之上 */
+  opacity: 0;
+  /* 套用按鈕淡入動畫：持續 0.8 秒、延遲 2 秒後才開始、forwards 讓動畫結束後保持不透明 */
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+.camera_button {
+  left: 929px;
+  width: 238px;
+  height: 75px;
+  background-image: url("../img/camera_button_default.png");
+}
+.mouse_button:active {
+  background-image: url("../img/mouse_start_button_active.png");
+}
+.camera_button:active {
+  background-image: url("../img/camera_button_active.png");
+}
+.devel1_Q1_bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+.devel1_Q1_bg img,
+.devel1_Q2_bg img,
+.devel1_Q3_bg img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: auto;
+  transform: translate(-50%, -50%);
+}
+.devel1_Q2_bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+.devel1_Q3_bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* 十字形按鈕的九宮格容器 */
+.dpad_container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+
+  display: grid;
+  grid-template-columns: repeat(3, 70px);
+  grid-template-rows: repeat(3, 70px);
+  justify-items: center;
+  align-items: center;
+}
+
+.score_display {
+  display: none;
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 20;
+  padding: 12px 18px;
+  border: 3px solid #a12010;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #a12010;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.camera_detection_panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 10;
+  width: 235px;
+  max-width: calc(100vw - 32px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 12px;
+  transform: translate(-50%, -50%);
+  border: 4px solid #a12010;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.camera_detection_video {
+  display: block;
+  align-self: center;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  transform: translateY(5px) scaleX(-1);
+  border-radius: 8px;
+  background: #222;
+  object-fit: cover;
+}
+
+.camera_detection_status {
+  width: 100%;
+  min-height: 2.24em;
+  margin-top: 0;
+  transform: translateY(15px);
+  color: #a12010;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.12;
+  text-align: center;
+}
+
+/* 按鈕共同基礎設定 */
+.findtea_btn_Q1 {
+  width: 90px;
+  height: 90px;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+
+.findtea_btn_Q2 {
+  width: 90px;
+  height: 90px;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+.findtea_btn_Q3 {
+  width: 90px;
+  height: 90px;
+  border: none;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+/* --- 分別指定四個方向的手繪圖片 --- */
+#btn_up {
+  grid-column: 2;
+  grid-row: 1;
+  transform: translateY(25px);
+  z-index: 2;
+  background-image: url("../img/up_arrow_default.png"); /* 你的上方按鈕圖片路徑 */
+}
+
+#btn_left {
+  grid-column: 1;
+  grid-row: 2;
+  transform: translateX(-5px);
+  z-index: 3;
+  background-image: url("../img/left_arrow_default.png"); /* 你的左方按鈕圖片路徑 */
+}
+
+#btn_right {
+  grid-column: 3;
+  grid-row: 2;
+  transform: translateX(5px);
+  z-index: 1;
+  background-image: url("../img/right_arrow_default.png"); /* 你的右方按鈕圖片路徑 */
+}
+
+#btn_down {
+  grid-column: 2;
+  grid-row: 3;
+  transform: translateY(-25px);
+  z-index: 2;
+  background-image: url("../img/down_arrow_default.png"); /* 你的下方按鈕圖片路徑 */
+}
+
+/* ==========================================
+   每一顆按鈕共同的 `:active` 點擊特效
+   ========================================== */
+#btn_up:active {
+  background-image: url("../img/up_arrow_active.png");
+}
+#btn_left:active {
+  background-image: url("../img/left_arrow_active.png");
+}
+#btn_right:active {
+  background-image: url("../img/right_arrow_active.png");
+}
+#btn_down:active {
+  background-image: url("../img/down_arrow_active.png");
+}
+
+@keyframes popendBounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(0.94);
+  }
+  82% {
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/* 結束畫面與圖片按鈕 */
+.end_container {
+  position: absolute;
+  top: 81px;
+  left: 144px;
+  width: 1632px;
+  height: 918px;
+  z-index: 2;
+}
+.popend {
+  position: absolute;
+  inset: 0;
+  background-image: url("../img/find_tea_end_popupwindow.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transform: scale(1);
+  animation: popendBounceIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.next_button {
+  position: absolute;
+  left: 1258px;
+  bottom: 184px;
+  width: 180px;
+  height: 80px;
+  border: none;
+  background-color: transparent;
+  background-image: url(../img/next_button_default.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  outline: none;
+  z-index: 2;
+  opacity: 0;
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+.next_button:active {
+  background-image: url(../img/next_button_active.png);
+}
