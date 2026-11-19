@@ -18,11 +18,12 @@ const background = document.querySelector(".camera_game_background");
 const stopBackgroundImage = new Image();
 const correctDirection = background.dataset.correctDirection;
 const nextPage = background.dataset.nextPage;
-const scoreParam = new URLSearchParams(window.location.search).get(SCORE_STORAGE_PARAM);
+const scoreParam = new URLSearchParams(window.location.search).get(
+  SCORE_STORAGE_PARAM,
+);
 const parsedScore = Number(scoreParam);
-let score = scoreParam !== null && Number.isFinite(parsedScore) ? parsedScore : 0;
-const animationDurationMs =
-  Number(background.dataset.animationDurationMs) || 2160;
+let score =
+  scoreParam !== null && Number.isFinite(parsedScore) ? parsedScore : 0;
 let cameraStream;
 let faceLandmarker;
 let frameRequest;
@@ -33,7 +34,6 @@ let neutralPose;
 let candidateDirection;
 let candidateFrames = 0;
 let transitionStarted = false;
-let noMovementTimeout;
 let turnDetectionEnabled = false;
 let backgroundAnimationSource;
 let fisheyeCanvas;
@@ -211,7 +211,8 @@ function showError(error) {
   }
 
   if (error && error.name === "NotAllowedError") {
-    statusMessage.textContent = "相機權限遭拒，請在瀏覽器設定中允許使用攝影機。";
+    statusMessage.textContent =
+      "相機權限遭拒，請在瀏覽器設定中允許使用攝影機。";
   } else if (error && error.name === "NotFoundError") {
     statusMessage.textContent = "找不到攝影機，請連接攝影機後重新載入。";
   } else {
@@ -346,7 +347,6 @@ function completeWithDirection(direction) {
     return;
   }
   transitionStarted = true;
-  window.clearTimeout(noMovementTimeout);
 
   const earnedPoints = direction === correctDirection ? 8 : 0;
   score += earnedPoints;
@@ -379,23 +379,6 @@ function completeWithDirection(direction) {
   });
 }
 
-function completeWithoutMovement() {
-  if (transitionStarted) return;
-  transitionStarted = true;
-  candidateDirection = undefined;
-  candidateFrames = 0;
-  setGuideDirection(undefined);
-  closeFaceLandmarker();
-  if (frameRequest) cancelAnimationFrame(frameRequest);
-  freezeCurrentBackground();
-  statusMessage.textContent = "你太慢了";
-
-  window.setTimeout(() => {
-    stopCamera();
-    window.location.href = `${nextPage}?${SCORE_STORAGE_PARAM}=${score}`;
-  }, 1200);
-}
-
 function processFrame() {
   if (transitionStarted || !faceLandmarker) {
     return;
@@ -406,7 +389,10 @@ function processFrame() {
     return;
   }
 
-  if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && video.currentTime !== lastVideoTime) {
+  if (
+    video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+    video.currentTime !== lastVideoTime
+  ) {
     lastVideoTime = video.currentTime;
     let result;
     try {
@@ -422,8 +408,8 @@ function processFrame() {
       candidateFrames = 0;
       setGuideDirection(undefined);
       statusMessage.textContent = neutralPose
-        ? "未偵測到人臉，請回到鏡頭畫面中央。"
-        : "請將臉放在鏡頭畫面中央，並正面看鏡頭校準。";
+        ? "臉呢？請看鏡頭畫面中央。"
+        : "把臉放在畫面中央，並正面看鏡頭校準。";
     } else {
       const pose = getHeadPose(landmarks);
       if (!pose) {
@@ -436,7 +422,10 @@ function processFrame() {
         }
         calibrationSamples.push(pose);
 
-        if (performance.now() - calibrationStartedAt >= 1000 && calibrationSamples.length >= 10) {
+        if (
+          performance.now() - calibrationStartedAt >= 1000 &&
+          calibrationSamples.length >= 10
+        ) {
           neutralPose = averagePose(calibrationSamples);
           directionGuide.classList.add("is_calibrated");
           statusMessage.textContent = "確認成功";
@@ -445,10 +434,6 @@ function processFrame() {
             resumeBackgroundAnimation();
             turnDetectionEnabled = true;
             statusMessage.textContent = "請向上、下、左或右轉頭。";
-            noMovementTimeout = window.setTimeout(
-              completeWithoutMovement,
-              animationDurationMs,
-            );
           }, 1200);
         } else {
           statusMessage.textContent = "請正面看鏡頭，保持不動。";
@@ -499,7 +484,9 @@ async function startCameraGame() {
   startFisheyePreview();
 
   statusMessage.textContent = "正在載入頭部偵測模型...";
-  const { FaceLandmarker, FilesetResolver } = await import(MEDIA_PIPE_MODULE_URL);
+  const { FaceLandmarker, FilesetResolver } = await import(
+    MEDIA_PIPE_MODULE_URL
+  );
   const vision = await FilesetResolver.forVisionTasks(MEDIA_PIPE_WASM_URL);
   faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
     baseOptions: { modelAssetPath: FACE_LANDMARKER_MODEL_URL },
