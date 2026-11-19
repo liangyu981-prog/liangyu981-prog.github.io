@@ -1,0 +1,114 @@
+<!doctype html>
+<!-- Level 2 遊戲頁：呈現計分條、指針、停止按鈕與回饋動畫。 -->
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>（遊戲）</title>
+    <link href="./css/Devel3_style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main class="game_stage">
+      <div class="bg_layer"></div>
+      <div
+        class="Devel3_bg_animated"
+        id="Devel3Background"
+        aria-hidden="true"
+      ></div>
+      <div class="fired_container">
+        <img src="./img/fire.gif" alt="fired" class="fired_img" />
+      </div>
+      <div class="score_bar_area">
+        <div class="score_bar" id="scoreBar" aria-label="分數區域">
+          <div
+            class="score_zone score_zone_1"
+            data-score="5"
+            aria-label="5 分區域"
+          ></div>
+          <div
+            class="score_zone score_zone_2"
+            data-score="25"
+            aria-label="25 分區域"
+          ></div>
+          <div
+            class="score_zone score_zone_3"
+            data-score="10"
+            aria-label="10 分區域"
+          ></div>
+          <div
+            class="score_zone score_zone_4"
+            data-score="5"
+            aria-label="5 分區域"
+          ></div>
+        </div>
+      </div>
+      <img
+        class="score_pointer"
+        id="scorePointer"
+        src="./img/trangle.png"
+        alt=""
+        aria-hidden="true"
+      />
+      <button
+        class="stop_button"
+        id="stopBtn"
+        type="button"
+        aria-label="停止並結算"
+      >
+        <span class="visually_hidden">停止</span>
+      </button>
+      <div class="feedback_gif_container">
+        <div class="feedback_pair" data-score="5">
+          <img
+            class="feedback_gif_image fb_top_left"
+            id="feedbackBadTop"
+            src="./img/top_5_feedfack.gif"
+            alt="Bad Top"
+            aria-hidden="true"
+          />
+          <img
+            class="fb_bottom_right"
+            id="feedbackBadBottom"
+            src="./img/button_5_feedfack.GIF"
+            alt="Bad Bottom"
+            aria-hidden="true"
+          />
+        </div>
+        <div class="feedback_pair" data-score="10">
+          <img
+            class="feedback_gif_image fb_top_left"
+            id="feedbackNormalTop"
+            src="./img/top_10_feedfack.gif"
+            alt="Normal Top"
+            aria-hidden="true"
+          />
+          <img
+            class="fb_bottom_right"
+            id="feedbackNormalBottom"
+            src="./img/button_10_feedfack.gif"
+            alt="Normal Bottom"
+            aria-hidden="true"
+          />
+        </div>
+        <div class="feedback_pair" data-score="25">
+          <img
+            class="feedback_gif_image fb_top_left"
+            id="feedbackGoodTop"
+            src="./img/top_25_feedfack.gif"
+            alt="Good Top"
+            aria-hidden="true"
+          />
+          <img
+            class="fb_bottom_right"
+            id="feedbackGoodBottom"
+            src="./img/button_25_feedfack.gif"
+            alt="Good Bottom"
+            aria-hidden="true"
+          />
+        </div>
+      </div>
+    </main>
+    <script src="./js/stage_script.js"></script>
+    <script src="./js/Devel3_script.js"></script>
+  </body>
+</html>

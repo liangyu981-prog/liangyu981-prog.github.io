@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./css/grind_tea_camera_game.css" rel="stylesheet" />
+    <title>磨茶遊戲｜手掌偵測</title>
+  </head>
+  <body>
+    <video
+      class="camera_feed"
+      id="cameraFeed"
+      autoplay
+      muted
+      playsinline
+      aria-hidden="true"
+    ></video>
+    <img
+      class="basket_overlay"
+      src="./img/basket.gif"
+      alt=""
+      aria-hidden="true"
+    />
+
+    <main class="game_stage" id="gameStage">
+      <img class="tea" src="./img/tea.GIF" alt="茶葉" />
+      <section class="hud" aria-label="遊戲資訊">
+        <p class="score" id="score" aria-live="polite">&#x5206;&#x6578;&#xff1a;&#x31;&#x30;</p>
+        <p class="timer" id="timer" aria-live="polite">&#x5269;&#x9918;&#x6642;&#x9593;&#xff1a;&#x31;&#x35;&#x20;&#x79d2;</p>
+      </section>
+      <section class="follow_area" aria-label="跟著牛移動手掌，控制杵子">
+        <img class="bar" src="./img/bar.png" alt="" />
+        <div class="track" id="track">
+          <div class="cow_guide" id="cowGuide" aria-hidden="true"></div>
+          <img class="cow" id="cow" src="./img/cow.GIF" alt="左右移動目標" />
+        </div>
+        <p class="instruction">&#x5de6;&#x53f3;&#x79fb;&#x52d5;&#x624b;&#x638c;&#xff0c;&#x8ddf;&#x8457;&#x725b;&#x79fb;&#x52d5;&#x6775;&#x5b50;&#x3002;</p>
+        <p class="feedback" id="feedback" aria-live="polite">&#x6e96;&#x5099;&#x958b;&#x59cb;</p>
+      </section>
+      <p
+        class="camera_status"
+        id="cameraStatus"
+        role="status"
+        aria-live="polite"
+      >&#x8acb;&#x5c07;&#x4e00;&#x96bb;&#x624b;&#x638c;&#x653e;&#x9032;&#x93e1;&#x982d;&#x756b;&#x9762;</p>
+      <img class="pestle" id="pestle" src="./img/pestle.png" alt="" />
+      <section
+        class="result"
+        id="result"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="resultTitle"
+        hidden
+      >
+        <div class="result_card">
+          <h1 id="resultTitle">&#x904a;&#x6232;&#x7d50;&#x675f;</h1>
+          <p id="finalScore">&#x6700;&#x7d42;&#x5206;&#x6578;&#xff1a;&#x31;&#x30;&#x20;&#x5206;</p>
+          <button class="restart" id="restart" type="button">&#x518d;&#x73a9;&#x4e00;&#x6b21;</button>
+        </div>
+      </section>
+    </main>
+    <script src="./js/stage_scale.js"></script>
+    <script type="module" src="./js/grind_tea_hand_game.js"></script>
+  </body>
+</html>

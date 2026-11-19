@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./css/grind_tea_game.css" rel="stylesheet" />
+    <title>&#x78e8;&#x8336;&#x904a;&#x6232;&#xff5c;&#x6ed1;&#x9f20;&#x6a21;&#x5f0f;</title>
+  </head>
+  <body>
+    <main class="game_stage" id="gameStage">
+      <div class="game_background" aria-hidden="true"></div>
+      <img class="tea" src="./img/tea.GIF" alt="茶葉" />
+
+      <section class="hud" aria-label="遊戲資訊">
+        <p class="score" id="score" aria-live="polite">&#x5206;&#x6578;&#xff1a;&#x31;&#x30;</p>
+        <p class="timer" id="timer" aria-live="polite">&#x5269;&#x9918;&#x6642;&#x9593;&#xff1a;&#x31;&#x35;&#x20;&#x79d2;</p>
+      </section>
+
+      <section class="follow_area" aria-label="跟著牛移動滑鼠，控制杵子">
+        <img class="bar" src="./img/bar.png" alt="" />
+        <div class="track" id="track">
+          <div class="cow_guide" id="cowGuide" aria-hidden="true"></div>
+          <img class="cow" id="cow" src="./img/cow.GIF" alt="左右移動目標" />
+        </div>
+        <p class="instruction">&#x79fb;&#x52d5;&#x6ed1;&#x9f20;&#xff0c;&#x8ddf;&#x8457;&#x725b;&#x7684;&#x4f4d;&#x7f6e;&#x63a7;&#x5236;&#x6775;&#x5b50;&#x3002;</p>
+        <p class="feedback" id="feedback" aria-live="polite">&#x6e96;&#x5099;&#x958b;&#x59cb;</p>
+      </section>
+
+      <img class="pestle" id="pestle" src="./img/pestle.png" alt="" />
+
+      <section
+        class="result"
+        id="result"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="resultTitle"
+        hidden
+      >
+        <div class="result_card">
+          <h1 id="resultTitle">&#x904a;&#x6232;&#x7d50;&#x675f;</h1>
+          <p id="finalScore">&#x6700;&#x7d42;&#x5206;&#x6578;&#xff1a;&#x31;&#x30;&#x20;&#x5206;</p>
+          <button class="restart" id="restart" type="button">&#x518d;&#x73a9;&#x4e00;&#x6b21;</button>
+        </div>
+      </section>
+    </main>
+    <script src="./js/stage_scale.js"></script>
+    <script src="./js/grind_tea_game.js"></script>
+  </body>
+</html>

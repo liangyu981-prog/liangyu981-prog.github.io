@@ -58,6 +58,22 @@ html {
   z-index: 0;
 }
 
+.scene_frame {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.scene_frame_g_home {
+  background-image: url("./../img/g_home.PNG");
+}
+
 /* 背景等比例填滿視窗；靜態開場圖與遊戲 GIF 共用版面設定。 */
 .level2_bg,
 .level2_bg_animated {
@@ -69,7 +85,7 @@ html {
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  z-index: 1;
+  z-index: 2;
 }
 
 .level2_bg {
@@ -338,11 +354,20 @@ body {
   transition: background-color 0.3s ease;
 }
 
+.ending_frame {
+  position: absolute;
+  inset: 0;
+  background: url("./../img/g_home.PNG") center / 100% 100% no-repeat;
+  z-index: 1;
+  pointer-events: none;
+}
+
 /* 透明 GIF 樣式 */
 .transparent_gif {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 2;
   width: 1920px;
   height: 1080px;
   object-fit: contain; /* 確保透明 GIF 不變形 */

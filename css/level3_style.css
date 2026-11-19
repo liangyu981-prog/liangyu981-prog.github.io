@@ -75,6 +75,22 @@ html {
   z-index: 0;
 }
 
+.scene_frame {
+  position: absolute;
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.scene_frame_fried_egg {
+  background-image: url("./../img/fried_egg_bg.PNG");
+}
+
 /* 背景等比例填滿視窗；靜態開場圖與遊戲 GIF 共用版面設定。 */
 .level3_bg,
 .level3_bg_animated {
@@ -86,7 +102,7 @@ html {
   background-repeat: no-repeat;
   background-position: center;
   background-size: 1920px 1080px;
-  z-index: 1;
+  z-index: 2;
   background-image: url("./../img/friedegg_animation.gif");
 }
 
