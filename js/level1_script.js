@@ -2,13 +2,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById("startBtn");
   const nextBtn = document.getElementById("nextBtn");
-  const startButtonSound = new Audio("./audio/chicken_background_sound.mp3");
   const startButtonClock = new Audio("./audio/clock.mp3");
   const startButtonRing = new Audio("./audio/Gtimer_begin_ring.mp3");
-  startButtonSound.preload = "auto";
   startButtonClock.preload = "auto";
   startButtonRing.preload = "auto";
-  startButtonSound.load();
   startButtonClock.load();
   startButtonRing.load();
 
@@ -16,16 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
     startBtn.addEventListener("click", (e) => {
       // Prevent the default action so navigation can happen after the press feedback.
       e.preventDefault();
-      startButtonSound.currentTime = 0;
-      sessionStorage.setItem("chickenBackgroundResume", "1");
-      sessionStorage.setItem("chickenBackgroundTime", "0");
       sessionStorage.setItem("startButtonClockResume", "1");
       sessionStorage.setItem("startButtonClockTime", "0");
       sessionStorage.setItem("startButtonRingResume", "1");
       sessionStorage.setItem("startButtonRingTime", "0");
-      startButtonSound.play().catch((error) => {
-        console.error("Failed to play start button sound:", error);
-      });
       startButtonClock.currentTime = 0;
       startButtonClock.play().catch((error) => {
         console.error("Failed to play start button clock:", error);
@@ -36,10 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       const savePlaybackPosition = () => {
         sessionStorage.setItem(
-          "chickenBackgroundTime",
-          String(startButtonSound.currentTime),
-        );
-        sessionStorage.setItem(
           "startButtonClockTime",
           String(startButtonClock.currentTime),
         );
@@ -48,7 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
           String(startButtonRing.currentTime),
         );
       };
-      startButtonSound.addEventListener("timeupdate", savePlaybackPosition);
       startButtonClock.addEventListener("timeupdate", savePlaybackPosition);
       startButtonRing.addEventListener("timeupdate", savePlaybackPosition);
       window.addEventListener("pagehide", savePlaybackPosition, { once: true });
@@ -72,38 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "./0_2_1.html";
       }, 200);
     });
-  }
-
-  if (!startBtn && sessionStorage.getItem("chickenBackgroundResume") === "1") {
-    const resumeEvents = ["pointerdown", "touchstart", "click", "keydown"];
-    const clearResumeEvents = () => {
-      resumeEvents.forEach((eventName) => {
-        window.removeEventListener(eventName, resumePlayback, true);
-      });
-    };
-    const resumePlayback = async () => {
-      startButtonSound.currentTime = Number(
-        sessionStorage.getItem("chickenBackgroundTime") || 0,
-      );
-      try {
-        await startButtonSound.play();
-        sessionStorage.removeItem("chickenBackgroundResume");
-        sessionStorage.removeItem("chickenBackgroundTime");
-        clearResumeEvents();
-      } catch (error) {
-        console.warn(
-          "Waiting for a user gesture to resume chicken audio:",
-          error,
-        );
-        resumeEvents.forEach((eventName) => {
-          window.addEventListener(eventName, resumePlayback, {
-            once: true,
-            capture: true,
-          });
-        });
-      }
-    };
-    resumePlayback();
   }
 
   if (!startBtn && sessionStorage.getItem("startButtonClockResume") === "1") {
