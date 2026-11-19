@@ -3,15 +3,46 @@ document.addEventListener("DOMContentLoaded", () => {
   const start_button = document.getElementById("startBtn");
   const next_button = document.getElementById("nextBtn");
   const stop_button = document.getElementById("stopBtn");
+  const frying_sound = new Audio("./audio/G_frying.mp3");
+  frying_sound.preload = "auto";
+
+  function save_frying_sound_position() {
+    if (frying_sound.paused) return;
+    sessionStorage.setItem("level5FryingResume", "1");
+    sessionStorage.setItem("level5FryingTime", String(frying_sound.currentTime));
+  }
+
+  function stop_frying_sound() {
+    frying_sound.pause();
+    frying_sound.currentTime = 0;
+    sessionStorage.removeItem("level5FryingResume");
+    sessionStorage.removeItem("level5FryingTime");
+  }
 
   if (start_button) {
     start_button.addEventListener("click", (event) => {
       event.preventDefault();
       localStorage.setItem("level5Score", "0");
+      frying_sound.currentTime = 0;
+      sessionStorage.setItem("level5FryingResume", "1");
+      sessionStorage.setItem("level5FryingTime", "0");
+      frying_sound.play().catch((error) => {
+        console.error("Failed to play Level 5 frying sound:", error);
+      });
+      frying_sound.addEventListener("timeupdate", save_frying_sound_position);
+      window.addEventListener("pagehide", save_frying_sound_position, { once: true });
       setTimeout(() => {
         window.location.href = "./0_6_1.html";
       }, 200);
     });
+  }
+
+  if (!start_button && stop_button && sessionStorage.getItem("level5FryingResume") === "1") {
+    frying_sound.currentTime = Number(sessionStorage.getItem("level5FryingTime") || 0);
+    frying_sound.play().catch((error) => {
+      console.error("Failed to resume Level 5 frying sound:", error);
+    });
+    frying_sound.addEventListener("timeupdate", save_frying_sound_position);
   }
 
   if (next_button) {
@@ -102,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
       pointer.classList.remove("is_stopped");
       stop_button.disabled = false;
       is_stopped = false;
+      stop_frying_sound();
     }, 2000);
     setTimeout(() => {
       window.location.href = "./0_6_2.html";

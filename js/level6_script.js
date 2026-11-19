@@ -60,6 +60,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!stage?.querySelector(".item_selector")) return;
 
   const assemblyStartedAt = performance.now();
+  const pickSound = new Audio("./audio/pick.mp3");
+  const putSound = new Audio("./audio/put.mp3");
+  [pickSound, putSound].forEach((sound) => {
+    sound.preload = "auto";
+  });
 
   const itemSettings = {
     g: {
@@ -114,6 +119,11 @@ document.addEventListener("DOMContentLoaded", () => {
     selector.addEventListener("pointerdown", (event) => {
       if (event.button !== 0 || selector.disabled || activeDrag) return;
       event.preventDefault();
+
+      pickSound.currentTime = 0;
+      pickSound.play().catch((error) => {
+        console.error("Failed to play item pickup sound:", error);
+      });
 
       const item = selector.dataset.item;
       const settings = itemSettings[item];
@@ -186,6 +196,11 @@ document.addEventListener("DOMContentLoaded", () => {
       drag.menuImage.hidden = false;
       return;
     }
+
+    putSound.currentTime = 0;
+    putSound.play().catch((error) => {
+      console.error("Failed to play item placement sound:", error);
+    });
 
     drag.menuImage.hidden = false;
     drag.selector.disabled = true;
