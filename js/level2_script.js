@@ -106,7 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const bg_container = document.getElementById("bgContainer");
   const prev_bg = document.getElementById("prevBg");
   const ending_gif = document.getElementById("endingGif");
-  if (!bg_container || !ending_gif) return;
+  const ending_frame = document.getElementById("endingFrame");
+  if (!bg_container || !ending_gif || !ending_frame) return;
 
   const sound_play_at = Number(sessionStorage.getItem("level2EggCrackPlayAt"));
   if (Number.isFinite(sound_play_at) && sound_play_at > 0) {
@@ -156,6 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     // 1. 換成第二段透明 GIF
     ending_gif.src = "./img/level2_end_animation_2.GIF";
+    ending_frame.style.backgroundImage = 'url("./img/fried_egg_bg.PNG")';
 
     // 2. 移除/隱藏上一段延伸過來的底層動畫（第二段不要）
     if (prev_bg) {
