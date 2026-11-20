@@ -105,7 +105,7 @@ html {
 }
 
 /* 開始按鈕覆蓋在彈窗圖片上，定位、大小與 0.2 的彈窗按鈕一致。 */
-.start_button {
+.mouse_button {
   position: absolute;
   left: 1187px;
   bottom: 184px;
@@ -125,7 +125,7 @@ html {
 }
 
 /* 按住開始按鈕時切換成按下狀態圖片，提供操作回饋。 */
-.start_button:active {
+.mouse_button:active {
   background-image: url("../img/mouse_start_button_active.png");
 }
 

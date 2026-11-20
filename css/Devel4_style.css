@@ -45,24 +45,6 @@ html {
   }
 }
 
-@keyframes popendBounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(1.35);
-  }
-  65% {
-    opacity: 1;
-    transform: scale(0.94);
-  }
-  82% {
-    transform: scale(1.04);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 /* 最底層的黃色底色，填滿彈窗背景以外的區域。 */
 .bg_layer {
   position: absolute;
@@ -123,7 +105,7 @@ html {
 }
 
 /* 開始按鈕覆蓋在彈窗圖片上，定位、大小與 0.2 的彈窗按鈕一致。 */
-.start_button {
+.mouse_button {
   position: absolute;
   left: 1187px;
   bottom: 184px;
@@ -131,7 +113,7 @@ html {
   height: 94px;
   border: none;
   background-color: transparent;
-  background-image: url("../img/start_button_default.png");
+  background-image: url("../img/mouse_start_button_default.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -143,8 +125,8 @@ html {
 }
 
 /* 按住開始按鈕時切換成按下狀態圖片，提供操作回饋。 */
-.start_button:active {
-  background-image: url("../img/start_button_active.png");
+.mouse_button:active {
+  background-image: url("../img/mouse_start_button_active.png");
 }
 
 .camera_button {
@@ -309,56 +291,3 @@ html {
   background: rgb(120 20 0 / 85%);
 }
 
-/* 結束頁以最後遊戲畫面作半透明底圖，結束彈窗在其上回彈淡入。 */
-.ending_stage {
-  background: #f6a900;
-}
-
-.ending_background,
-.ending_popup {
-  position: absolute;
-  inset: 0;
-  width: 1920px;
-  height: 1080px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-}
-
-.ending_background {
-  z-index: 0;
-  opacity: 0.5;
-}
-
-.ending_background {
-  background-image: url("../img/cow_animation.gif");
-}
-
-.ending_popup {
-  z-index: 1;
-  background-image: url("../img/end_popupwindow4.png");
-  background-size: 85% auto;
-  transform-origin: center;
-  animation: popendBounceIn 0.75s cubic-bezier(0.2, 0.75, 0.25, 1) both;
-}
-
-.ending_next_button {
-  position: absolute;
-  left: 1400px;
-  bottom: 264px;
-  width: 153px;
-  height: 77px;
-  padding: 0;
-  border: 0;
-  background: transparent url("../img/next_button_default.png") center / contain
-    no-repeat;
-  cursor: pointer;
-  outline: none;
-  z-index: 2;
-  opacity: 0;
-  animation: buttonFadeIn 0.3s ease 1s forwards;
-}
-
-.ending_next_button:active {
-  background-image: url("../img/next_button_active.png");
-}

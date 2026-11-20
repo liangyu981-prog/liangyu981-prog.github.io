@@ -1,6 +1,6 @@
 // Level 4 開場頁的開始導頁。
 document.addEventListener("DOMContentLoaded", () => {
-  const start_button = document.getElementById("startBtn");
+  const start_button = document.getElementById("mouseBtn");
   const camera_button = document.getElementById("cameraBtn");
 
   start_button?.addEventListener("click", () => {
@@ -76,19 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     ],
   };
-
-  // 結束頁共用此腳本：清除遊玩模式狀態，並在檢查器輸出累計分數。
-  const ending_background = document.querySelector(".ending_background");
-  if (ending_background) {
-    try {
-      sessionStorage.removeItem("level4PlayMode");
-      const total = Number(localStorage.getItem(CONFIG.totalScoreStorageKey) ?? "0");
-      console.log(`[Devel4] 最終累計分數：${Number.isFinite(total) ? total : 0}`);
-    } catch (error) {
-      console.warn("[Devel4] 無法讀取或清除儲存的遊戲狀態。", error);
-    }
-    return;
-  }
 
   const stage = document.querySelector(".game_stage");
   const milk_layer = document.getElementById("milkLayer");
@@ -265,7 +252,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const finish_game = () => {
     if (ended) return;
     clear_game();
-    window.location.href = "1_5_2.html";
+    const total = Number(localStorage.getItem(CONFIG.totalScoreStorageKey) ?? "0");
+    console.log(`[Devel4] 本關結束，得分 ${score} 分；最終累計總分 ${Number.isFinite(total) ? total : 0} 分`);
   };
 
   const start_game = () => {

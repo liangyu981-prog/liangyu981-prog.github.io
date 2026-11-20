@@ -20,7 +20,7 @@
   }
 
   const durationSeconds = 15;
-  const minScore = 10;
+  const minScore = 5;
   const maxScore = 25;
   const initialCowSpeed = 400; // 牛剛開始的速度，單位為舞台像素／秒。
   const cowAcceleration = 80; // 每秒增加的速度。
@@ -110,6 +110,12 @@
     window.clearInterval(scoreId);
     if (timerDisplay) timerDisplay.textContent = "剩餘時間：0 秒";
     feedback.textContent = "遊戲結束";
+    const previousTotal = Number(localStorage.getItem("totalScore") ?? "0");
+    const currentTotal = Number.isFinite(previousTotal) ? previousTotal : 0;
+    const newTotal = currentTotal + score;
+    localStorage.setItem("level2Score", String(score));
+    localStorage.setItem("totalScore", String(newTotal));
+    console.log(`[Devel2] 本關得分 ${score} 分；累計總分 ${newTotal} 分`);
     window.location.href = "./1_3_2.html";
   };
 

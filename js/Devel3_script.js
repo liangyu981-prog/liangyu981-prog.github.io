@@ -1,6 +1,6 @@
 // Level 2 的關卡導頁、計分判定與分數回饋行為。
 document.addEventListener("DOMContentLoaded", () => {
-  const start_button = document.getElementById("startBtn");
+  const start_button = document.getElementById("mouseBtn");
   const camera_button = document.getElementById("cameraBtn");
   const stop_button = document.getElementById("stopBtn");
 
@@ -33,9 +33,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const camera_mode = game_stage?.classList.contains("camera_mode") ?? false;
   let is_stopped = false;
 
-  // 每次開始第 3 關都從 0 分累計，避免沿用前一次遊戲留在 localStorage 的分數。
-  localStorage.setItem("totalScore", "0");
-  console.log("[Devel3] 遊戲開始，累計分數：0");
+  const saved_total = Number(localStorage.getItem("totalScore") ?? "0");
+  const total_before_level = Number.isFinite(saved_total) ? saved_total : 0;
+  console.log(`[Devel3] 遊戲開始，接續累計總分 ${total_before_level} 分`);
 
   const settle_game = () => {
     if (is_stopped || !pointer || !game_background || !game_stage) return false;
@@ -75,11 +75,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
 
-    const saved_total = Number(localStorage.getItem("totalScore") ?? "0");
-    const current_total = Number.isFinite(saved_total) ? saved_total : 0;
+    const current_saved_total = Number(localStorage.getItem("totalScore") ?? "0");
+    const current_total = Number.isFinite(current_saved_total) ? current_saved_total : 0;
+    const level_score = Number(localStorage.getItem("level3Score") ?? "0") + earned_score;
     const new_score = current_total + earned_score;
+    localStorage.setItem("level3Score", String(level_score));
     localStorage.setItem("totalScore", String(new_score));
-    console.log(`[Devel3] 本關得分：${earned_score}；第 3、4 關累計：${new_score}`);
+    console.log(`[Devel3] 本關累計 ${level_score} 分（本次 +${earned_score}）；遊戲總分 ${new_score} 分`);
 
     if (stop_button) stop_button.setAttribute("aria-label", `已獲得 ${earned_score} 分`);
     game_background.style.backgroundImage = `url("${result.image}")`;

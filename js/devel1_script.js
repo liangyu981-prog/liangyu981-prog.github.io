@@ -8,13 +8,25 @@ const parsedScore = Number(scoreParam);
 let score =
   scoreParam !== null && Number.isFinite(parsedScore) ? parsedScore : 0;
 
+// 第一關是整段遊戲的起點；後續題目透過網址參數接續本關分數。
+if (document.querySelector(".devel1_bg") && document.querySelector(".modal_container")) {
+  localStorage.setItem("totalScore", "0");
+  localStorage.setItem("level1Score", "0");
+  console.log("[Devel1] 新遊戲開始，累計總分 0 分");
+}
+
 if (scoreDisplay) {
   scoreDisplay.textContent = `本次得分：0 分｜累計積分：${score} 分`;
 }
 
-function updateScore(button, correctButtonId) {
-  const earnedPoints = button.id === correctButtonId ? 8 : 0;
+function updateScore(button, correctButtonId, maxPoints) {
+  const earnedPoints = button.id === correctButtonId ? maxPoints : 0;
   score += earnedPoints;
+  localStorage.setItem("level1Score", String(score));
+  localStorage.setItem("totalScore", String(score));
+  console.log(
+    `[Devel1] 本題得分 ${earnedPoints} 分；第一關累計 ${score} 分；遊戲總分 ${score} 分`,
+  );
 
   if (scoreDisplay) {
     scoreDisplay.textContent = `本次得分：${earnedPoints} 分｜累計積分：${score} 分`;
@@ -53,7 +65,7 @@ if (cameraBtn) {
 document.querySelectorAll(".findtea_btn_Q1").forEach((button) => {
   button.addEventListener("click", () => {
     if (startQ1StopTransition()) {
-      updateScore(button, "btn_up");
+      updateScore(button, "btn_up", 8);
     }
   });
 });
@@ -61,7 +73,7 @@ document.querySelectorAll(".findtea_btn_Q1").forEach((button) => {
 document.querySelectorAll(".findtea_btn_Q2").forEach((button) => {
   button.addEventListener("click", () => {
     if (startQ2StopTransition()) {
-      updateScore(button, "btn_left");
+      updateScore(button, "btn_left", 8);
     }
   });
 });
@@ -69,7 +81,7 @@ document.querySelectorAll(".findtea_btn_Q2").forEach((button) => {
 document.querySelectorAll(".findtea_btn_Q3").forEach((button) => {
   button.addEventListener("click", () => {
     if (startQ3StopTransition()) {
-      updateScore(button, "btn_down");
+      updateScore(button, "btn_down", 9);
     }
   });
 });

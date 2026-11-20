@@ -348,8 +348,14 @@ function completeWithDirection(direction) {
   }
   transitionStarted = true;
 
-  const earnedPoints = direction === correctDirection ? 8 : 0;
+  const questionPoints = background.classList.contains("devel1_Q3_bg") ? 9 : 8;
+  const earnedPoints = direction === correctDirection ? questionPoints : 0;
   score += earnedPoints;
+  localStorage.setItem("level1Score", String(score));
+  localStorage.setItem("totalScore", String(score));
+  console.log(
+    `[Devel1 鏡頭] 本題得分 ${earnedPoints} 分；第一關累計 ${score} 分；遊戲總分 ${score} 分`,
+  );
   if (scoreDisplay) {
     scoreDisplay.textContent = `本次得分：${earnedPoints} 分｜累計積分：${score} 分`;
   }
