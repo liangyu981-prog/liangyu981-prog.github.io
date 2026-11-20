@@ -110,10 +110,10 @@ html {
   left: 1187px;
   bottom: 184px;
   width: 180px;
-  height: 80px;
+  height: 94px;
   border: none;
   background-color: transparent;
-  background-image: url("../img/start_button_default.png");
+  background-image: url("../img/mouse_start_button_default.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -126,15 +126,15 @@ html {
 
 /* 按住開始按鈕時切換成按下狀態圖片，提供操作回饋。 */
 .start_button:active {
-  background-image: url("../img/start_button_active.png");
+  background-image: url("../img/mouse_start_button_active.png");
 }
 
 .camera_button {
   position: absolute;
-  left: 970px;
-  bottom: 163px;
-  width: 220px;
-  height: 120px;
+  left: 925px;
+  bottom: 183px;
+  width: 255px;
+  height: 90px;
   border: none;
   background-color: transparent;
   background-image: url("../img/camera_button_default.png");

@@ -7,9 +7,6 @@
   const scoreDisplay = document.getElementById("score");
   const timerDisplay = document.getElementById("timer");
   const feedback = document.getElementById("feedback");
-  const result = document.getElementById("result");
-  const finalScore = document.getElementById("finalScore");
-  const restart = document.getElementById("restart");
 
   if (
     !stage ||
@@ -17,12 +14,7 @@
     !cow ||
     !cowGuide ||
     !pestle ||
-    !scoreDisplay ||
-    !timerDisplay ||
-    !feedback ||
-    !result ||
-    !finalScore ||
-    !restart
+    !feedback
   ) {
     throw new Error("磨茶葉遊戲缺少必要的畫面元素。");
   }
@@ -30,6 +22,9 @@
   const durationSeconds = 15;
   const minScore = 10;
   const maxScore = 25;
+  const initialCowSpeed = 400; // 牛剛開始的速度，單位為舞台像素／秒。
+  const cowAcceleration = 80; // 每秒增加的速度。
+  const maxCowSpeed = 1500; // 牛的最高速度。
   // Keep the mouse position and target center in the same 1920px stage space.
   // A wider band makes the timing forgiving while still requiring the cursor
   // to stay near the moving cow.
@@ -40,13 +35,14 @@
   let markerX = 0;
   let direction = 1;
   let lastFrame = 0;
+  let gameStartedAt = 0;
   let running = true;
   let animationId = 0;
   let timerId = 0;
   let scoreId = 0;
 
   const renderScore = () => {
-    scoreDisplay.textContent = `分數：${score}`;
+    if (scoreDisplay) scoreDisplay.textContent = `分數：${score}`;
   };
 
   const updateStagePointer = (event) => {
@@ -65,7 +61,11 @@
     if (lastFrame) {
       const elapsed = Math.min((now - lastFrame) / 1000, 0.05);
       const maxX = Math.max(0, track.clientWidth - cow.clientWidth);
-      markerX += direction * 430 * elapsed;
+      const currentSpeed = Math.min(
+        maxCowSpeed,
+        initialCowSpeed + ((now - gameStartedAt) / 1000) * cowAcceleration,
+      );
+      markerX += direction * currentSpeed * elapsed;
       if (markerX >= maxX) {
         markerX = maxX;
         direction = -1;
@@ -93,9 +93,13 @@
       cow.clientWidth / 2;
     const onTarget =
       playerX !== null && Math.abs(playerX - targetX) <= followDistance;
+    cowGuide.classList.toggle("is_following", onTarget);
+    cowGuide.classList.toggle("is_missing", !onTarget);
     score = Math.max(minScore, Math.min(maxScore, score + (onTarget ? 1 : -1)));
     renderScore();
-    feedback.textContent = onTarget ? "跟上了！繼續保持！" : "沒有跟上，分數下降中！";
+    feedback.textContent = onTarget
+      ? "跟上了！繼續保持！"
+      : "還沒跟上，繼續追上牛！";
   };
 
   const finishGame = () => {
@@ -104,11 +108,9 @@
     window.cancelAnimationFrame(animationId);
     window.clearInterval(timerId);
     window.clearInterval(scoreId);
-    timerDisplay.textContent = "剩餘時間：0 秒";
+    if (timerDisplay) timerDisplay.textContent = "剩餘時間：0 秒";
     feedback.textContent = "遊戲結束";
-    finalScore.textContent = `本次得分：${score} 分`;
-    result.hidden = false;
-    restart.focus();
+    window.location.href = "./1_3_2.html";
   };
 
   const startGame = () => {
@@ -118,10 +120,10 @@
     markerX = 0;
     direction = 1;
     lastFrame = 0;
+    gameStartedAt = performance.now();
     running = true;
-    result.hidden = true;
     renderScore();
-    timerDisplay.textContent = `剩餘時間：${secondsLeft} 秒`;
+    if (timerDisplay) timerDisplay.textContent = `剩餘時間：${secondsLeft} 秒`;
     feedback.textContent = "準備開始";
     cow.style.left = "0px";
     cow.style.transform = "scaleX(-1)";
@@ -129,14 +131,13 @@
     animationId = window.requestAnimationFrame(animateMarker);
     timerId = window.setInterval(() => {
       secondsLeft -= 1;
-      timerDisplay.textContent = `剩餘時間：${secondsLeft} 秒`;
+      if (timerDisplay) timerDisplay.textContent = `剩餘時間：${secondsLeft} 秒`;
       if (secondsLeft <= 0) finishGame();
     }, 1000);
     scoreId = window.setInterval(updateScore, 1000);
   };
 
   stage.addEventListener("pointermove", updateStagePointer);
-  restart.addEventListener("click", startGame);
   renderScore();
   startGame();
 })();

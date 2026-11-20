@@ -2,12 +2,14 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: iti;
 }
 body,
 html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background-color: #ffc700;
 }
 .game_stage {
   position: absolute;
@@ -16,7 +18,7 @@ html {
   width: 1920px;
   height: 1080px;
   overflow: hidden;
-  transform: translate(-50%, -50%) scale(var(--stage_scale, 1));
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
   transform-origin: center;
 }
 /* 開頭視窗的動畫*/
@@ -99,7 +101,7 @@ html {
   left: 1187px;
   bottom: 184px;
   width: 180px;
-  height: 80px;
+  height: 94px;
   border: none;
   background-color: transparent;
   cursor: pointer;
@@ -116,8 +118,8 @@ html {
 }
 .camera_button {
   left: 929px;
-  width: 238px;
-  height: 75px;
+  width: 255px;
+  height: 90px;
   background-image: url("../img/camera_button_default.png");
 }
 .mouse_button:active {
@@ -183,20 +185,22 @@ html {
   left: 24px;
   z-index: 20;
   padding: 12px 18px;
-  border: 3px solid #a12010;
+  border: 3px solid #b70600;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.92);
-  color: #a12010;
+  color: #b70600;
   font-size: 30px;
   font-weight: 700;
 }
 
 .camera_detection_panel {
   position: absolute;
-  top: 50%;
+  top: 52%;
   left: 50%;
   z-index: 10;
-  width: 235px;
+  height: 35%;
+  max-height: 40%;
+  width: min(660px, 32.5vw, calc(38.9vw - 78px), calc(69.1vh - 90px));
   max-width: calc(100vw - 32px);
   display: flex;
   flex-direction: column;
@@ -204,31 +208,115 @@ html {
   align-items: center;
   padding: 5px 12px;
   transform: translate(-50%, -50%);
-  border: 4px solid #a12010;
-  border-radius: 16px;
+  border: 4px solid #b70600;
+  border-radius: 3px;
   background: rgba(255, 255, 255, 0.92);
 }
 
-.camera_detection_video {
-  display: block;
-  align-self: center;
-  width: 100%;
+.camera_preview_wrap {
+  position: relative;
+  width: 102%;
   aspect-ratio: 4 / 3;
-  transform: translateY(5px) scaleX(-1);
-  border-radius: 8px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #222;
+  border: 4px solid #b70600;
+}
+
+.camera_detection_video {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1) scale(2);
   background: #222;
   object-fit: cover;
 }
 
-.camera_detection_status {
+.camera_fisheye_preview {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
   width: 100%;
+  height: 100%;
+  transform: scaleX(-1) scale(2);
+  background: #222;
+}
+
+.face_direction_guide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: 130%;
+  aspect-ratio: 1;
+  height: 130%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 3px rgb(0 0 0 / 85%));
+  pointer-events: none;
+}
+
+.guide_crosshair,
+.guide_quadrant {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 5;
+  stroke-opacity: 0.4;
+  stroke-linecap: round;
+  transition:
+    stroke 180ms ease,
+    stroke-width 180ms ease;
+}
+
+.guide_crosshair,
+.guide_quadrant {
+  stroke-dasharray: 8 10;
+}
+
+.guide_region {
+  fill: transparent;
+  stroke: none;
+  transition: fill 180ms ease;
+}
+
+.face_direction_guide.is_calibrated .guide_crosshair,
+.face_direction_guide.is_calibrated .guide_quadrant {
+  stroke: #55f17a;
+}
+
+.face_direction_guide.is_calibrated .guide_quadrant {
+  stroke-dasharray: 7 6;
+}
+
+.face_direction_guide.direction_up .guide_region.guide_up,
+.face_direction_guide.direction_right .guide_region.guide_right,
+.face_direction_guide.direction_down .guide_region.guide_down,
+.face_direction_guide.direction_left .guide_region.guide_left {
+  fill: rgb(0 255 76 / 30%);
+}
+
+.face_direction_guide.direction_up .guide_quadrant.guide_up,
+.face_direction_guide.direction_right .guide_quadrant.guide_right,
+.face_direction_guide.direction_down .guide_quadrant.guide_down,
+.face_direction_guide.direction_left .guide_quadrant.guide_left {
+  stroke: #00ff4c;
+  stroke-width: 8;
+  stroke-opacity: 0.85;
+  stroke-dasharray: none;
+}
+
+.camera_detection_status {
+  width: 120%;
   min-height: 2.24em;
   margin-top: 0;
   transform: translateY(15px);
   color: #a12010;
-  font-size: 15px;
+  font-size: 25px;
   font-weight: 700;
-  line-height: 1.12;
+  letter-spacing: 3px;
+  line-height: 1.2;
   text-align: center;
 }
 
@@ -369,4 +457,8 @@ html {
 }
 .next_button:active {
   background-image: url(../img/next_button_active.png);
+}
+@font-face {
+  font-family: "iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2"); /* 宣告為 opentype 格式 */
 }

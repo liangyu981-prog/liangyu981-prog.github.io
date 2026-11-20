@@ -5,7 +5,8 @@ const nextBtn = document.getElementById("nextBtn");
 const scoreDisplay = document.getElementById("score_display");
 const scoreParam = new URLSearchParams(window.location.search).get("score");
 const parsedScore = Number(scoreParam);
-let score = scoreParam !== null && Number.isFinite(parsedScore) ? parsedScore : 0;
+let score =
+  scoreParam !== null && Number.isFinite(parsedScore) ? parsedScore : 0;
 
 if (scoreDisplay) {
   scoreDisplay.textContent = `本次得分：0 分｜累計積分：${score} 分`;
@@ -28,26 +29,26 @@ let startQ1StopTransition = () => false;
 let startQ2StopTransition = () => false;
 let startQ3StopTransition = () => false;
 
-  if (mouseBtn) {
-    mouseBtn.addEventListener("click", (e) => {
-      // Prevent the default action so navigation can happen after the press feedback.
-      e.preventDefault();
-      setTimeout(() => {
-        window.location.href = "1_2_1_1.html"; 
-      }, 200);
-    });
-  }
+if (mouseBtn) {
+  mouseBtn.addEventListener("click", (e) => {
+    // Prevent the default action so navigation can happen after the press feedback.
+    e.preventDefault();
+    setTimeout(() => {
+      window.location.href = "1_2_1_1.html";
+    }, 200);
+  });
+}
 
-  if (cameraBtn) {
-    cameraBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      setTimeout(() => {
-        window.location.href = "1_2_1_2.html";
-      }, 200);
-    });
-  }
+if (cameraBtn) {
+  cameraBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    setTimeout(() => {
+      window.location.href = "1_2_1_2.html";
+    }, 200);
+  });
+}
 
-  // 接下一頁的自己改
+// 接下一頁的自己改
 
 document.querySelectorAll(".findtea_btn_Q1").forEach((button) => {
   button.addEventListener("click", () => {
@@ -71,7 +72,6 @@ document.querySelectorAll(".findtea_btn_Q3").forEach((button) => {
       updateScore(button, "btn_down");
     }
   });
- 
 });
 document.querySelectorAll(".next_button").forEach((button) => {
   button.addEventListener("click", () => {
@@ -79,16 +79,13 @@ document.querySelectorAll(".next_button").forEach((button) => {
       window.location.href = scoreDestination("1_3.html");
     }, 170);
   });
- 
 });
-
-
 
 function freezeBackgroundAfterPlayback(
   selector,
   destination,
   stopImage,
-  holdDuration = 3000,
+  holdDuration = 1000,
 ) {
   const background = document.querySelector(selector);
   if (!background) return () => false;
@@ -155,19 +152,18 @@ function navigateAfterHold(destination, holdDuration) {
 startQ1StopTransition = freezeBackgroundAfterPlayback(
   ".devel1_Q1_bg",
   "1_2_2_1.html",
-  "./img/devel1_Q1_stop_bg.png",
-  2000,
+  null,
+  800,
 );
 startQ2StopTransition = freezeBackgroundAfterPlayback(
   ".devel1_Q2_bg",
   "1_2_3_1.html",
-  "./img/devel1_Q2_stop_bg.png",
-  2000,
+  null,
+  800,
 );
 startQ3StopTransition = freezeBackgroundAfterPlayback(
   ".devel1_Q3_bg",
   "1_2_4.html",
-  "./img/devel1_Q3_stop_bg.png",
-  2000,
+  null,
+  800,
 );
-   

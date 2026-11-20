@@ -12,8 +12,8 @@ body {
 }
 
 body {
-  background: #ad3e00;
-  font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  background: #b84100;
+  font-family: "iti";
 }
 
 .game_stage {
@@ -23,7 +23,7 @@ body {
   width: 1920px;
   height: 1080px;
   overflow: hidden;
-  transform: translate(-50%, -50%) scale(var(--stage_scale, 1));
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
   transform-origin: center;
   cursor: none;
   user-select: none;
@@ -32,7 +32,7 @@ body {
 .game_background {
   position: absolute;
   inset: 0;
-  background: url("../img/devel2_mouse_bg.PNG") center / 100% 100% no-repeat;
+  background: url("../img/basket.gif") center / 100% 100% no-repeat;
 }
 
 .tea {
@@ -76,30 +76,40 @@ body {
 .bar {
   position: absolute;
   top: 0;
-  left: 360px;
-  width: 1200px;
+  left: 260px;
+  width: 1400px;
   height: auto;
 }
 
 .track {
   position: absolute;
   top: 3px;
-  left: 430px;
-  width: 1060px;
+  left: 210px;
+  width: 1500px;
   height: 78px;
 }
 
 .cow {
   position: absolute;
-  top: -55px;
+  top: -23px;
   left: 0;
   width: 250px;
-  height: auto;
-  object-fit: contain;
+  height: 181px;
+  overflow: hidden;
   will-change: left;
 }
 
+.cow_art {
+  position: absolute;
+  top: -165px;
+  left: -11px;
+  width: 1021px;
+  max-width: none;
+  height: auto;
+}
+
 .cow_guide {
+  --guide-color: 255, 70, 60;
   position: absolute;
   top: 65px;
   left: 56px;
@@ -107,13 +117,22 @@ body {
   height: 535px;
   background: linear-gradient(
     to bottom,
-    rgba(255, 227, 120, 0.9),
-    rgba(255, 227, 120, 0.55) 65%,
-    rgba(255, 227, 120, 0)
+    rgba(var(--guide-color), 0.95),
+    rgba(var(--guide-color), 0.55) 65%,
+    rgba(var(--guide-color), 0)
   );
+  transition: --guide-color 160ms ease;
   filter: drop-shadow(0 0 4px rgba(100, 34, 0, 0.8));
   pointer-events: none;
   transform: translateX(-50%);
+}
+
+.cow_guide.is_following {
+  --guide-color: 45, 235, 105;
+}
+
+.cow_guide.is_missing {
+  --guide-color: 255, 70, 60;
 }
 
 .instruction {
@@ -148,64 +167,16 @@ body {
   width: 300px;
   height: auto;
   pointer-events: none;
-  transform: translate(-50%, -50%) rotate(-24deg);
+  transform: translate(-50%, -50%);
   transform-origin: center;
-}
-
-.result[hidden] {
-  display: none;
-}
-
-.result {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: grid;
-  place-items: center;
-  background: rgba(49, 18, 0, 0.58);
-  cursor: default;
-}
-
-.result_card {
-  min-width: 520px;
-  padding: 48px 64px;
-  border: 8px solid #a83500;
-  border-radius: 32px;
-  background: #fff1c7;
-  color: #792500;
-  text-align: center;
-  box-shadow: 0 12px 0 rgba(89, 27, 0, 0.45);
-}
-
-.result_card h1 {
-  margin-bottom: 20px;
-  font-size: 54px;
-}
-
-.result_card p {
-  margin-bottom: 28px;
-  font-size: 34px;
-  font-weight: 800;
-}
-
-.restart {
-  padding: 14px 36px;
-  border: 4px solid #8d2500;
-  border-radius: 18px;
-  background: #ef7200;
-  color: white;
-  font: inherit;
-  font-size: 30px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.restart:hover {
-  background: #d65b00;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .cow {
     will-change: auto;
   }
+}
+@font-face {
+  font-family: "iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2"); /* 宣告為 opentype 格式 */
 }

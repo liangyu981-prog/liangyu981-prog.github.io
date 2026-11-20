@@ -13,7 +13,7 @@ body {
 
 body {
   background: #ad3e00;
-  font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  font-family: "iti", sans-serif;
 }
 
 .game_stage {
@@ -23,7 +23,7 @@ body {
   width: 1920px;
   height: 1080px;
   overflow: hidden;
-  transform: translate(-50%, -50%) scale(var(--stage_scale, 1));
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
   transform-origin: center;
   cursor: none;
   user-select: none;
@@ -44,14 +44,12 @@ body {
 }
 
 .basket_overlay {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  z-index: 1;
-  width: min(100vw, 177.7778vh);
-  height: min(100vh, 56.25vw);
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
   object-fit: fill;
-  transform: translate(-50%, -50%);
   pointer-events: none;
 }
 
@@ -96,30 +94,40 @@ body {
 .bar {
   position: absolute;
   top: 0;
-  left: 360px;
-  width: 1200px;
+  left: 260px;
+  width: 1400px;
   height: auto;
 }
 
 .track {
   position: absolute;
   top: 3px;
-  left: 430px;
-  width: 1060px;
+  left: 210px;
+  width: 1500px;
   height: 78px;
 }
 
 .cow {
   position: absolute;
-  top: -55px;
+  top: -23px;
   left: 0;
   width: 250px;
-  height: auto;
-  object-fit: contain;
+  height: 181px;
+  overflow: hidden;
   will-change: left;
 }
 
+.cow_art {
+  position: absolute;
+  top: -165px;
+  left: -11px;
+  width: 1021px;
+  max-width: none;
+  height: auto;
+}
+
 .cow_guide {
+  --guide-color: 255, 70, 60;
   position: absolute;
   top: 65px;
   left: 56px;
@@ -127,13 +135,22 @@ body {
   height: 535px;
   background: linear-gradient(
     to bottom,
-    rgba(255, 227, 120, 0.9),
-    rgba(255, 227, 120, 0.55) 65%,
-    rgba(255, 227, 120, 0)
+    rgba(var(--guide-color), 0.95),
+    rgba(var(--guide-color), 0.55) 65%,
+    rgba(var(--guide-color), 0)
   );
+  transition: --guide-color 160ms ease;
   filter: drop-shadow(0 0 4px rgba(100, 34, 0, 0.8));
   pointer-events: none;
   transform: translateX(-50%);
+}
+
+.cow_guide.is_following {
+  --guide-color: 45, 235, 105;
+}
+
+.cow_guide.is_missing {
+  --guide-color: 255, 70, 60;
 }
 
 .instruction {
@@ -168,7 +185,7 @@ body {
   width: 300px;
   height: auto;
   pointer-events: none;
-  transform: translate(-50%, -50%) rotate(-24deg);
+  transform: translate(-50%, -30%);
   transform-origin: center;
 }
 
@@ -242,4 +259,8 @@ body {
   .cow {
     will-change: auto;
   }
+}
+@font-face {
+  font-family: "iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2"); /* 宣告為 opentype 格式 */
 }
