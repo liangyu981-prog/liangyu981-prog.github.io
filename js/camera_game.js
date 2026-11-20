@@ -18,6 +18,8 @@ const background = document.querySelector(".camera_game_background");
 const stopBackgroundImage = new Image();
 const correctDirection = background.dataset.correctDirection;
 const nextPage = background.dataset.nextPage;
+const animationDurationMs =
+  Number(background.dataset.animationDurationMs) || 2160;
 const scoreParam = new URLSearchParams(window.location.search).get(
   SCORE_STORAGE_PARAM,
 );
@@ -34,6 +36,7 @@ let neutralPose;
 let candidateDirection;
 let candidateFrames = 0;
 let transitionStarted = false;
+let noMovementTimeout;
 let turnDetectionEnabled = false;
 let backgroundAnimationSource;
 let fisheyeCanvas;
@@ -206,6 +209,8 @@ function closeFaceLandmarker() {
 function showError(error) {
   stopCamera();
   closeFaceLandmarker();
+  // Keep the page artwork visible if camera permission or model loading fails.
+  resumeBackgroundAnimation();
   if (frameRequest) {
     cancelAnimationFrame(frameRequest);
   }
@@ -342,11 +347,20 @@ function resumeBackgroundAnimation() {
   frozenFrame.replaceWith(image);
 }
 
+function navigateToNextPage() {
+  localStorage.setItem("level1Score", String(score));
+  localStorage.setItem("totalScore", String(score));
+  const destination = new URL(nextPage, window.location.href);
+  destination.searchParams.set(SCORE_STORAGE_PARAM, String(score));
+  window.location.assign(destination.href);
+}
+
 function completeWithDirection(direction) {
   if (transitionStarted) {
     return;
   }
   transitionStarted = true;
+  window.clearTimeout(noMovementTimeout);
 
   const questionPoints = background.classList.contains("devel1_Q3_bg") ? 9 : 8;
   const earnedPoints = direction === correctDirection ? questionPoints : 0;
@@ -361,7 +375,7 @@ function completeWithDirection(direction) {
   }
 
   closeFaceLandmarker();
-  statusMessage.textContent = `偵測到頭部向${DIRECTION_NAMES[direction]}。`;
+  statusMessage.textContent = `你往${DIRECTION_NAMES[direction]}看了！`;
   setGuideDirection(direction);
 
   const showEndFrame = stopBackgroundImage.src
@@ -380,9 +394,28 @@ function completeWithDirection(direction) {
   showEndFrame.finally(() => {
     setTimeout(() => {
       stopCamera();
-      window.location.href = `${nextPage}?${SCORE_STORAGE_PARAM}=${score}`;
+      navigateToNextPage();
     }, 2000);
   });
+}
+
+function completeWithoutMovement() {
+  if (transitionStarted) return;
+  transitionStarted = true;
+  candidateDirection = undefined;
+  candidateFrames = 0;
+  setGuideDirection(undefined);
+  closeFaceLandmarker();
+  if (frameRequest) cancelAnimationFrame(frameRequest);
+  freezeCurrentBackground();
+  statusMessage.textContent = "你太慢了";
+  localStorage.setItem("level1Score", String(score));
+  localStorage.setItem("totalScore", String(score));
+
+  window.setTimeout(() => {
+    stopCamera();
+    navigateToNextPage();
+  }, 1200);
 }
 
 function processFrame() {
@@ -440,6 +473,10 @@ function processFrame() {
             resumeBackgroundAnimation();
             turnDetectionEnabled = true;
             statusMessage.textContent = "請向上、下、左或右轉頭。";
+            noMovementTimeout = window.setTimeout(
+              completeWithoutMovement,
+              animationDurationMs,
+            );
           }, 1200);
         } else {
           statusMessage.textContent = "請正面看鏡頭，保持不動。";

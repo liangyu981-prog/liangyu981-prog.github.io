@@ -195,9 +195,9 @@ html {
   padding: 12px 24px;
   transform: translateX(-50%);
   border-radius: 12px;
-  background: rgb(0 0 0 / 65%);
-  color: #fff;
-  font: 24px/1.4 sans-serif;
+  font-family: "iti";
+  color: #b70600;
+  font: 30px;
   text-align: center;
   pointer-events: none;
 }
@@ -478,4 +478,8 @@ body {
   height: auto;
   object-fit: contain;
   z-index: 11;
+}
+@font-face {
+  font-family: "iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2"); /* 宣告為 opentype 格式 */
 }

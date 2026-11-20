@@ -9,11 +9,12 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  letter-spacing: 5px;
 }
 
 body {
-  background: #b84100;
-  font-family: "iti";
+  background: #ffc700;
+  font-family: "iti", sans-serif;
 }
 
 .game_stage {
@@ -27,6 +28,8 @@ body {
   transform-origin: center;
   cursor: none;
   user-select: none;
+  z-index: 2;
+  background: transparent;
 }
 
 .game_background {
@@ -67,7 +70,7 @@ body {
 
 .follow_area {
   position: absolute;
-  top: 110px;
+  top: 8vh;
   left: 0;
   width: 100%;
   height: 200px;
@@ -91,11 +94,11 @@ body {
 
 .cow {
   position: absolute;
-  top: -23px;
+  top: -50px;
   left: 0;
   width: 250px;
-  height: 181px;
-  overflow: hidden;
+  height: 360px;
+  overflow: visible;
   will-change: left;
 }
 
@@ -111,7 +114,7 @@ body {
 .cow_guide {
   --guide-color: 255, 70, 60;
   position: absolute;
-  top: 65px;
+  top: 50px;
   left: 56px;
   width: 4px;
   height: 535px;
@@ -137,31 +140,30 @@ body {
 
 .instruction {
   position: absolute;
-  top: 91px;
+  top: 75px;
   left: 0;
   width: 100%;
-  color: #fff3cc;
-  font-size: 30px;
+  color: #b70f00;
+  font-size: 50px;
   font-weight: 800;
   text-align: center;
-  text-shadow: 0 3px 4px #752500;
 }
 
 .feedback {
   position: absolute;
-  top: 133px;
+  top: 140px;
   left: 0;
   width: 100%;
-  color: #ffe05d;
+  color: #ffffff;
   font-size: 25px;
   font-weight: 800;
   text-align: center;
-  text-shadow: 0 2px 3px #752500;
+  text-shadow: 0 1px 1px #b70600;
 }
 
 .pestle {
   position: absolute;
-  top: 0;
+  top: 350px;
   left: 0;
   z-index: 3;
   width: 300px;

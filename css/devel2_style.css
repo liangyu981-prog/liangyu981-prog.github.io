@@ -131,6 +131,45 @@ html {
   opacity: 0;
   animation: buttonFadeIn 0.3s ease 1s forwards;
 }
+.end_container {
+  position: absolute;
+  top: 81px;
+  left: 144px;
+  width: 1632px;
+  height: 918px;
+  z-index: 2;
+}
+.popend {
+  position: absolute;
+  inset: 0;
+  background-image: url("../img/devel2_end_popupwindow.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  transform: scale(1);
+  animation: popendBounceIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.next_button {
+  position: absolute;
+  left: 1258px;
+  bottom: 184px;
+  width: 180px;
+  height: 80px;
+  border: none;
+  background-color: transparent;
+  background-image: url(../img/next_button_default.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  outline: none;
+  z-index: 2;
+  opacity: 0;
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+.next_button:active {
+  background-image: url(../img/next_button_active.png);
+}
 .camera_button:active {
   background-image: url("../img/camera_button_active.png");
 }

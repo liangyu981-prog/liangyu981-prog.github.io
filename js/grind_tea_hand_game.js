@@ -225,9 +225,13 @@ function detectHands() {
       if (landmarks) {
         if (!gameHasStarted) {
           if (isClosedFist(landmarks)) {
-            if (fistHoldStartedAt === null) fistHoldStartedAt = performance.now();
+            if (fistHoldStartedAt === null)
+              fistHoldStartedAt = performance.now();
             const heldFor = performance.now() - fistHoldStartedAt;
-            const remaining = Math.max(0, (FIST_CONFIRMATION_MS - heldFor) / 1000);
+            const remaining = Math.max(
+              0,
+              (FIST_CONFIRMATION_MS - heldFor) / 1000,
+            );
             if (heldFor >= FIST_CONFIRMATION_MS) {
               gameHasStarted = true;
               status.textContent = "握拳確認完成，遊戲開始！";
@@ -240,7 +244,7 @@ function detectHands() {
             }
           } else {
             fistHoldStartedAt = null;
-            status.textContent = "偵測到手掌，請握拳並保持 1.2 秒開始";
+            status.textContent = "偵測到手，請握拳並保持 1.2 秒開始";
             feedback.textContent = "握拳確認後才會開始遊戲";
           }
           requestAnimationFrame(detectHands);

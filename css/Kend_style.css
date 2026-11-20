@@ -95,7 +95,7 @@ html.preload-transition .feedback_decoration {
 .menu_camera_modal .shutter_button {
   margin-top: clamp(3px, 5px, 12px);
   padding: 10px 42px;
-  font-size: clamp(20px, 2vw, 28px);
+  font-size: clamp(20px, 2.3vw, 28px);
 }
 .menu_camera_modal .name_form {
   width: min(620px, 90%);
@@ -119,6 +119,7 @@ html.preload-transition .feedback_decoration {
   border: #b70600 10px;
   background: #fff8e9 var(--popup-art) center / 100% 100% no-repeat;
   border-radius: 2px;
+  letter-spacing: 3px;
   filter: shadow(0 18px 32px #b84100);
   animation: popupIn 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
@@ -196,7 +197,7 @@ html.preload-transition .feedback_decoration {
   inset: auto 14px 12px;
   margin: 0;
   color: white;
-  font-size: 20px;
+  font-size: 25px;
   text-align: center;
   text-shadow: 0 1px 5px #000;
 }

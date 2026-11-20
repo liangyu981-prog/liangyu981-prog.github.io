@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
       centeredFrames = 0;
       faceIsAligned = false;
       guide.classList.remove("is_aligned");
-      status.textContent = "尚未偵測到臉";
+      status.textContent = "臉呢？";
       shutter.disabled = Boolean(gestureRecognizer);
       return;
     }

@@ -280,9 +280,8 @@ html {
   padding: 12px 24px;
   transform: translateX(-50%);
   border-radius: 12px;
-  background: rgb(0 0 0 / 65%);
-  color: #fff;
-  font: 24px/1.4 sans-serif;
+  color: #b70600;
+  font: 30px/iti;
   text-align: center;
   pointer-events: none;
 }
@@ -290,4 +289,7 @@ html {
 .camera_mode.camera_unavailable .camera_status {
   background: rgb(120 20 0 / 85%);
 }
-
+@font-face {
+  font-family: "iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2"); /* 宣告為 opentype 格式 */
+}
