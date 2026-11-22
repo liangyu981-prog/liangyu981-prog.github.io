@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>切雞肉</title>
+    <link href="./css/level4_1_style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main class="game_stage">
+      <div class="level_background" aria-hidden="true"></div>
+      <img class="chicken_background" src="./img/cut_chicken_bg.gif" alt="" />
+      <section class="cutting_game" aria-label="切雞肉描圖遊戲">
+        <p class="instruction" id="instruction">
+          沿著圓形痕跡描出一模一樣的圖形！點擊並開始作畫
+        </p>
+        <canvas
+          class="guide_canvas"
+          id="guideCanvas"
+          width="1920"
+          height="1080"
+          aria-hidden="true"
+        ></canvas>
+        <canvas
+          id="drawingCanvas"
+          width="1920"
+          height="1080"
+          aria-label="描繪圓形"
+        ></canvas>
+        <div class="result" id="result" aria-live="polite"></div>
+      </section>
+    </main>
+    <script src="./js/scale.js"></script>
+    <script src="./js/level4_1_script.js"></script>
+    <script src="./js/global_bgm.js"></script>
+  </body>
+</html>

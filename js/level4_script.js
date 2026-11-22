@@ -16,7 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // Prevent the default action so navigation can happen after the press feedback.
       e.preventDefault();
 
-      localStorage.setItem("level4Score", "0");
+      const current_page = window.location.pathname.split("/").pop();
+      if (current_page !== "0_5_7.html") {
+        localStorage.setItem("level4Score", "0");
+      }
       const save_start_sound_positions = () => {
         start_sounds.forEach(({ audio, key }) => {
           sessionStorage.setItem(`${key}Resume`, "1");
@@ -36,8 +39,14 @@ document.addEventListener("DOMContentLoaded", () => {
         once: true,
       });
 
+      const next_page =
+        current_page === "0_5_5.html"
+          ? "./0_5_6.html"
+          : current_page === "0_5_7.html"
+            ? "./0_6.html"
+            : "./0_5_1.html";
       setTimeout(() => {
-        window.location.href = "./0_5_1.html";
+        window.location.href = next_page;
       }, 200);
     });
   }
@@ -69,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
 
       setTimeout(() => {
-        window.location.href = "./0_6.html";
+        window.location.href = "./0_5_5.html";
       }, 200);
     });
   }

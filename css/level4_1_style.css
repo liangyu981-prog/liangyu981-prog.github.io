@@ -1,0 +1,196 @@
+/* Level 4：背景、開場說明彈窗與按鈕的樣式。 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 遊戲畫面固定填滿視窗，避免背景或動畫出現捲軸。 */
+body,
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #b70600\;;
+}
+
+.game_stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
+  transform-origin: center;
+}
+
+.level_background {
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  width: 170vw;
+  height: 1080px;
+  transform: translateX(-50%);
+  background: url("../img/level4_1_bg.gif") center center / cover no-repeat;
+
+  z-index: 0;
+}
+
+/* 讓彈窗與按鈕一起由畫面上方落下，並在中央淡入、回彈定位。 */
+@keyframes dropDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-1080px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 控制開始按鈕延遲淡入。 */
+@keyframes buttonFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes popendBounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(0.94);
+  }
+  82% {
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 縮小雞肉背景並維持置中、等比例顯示。 */
+.chicken_background {
+  position: absolute;
+  left: 50%;
+  top: 70%;
+  width: 800px;
+  height: auto;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cutting_game,
+#drawingCanvas,
+.guide_canvas {
+  position: absolute;
+  inset: 0;
+  top: 13%;
+  width: 1920px;
+  height: 1080px;
+}
+
+.cutting_game {
+  z-index: 2;
+}
+
+#drawingCanvas {
+  z-index: 1;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.guide_canvas {
+  z-index: 0;
+  display: block;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.08s linear;
+}
+
+.instruction {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  bottom: 70px;
+  transform: translateX(-50%);
+  padding: 20px 38px;
+  border: 5px solid #fff0bd;
+  border-radius: 24px;
+  background: rgba(64, 32, 15, 0.88);
+  color: #fff8df;
+  font-size: 34px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-shadow: 2px 3px 2px #3f1b08;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.instruction.is_hidden {
+  opacity: 0;
+}
+
+.result {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0px;
+  height: 18vh;
+  width: 50vw;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #b84100;
+  font-size: 100px;
+  font-weight: 800;
+  font-family: "iti";
+  text-align: center;
+  pointer-events: none;
+  background-color: #fff8df;
+  border: #b70600 10px solid;
+  border-radius: 3%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease;
+}
+
+.result.is_visible {
+  opacity: 1;
+  visibility: visible;
+  animation: resultStampIn 0.65s cubic-bezier(0.2, 0.85, 0.3, 1.2) both;
+}
+
+@keyframes resultStampIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(2.1) rotate(-5deg);
+  }
+  58% {
+    opacity: 1;
+    transform: translateX(-50%) scale(0.88) rotate(1deg);
+  }
+  78% {
+    transform: translateX(-50%) scale(1.08) rotate(-0.4deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) rotate(0);
+  }
+}
+@font-face {
+  font-family: "iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2"); /* 宣告為 opentype 格式 */
+}
