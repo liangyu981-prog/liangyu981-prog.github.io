@@ -45,7 +45,8 @@ document.addEventListener("DOMContentLoaded", () => {
       { x: 1155, y: 465 }, // 奶頭 3
       { x: 1450, y: 450 }, // 奶頭 4
     ],
-    bottle: { startX: 765, startY: 650, width: 390, height: 430 },
+    // 牛奶進入杯口後再往下約 35px 才消失。
+    bottle: { startX: 765, startY: 650, width: 390, height: 430, catchLine: 90 },
     drop: { width: 200, height: 300, speed: 430 },
     waves: [
       {
@@ -187,6 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (ended) return;
     const milk_type = choose(wave.milk);
     const source = CONFIG.milk[milk_type];
+    const catch_line =
+      CONFIG.bottle.catchLine + (milk_type === "+3" || milk_type === "-1" ? 70 : 0);
     const position = choose(wave.xPositions);
     const x =
       Number.isInteger(position) &&
@@ -215,17 +218,17 @@ document.addEventListener("DOMContentLoaded", () => {
     drops.add(drop);
 
     const started_at = performance.now();
-    // 使用牛奶中心作為碰撞點；只在它首次越過瓶口頂線的影格判定。
-    let previous_gap = start_y + drop.offsetHeight / 2 - (bottle_y + 5);
-    let has_passed_bottle_top = previous_gap >= 0;
+    // 牛奶底部進入杯口並抵達判定線時判定是否接到。
+    let previous_gap = start_y + drop.offsetHeight - (bottle_y + catch_line);
+    let has_passed_catch_line = previous_gap >= 0;
     const animate = (now) => {
       if (ended || !drop.isConnected) return;
       const y = start_y + ((now - started_at) / 1000) * CONFIG.drop.speed;
       drop.style.top = `${y}px`;
-      const current_gap = y + drop.offsetHeight / 2 - (bottle_y + 5);
-      if (!has_passed_bottle_top && previous_gap < 0 && current_gap >= 0) {
-        has_passed_bottle_top = true;
-        // 只有第一次越過杯口頂線時接到才計分並消失；錯過就繼續落下。
+      const current_gap = y + drop.offsetHeight - (bottle_y + catch_line);
+      if (!has_passed_catch_line && previous_gap < 0 && current_gap >= 0) {
+        has_passed_catch_line = true;
+        // 牛奶底部越過杯內判定線時接到才計分並消失；錯過就繼續落下。
         if (overlaps_bottle_top(drop)) {
           score = Math.min(
             CONFIG.maxScore,
@@ -263,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clear_game();
     const total = Number(localStorage.getItem(CONFIG.totalScoreStorageKey) ?? "0");
     console.log(`[Devel4] 本關結束，得分 ${score} 分；最終累計總分 ${Number.isFinite(total) ? total : 0} 分`);
-    window.location.href = "./1_5_2.html";
+    window.location.href = "./1_5_1.html";
   };
 
   const start_game = () => {

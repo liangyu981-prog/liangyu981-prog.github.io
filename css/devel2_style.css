@@ -5,6 +5,8 @@
 }
 body,
 html {
+  padding: 0;
+  margin: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -17,7 +19,7 @@ html {
   height: 1080px;
   overflow: hidden;
   transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
-  transform-origin: center;
+  transform-origin: center center;
 }
 /* 開頭視窗的動畫*/
 @keyframes dropDownFade {

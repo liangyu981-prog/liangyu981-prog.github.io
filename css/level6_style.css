@@ -7,6 +7,8 @@
 /* 遊戲畫面固定填滿視窗，避免背景或動畫出現捲軸。 */
 body,
 html {
+  padding: 0;
+  margin: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -20,7 +22,7 @@ html {
   height: 1080px;
   overflow: hidden;
   transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
-  transform-origin: center;
+  transform-origin: center center;
   background-color: #e57b0b;
 }
 
@@ -206,11 +208,6 @@ html {
   background-size: contain;
   transform: scale(1);
   animation: popendBounceIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-/* 1_5_2 使用 Level 4 的原結算圖，維持相同的結算版面與動畫。 */
-.popwidow7.milking_result_popup {
-  background-image: url("./../img/end_popupwindow4.png");
 }
 
 .modal7_container .next_button {
