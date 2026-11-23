@@ -8,6 +8,45 @@ document.addEventListener("DOMContentLoaded", () => {
   // 修改音檔開頭裁切秒數：調整此數值；0.8 代表跳過前 0.8 秒。
   const jane_dan_start_offset_seconds = 0.8;
 
+  const ending_popup = document.querySelector(".popwidow4");
+  const ending_popup_overlay = document.getElementById("endingPopupOverlay");
+  if (ending_popup && ending_popup_overlay) {
+    // 精確分數對照表：其他分數預設使用 bad 結尾。
+    const ending_popup_assets_by_score = {
+      15: {
+        background: "./img/3_end_popupwindow_good.png",
+        overlay: "./img/small_good_endpop.GIF",
+      },
+      10: {
+        background: "./img/3_end_popupwindow_normal.png",
+        overlay: "./img/small_normal_endpop.GIF",
+      },
+      5: {
+        background: "./img/3_end_popupwindow_bad.png",
+        overlay: "./img/small_bad_endpop.GIF",
+      },
+      0: {
+        background: "./img/3_end_popupwindow_bad.png",
+        overlay: "./img/small_bad_endpop.GIF",
+      },
+    };
+    const score_param = new URLSearchParams(window.location.search).get("score");
+    const query_score = Number(score_param);
+    const saved_level_score = Number(localStorage.getItem("level3Score") ?? "0");
+    const level_score =
+      score_param !== null && Number.isFinite(query_score)
+        ? query_score
+        : Number.isFinite(saved_level_score)
+          ? saved_level_score
+          : 0;
+    const ending_assets = ending_popup_assets_by_score[level_score] ??
+      ending_popup_assets_by_score[0];
+
+    ending_popup.style.backgroundImage = `url("${ending_assets.background}")`;
+    ending_popup_overlay.src = ending_assets.overlay;
+    console.log(`[Level 3 結尾] 本關 ${level_score} 分，顯示 ${ending_assets.background}`);
+  }
+
   if (next_button) {
     next_button.addEventListener("click", (event) => {
       event.preventDefault();
@@ -129,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.remove("feedback_visible");
     }, 2000);
     setTimeout(() => {
-      window.location.href = "./0_4_2.html";
+      window.location.href = `./0_4_2.html?score=${encodeURIComponent(earned_score)}`;
     }, 2000);
   });
   //過場動畫//

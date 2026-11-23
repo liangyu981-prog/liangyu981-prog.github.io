@@ -166,6 +166,18 @@ body.level4_legacy_page {
   animation: popendBounceIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
+/* 結尾疊圖微調：修改 top、left、width、height 可調整 GIF 相對於底圖的位置與大小。 */
+.level4_legacy_page .popwidow5_overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .level4_legacy_page .modal5_container .next_button {
   position: absolute;
   left: 1221px;

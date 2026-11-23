@@ -1,6 +1,49 @@
 // 切雞肉描圖關卡：描出提示圖形後依照路徑相似度計分。
 document.addEventListener("DOMContentLoaded", () => {
   const startButton = document.getElementById("startBtn");
+  const endingPopup = document.querySelector(".popwidow5");
+  const endingPopupOverlay = document.getElementById(
+    "cutChickenEndingPopupOverlay",
+  );
+
+  if (endingPopup && endingPopupOverlay) {
+    const correct_param = new URLSearchParams(window.location.search).get(
+      "accuracy",
+    );
+    const query_accuracy = Number(correct_param);
+    const saved_accuracy = Number(
+      localStorage.getItem("cutChickenAccuracy") ?? "0",
+    );
+    const accuracy =
+      correct_param !== null && Number.isFinite(query_accuracy)
+        ? query_accuracy
+        : Number.isFinite(saved_accuracy)
+          ? saved_accuracy
+          : 0;
+    const result_type =
+      accuracy <= 60 ? "bad" : accuracy < 80 ? "normal" : "good";
+    const ending_assets = {
+      bad: {
+        background: "./img/4_1_end_popupwindow_bad.png",
+        overlay: "./img/small_bad_endpop.GIF",
+      },
+      normal: {
+        background: "./img/4_1_end_popupwindow_normal.png",
+        overlay: "./img/small_normal_endpop.GIF",
+      },
+      good: {
+        background: "./img/4_1_end_popupwindow_good.png",
+        overlay: "./img/small_good_endpop.GIF",
+      },
+    }[result_type];
+
+    endingPopup.style.backgroundImage = `url("${ending_assets.background}")`;
+    endingPopupOverlay.src = ending_assets.overlay;
+    console.log(
+      `[切雞肉結尾] 準確度 ${accuracy}%，顯示 ${ending_assets.background}`,
+    );
+  }
+
   if (startButton) {
     startButton.addEventListener(
       "click",
@@ -8,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         startButton.disabled = true;
         localStorage.setItem("level4Score", "0");
+        localStorage.setItem("cutChickenAccuracy", "0");
         window.setTimeout(() => {
           window.location.href = "./0_5_6.html";
         }, 200);
@@ -157,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
       drawingTimer = window.setTimeout(() => {
         drawingTimeElapsed = true;
         if (hasClosedPath) finishDrawing();
-      }, 4000);
+      }, 100);
       promptTimer = window.setTimeout(
         () => instruction.classList.add("is_hidden"),
         8000,
@@ -258,13 +302,14 @@ document.addEventListener("DOMContentLoaded", () => {
     度 ${percentage}%`;
     result.classList.add("is_visible");
     localStorage.setItem("cutChickenScore", String(score));
+    localStorage.setItem("cutChickenAccuracy", String(percentage));
     const levelScore =
       Number(localStorage.getItem("level4Score") || "0") + score;
     const totalScore = Number(localStorage.getItem("totalScore") || "0");
     localStorage.setItem("level4Score", String(levelScore));
     localStorage.setItem("totalScore", String(totalScore + score));
     window.setTimeout(() => {
-      window.location.href = "./0_5_7.html";
+      window.location.href = `./0_5_7.html?accuracy=${encodeURIComponent(percentage)}`;
     }, 3000);
   }
 

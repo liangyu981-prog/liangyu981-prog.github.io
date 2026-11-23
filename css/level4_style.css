@@ -287,22 +287,37 @@ html {
 
 .question_image_container {
   position: absolute;
-  top: 600px; /* 距離畫面頂部的像素 */
+  top: 530px; /* 距離畫面頂部的像素 */
   left: 50%;
   transform: translateX(-50%);
-  width: 1000px;
+  width: 1800px;
   text-align: center;
   z-index: 10; /* 👈 加上這行，確保它在最上層，不會被背景吃掉！ */
 }
 .question_img {
-  width: 850px; /* 👈 想要圖片多寬？直接在這裡用 px 決定！ */
-  height: 350px; /* 👈 想要圖片多高？直接在這裡用 px 決定！ */
+  width: 900px; /* 👈 想要圖片多寬？直接在這裡用 px 決定！ */
+  height: 400px; /* 👈 想要圖片多高？直接在這裡用 px 決定！ */
   object-fit: contain; /* 確保圖片不變形 */
+}
+
+/* 題目進度：依截圖圈選位置放置；可調整 left、top、font-size 微調。 */
+.question_progress {
+  position: absolute;
+  top: 752px;
+  left: 1595px;
+  z-index: 11;
+  transform: translate(-50%, -50%);
+  color: #b70600;
+  font-family: "iti", sans-serif;
+  font-size: 48px;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
 }
 /* 3️⃣ 底部三個並排按鈕容器 */
 .answers_container {
   position: absolute;
-  top: 810px; /* 如果按鈕跑出畫面，把這個數字改小一點（例如 600px 或 700px）試試 */
+  top: 770px; /* 如果按鈕跑出畫面，把這個數字改小一點（例如 600px 或 700px）試試 */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -312,8 +327,8 @@ html {
 
 /* 4️⃣ 按鈕通用樣式 */
 .ans_button {
-  width: 400px; /* 按鈕寬度，依你的圖檔比例調整 */
-  height: 220px; /* 按鈕高度 */
+  width: 430px; /* 按鈕寬度，依你的圖檔比例調整 */
+  height: 250px; /* 按鈕高度 */
   border: none;
   background-color: transparent;
   background-size: contain;
@@ -335,108 +350,87 @@ html {
 
 /* --- 按鈕 1 --- */
 #btnOption1 {
-  background-image: url(./../img/chicken_btn_default.png);
-}
-#btnOption1:hover {
-  background-image: url(./../img/chicken_btn_hover.png);
+  background-image: url(./../img/op_flour_btn_default.png);
 }
 #btnOption1:active,
 #btnOption1.is_clicked {
-  background-image: url(./../img/chicken_btn_active.png);
+  background-image: url(./../img/op_flour_btn_active.png);
 }
 
 /* --- 按鈕 2 --- */
 #btnOption2 {
-  background-image: url(./../img/kitchen_btn_default.png);
-}
-#btnOption2:hover {
-  background-image: url(./../img/kitchen_btn_hover.png);
+  background-image: url(./../img/op_floor_btn_default.png);
 }
 #btnOption2:active,
 #btnOption2.is_clicked {
-  background-image: url(./../img/kitchen_btn_active.png);
+  background-image: url(./../img/op_floor_btn_active.png);
 }
 
 /* --- 按鈕 3 --- */
 #btnOption3 {
-  background-image: url(./../img/checkin_btn_default.png);
-}
-#btnOption3:hover {
-  background-image: url(./../img/checkin_btn_hover.png);
+  background-image: url(./../img/op_four_btn_default.png);
 }
 #btnOption3:active,
 #btnOption3.is_clicked {
-  background-image: url(./../img/checkin_btn_active.png);
+  background-image: url(./../img/op_four_btn_active.png);
 }
 /* --- 第二關：按鈕 1（這題的正確答案） --- */
 #btnOption4 {
-  background-image: url(./../img/18_btn_default.png);
-}
-#btnOption4:hover {
-  background-image: url(./../img/18_btn_hover.png);
+  background-image: url(./../img/op_cheesegg_btn_default.png);
 }
 #btnOption4:active,
 #btnOption4.is_clicked {
-  background-image: url(./../img/18_btn_active.png);
+  background-image: url(./../img/op_cheesegg_btn_active.png);
 }
 
 /* --- 第二關：按鈕 2 --- */
 #btnOption5 {
-  background-image: url("./../img/19_btn_default.png");
-}
-#btnOption5:hover {
-  background-image: url(./../img/19_btn_hover.png);
+  background-image: url("./../img/op_feet_btn_default.png");
 }
 #btnOption5:active,
 #btnOption5.is_clicked {
-  background-image: url(./../img/19_btn_active.png);
+  background-image: url(./../img/op_feet_btn_active.png);
 }
 
 /* --- 第二關：按鈕 3 --- */
 #btnOption6 {
-  background-image: url(./../img/20_btn_default.png);
-}
-#btnOption6:hover {
-  background-image: url(./../img/20_btn_hover.png);
+  background-image: url(./../img/op_tunaegg_btn_default.png);
 }
 #btnOption6:active,
 #btnOption6.is_clicked {
-  background-image: url(./../img/20_btn_active.png);
+  background-image: url(./../img/op_tunaegg_btn_active.png);
 }
 /* --- 第三關：按鈕 1 --- */
 #btnOption7 {
-  background-image: url(./../img/fandigan_btn_default.png);
-}
-#btnOption7:hover {
-  background-image: url(./../img/fandigan_btn_hover.png);
+  background-image: url(./../img/op_nagi_btn_default.png);
 }
 #btnOption7:active,
 #btnOption7.is_clicked {
-  background-image: url(./../img/fandigans_btn_active.png);
+  background-image: url(./../img/op_nagi_btn_active.png);
 }
 
 /* --- 第三關：按鈕 2 --- */
 #btnOption8 {
-  background-image: url(./../img/beigi_btn_default.png);
-}
-#btnOption8:hover {
-  background-image: url(./../img/beigi_btn_hover.png);
+  background-image: url(./../img/op_gahome_btn_default.png);
 }
 #btnOption8:active,
 #btnOption8.is_clicked {
-  background-image: url(./../img/beigi_btn_active.png);
+  background-image: url(./../img/op_gahome_btn_active.png);
 }
 
-/* --- 第三關：按鈕 3（這題的正確答案） --- */
+/* --- 第三關：按鈕 3 --- */
 #btnOption9 {
-  background-image: url(./../img/naigi_btn_default.png);
-}
-#btnOption9:hover {
-  background-image: url(./../img/naigi_btn_hover.png);
+  background-image: url(./../img/op_galic_btn_default.png);
 }
 #btnOption9:active,
 #btnOption9.is_clicked {
-  background-image: url(./../img/naigi_btn_active.png);
+  background-image: url(./../img/op_galic_btn_active.png);
+}
+
+@font-face {
+  font-family: "iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2");
+  font-display: swap;
 }
 
 .modal5_container {
@@ -460,6 +454,18 @@ html {
   background-size: contain;
   transform: scale(1);
   animation: popendBounceIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* 結尾疊圖微調：修改 top、left、width、height 可調整 GIF 相對於底圖的位置與大小。 */
+.popwidow5_overlay {
+  position: absolute;
+  top: -50px;
+  left: 180px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .modal5_container .next_button {

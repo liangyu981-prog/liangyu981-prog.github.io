@@ -1,0 +1,38 @@
+@font-face {
+  font-family: "portrait-guard-iti";
+  src: url("../fonts/壱城ラウラフォント.woff2") format("woff2");
+  font-display: block;
+}
+
+/* 微調整提示遮罩背景、字色、字級、間距時修改此區塊。 */
+.orientation_guard {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  padding: 28px;
+  background: #ffc700;
+  color: #b70600;
+  font-family: "portrait-guard-iti";
+  font-size: clamp(26px, 6vw, 48px);
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: center;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  overscroll-behavior: none;
+}
+
+.orientation_guard[hidden] {
+  display: none !important;
+}
+
+.orientation_guard p {
+  max-width: 90vw;
+  margin: 0;
+}

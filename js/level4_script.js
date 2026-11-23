@@ -2,6 +2,45 @@
 document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById("startBtn");
   const nextBtn = document.getElementById("nextBtn");
+  const ending_popup = document.querySelector(".popwidow5");
+  const ending_popup_overlay = document.getElementById("level4EndingPopupOverlay");
+
+  if (ending_popup && ending_popup_overlay) {
+    const ending_assets_by_correct_count = {
+      0: {
+        background: "./img/4_end_popupwindow_bad.png",
+        overlay: "./img/small_bad_endpop.GIF",
+      },
+      1: {
+        background: "./img/4_end_popupwindow_bad.png",
+        overlay: "./img/small_bad_endpop.GIF",
+      },
+      2: {
+        background: "./img/4_end_popupwindow_normal.png",
+        overlay: "./img/small_normal_endpop.GIF",
+      },
+      3: {
+        background: "./img/4_end_popupwindow_good.png",
+        overlay: "./img/small_good_endpop.GIF",
+      },
+    };
+    const correct_param = new URLSearchParams(window.location.search).get("correct");
+    const query_correct_count = Number(correct_param);
+    const saved_correct_count = Number(localStorage.getItem("level4CorrectCount") ?? "0");
+    const correct_count =
+      correct_param !== null && Number.isFinite(query_correct_count)
+        ? query_correct_count
+        : Number.isFinite(saved_correct_count)
+          ? saved_correct_count
+          : 0;
+    const ending_assets =
+      ending_assets_by_correct_count[correct_count] ?? ending_assets_by_correct_count[0];
+
+    ending_popup.style.backgroundImage = `url("${ending_assets.background}")`;
+    ending_popup_overlay.src = ending_assets.overlay;
+    console.log(`[Level 4 結尾] 答對 ${correct_count} 題，顯示 ${ending_assets.background}`);
+  }
+
   const start_sounds = [
     { audio: new Audio("./audio/clock.mp3"), key: "level4Clock" },
     { audio: new Audio("./audio/Gtimer_begin_ring.mp3"), key: "level4BeginRing" },
@@ -19,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const current_page = window.location.pathname.split("/").pop();
       if (current_page !== "0_5_7.html") {
         localStorage.setItem("level4Score", "0");
+        localStorage.setItem("level4CorrectCount", "0");
       }
       const save_start_sound_positions = () => {
         start_sounds.forEach(({ audio, key }) => {
@@ -189,7 +229,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (currentPath.includes("0_5_2.html")) {
       window.location.href = "./0_5_3.html";
     } else if (currentPath.includes("0_5_3.html")) {
-      window.location.href = "./0_5_4.html";
+      const correct_count = Number(localStorage.getItem("level4CorrectCount") ?? "0");
+      window.location.href = `./0_5_4.html?correct=${encodeURIComponent(correct_count)}`;
     }
   }
 
@@ -217,6 +258,12 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error(`Failed to play ${resultType} answer sound:`, error);
         });
       }
+      const savedCorrectCount = Number(localStorage.getItem("level4CorrectCount") ?? "0");
+      const correctCount =
+        (Number.isFinite(savedCorrectCount) ? savedCorrectCount : 0) +
+        (resultType === "correct" ? 1 : 0);
+      localStorage.setItem("level4CorrectCount", String(correctCount));
+
       const earnedScore = resultType === "correct" ? 6 : 0;
       const levelScore = Number(localStorage.getItem("level4Score") ?? "0") + earnedScore;
       const currentTotal = Number(localStorage.getItem("totalScore") ?? "0");
