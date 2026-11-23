@@ -10,6 +10,7 @@ html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: #e57b0b;
 }
 
 .game_stage {
@@ -171,7 +172,7 @@ html {
 
 .game_mode .game_background {
   z-index: 0;
-  background: #f6a900;
+  background: #e57b0b;
 }
 
 .game_mode .camera_video,

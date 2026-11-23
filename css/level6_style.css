@@ -95,6 +95,10 @@ html {
 .level6_bg.fini_background {
   background-image: url("./../img/level6_fini.PNG");
 }
+
+.level6_bg.cow_background {
+  background-image: url("./../img/cow_bg.gif");
+}
 .opacity_full {
   opacity: 1;
 }
@@ -202,6 +206,11 @@ html {
   background-size: contain;
   transform: scale(1);
   animation: popendBounceIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* 1_5_2 使用 Level 4 的原結算圖，維持相同的結算版面與動畫。 */
+.popwidow7.milking_result_popup {
+  background-image: url("./../img/end_popupwindow4.png");
 }
 
 .modal7_container .next_button {

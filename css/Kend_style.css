@@ -7,6 +7,7 @@ body {
   height: 100%;
   margin: 0;
   overflow: hidden;
+  background: #e57b0b;
 }
 body {
   font-family: "iti";
@@ -22,6 +23,10 @@ body {
   transform: translate(-50%, -50%) scale(var(--stage-scale, 1));
   transform-origin: center;
   background: #e57b0b;
+}
+
+.game_stage.cow_background_stage {
+  background: url("../img/cow_bg.gif") center / cover no-repeat;
 }
 .feedback_transition_frame {
   position: fixed;

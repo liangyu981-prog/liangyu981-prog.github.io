@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const feedbackPage = preloadFeedbackPage();
   const animation = document.querySelector(".end_animation");
-  const animationUrl = "./img/end_animation_once.gif?v=4";
+  const animationUrl =
+    animation?.getAttribute("src") || "./img/end_animation_once.gif?v=4";
 
   const [cycleDuration] = await Promise.all([
     measureGifDuration(animationUrl),
@@ -10,8 +11,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   window.setTimeout(async () => {
     const canShowPreloadedPage = await feedbackPage.ready;
-    // Hold the final animation frame briefly, then reveal the already-loaded page.
-    await new Promise((resolve) => window.setTimeout(resolve, 350));
     if (!canShowPreloadedPage) {
       window.location.href = "./0_8_1.html";
       return;

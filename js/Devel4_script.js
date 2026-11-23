@@ -2,6 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const start_button = document.getElementById("mouseBtn");
   const camera_button = document.getElementById("cameraBtn");
+  const next_button = document.getElementById("nextBtn");
 
   start_button?.addEventListener("click", () => {
     window.location.href = "1_5_1_1.html";
@@ -9,6 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   camera_button?.addEventListener("click", () => {
     window.location.href = "1_5_1_2.html";
+  });
+
+  next_button?.addEventListener("click", (event) => {
+    event.preventDefault();
+    next_button.disabled = true;
+    window.setTimeout(() => {
+      window.location.href = "./1_5_1.html";
+    }, 200);
   });
 
 });
@@ -254,6 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clear_game();
     const total = Number(localStorage.getItem(CONFIG.totalScoreStorageKey) ?? "0");
     console.log(`[Devel4] 本關結束，得分 ${score} 分；最終累計總分 ${Number.isFinite(total) ? total : 0} 分`);
+    window.location.href = "./1_5_2.html";
   };
 
   const start_game = () => {
