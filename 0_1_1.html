@@ -9,75 +9,77 @@
     <link href="./css/0_1_1style.css" rel="stylesheet" />
   </head>
   <body>
-    <div class="menu-scene">
-      <div class="menu-art">
-        <img class="menu-background" src="./img/D_menu.gif" alt="菜單" />
-        <div class="menu-hover-target" aria-hidden="true"></div>
-        <img class="menu-default" src="./img/D_menu_default.png" alt="" />
-        <img class="menu-hover" src="./img/D_menu_hover.gif" alt="" />
-        <a class="make-link" href="./1_2.html">點此製作</a>
-        <button
-          class="turn-button turn-button-left"
-          type="button"
-          aria-label="上一個菜單"
-        >
-          <img src="./img/turn_button_default.png" alt="" />
-        </button>
-        <button
-          class="turn-button turn-button-right"
-          type="button"
-          aria-label="下一個菜單"
-        >
-          <img src="./img/turn_button_default.png" alt="" />
-        </button>
-        <img class="menu-transition" alt="" aria-hidden="true" />
-      </div>
-    </div>
-    <section
-      class="camera_modal menu_camera_modal"
-      id="cameraModal"
-      aria-labelledby="modalTitle"
-      aria-hidden="true"
-      hidden
-    >
-      <div class="modal_backdrop"></div>
-      <div class="camera_panel">
-        <h1 id="modalTitle">▼一位蛋餅大師的誕生...▼</h1>
-        <div class="camera_frame">
-          <video id="cameraVideo" autoplay playsinline muted></video>
-          <canvas id="photoCanvas" hidden></canvas>
-          <div class="face_guide" aria-hidden="true"></div>
-          <div
-            class="countdown"
-            id="countdown"
-            aria-live="assertive"
-            hidden
-          ></div>
-          <p class="camera_status" id="cameraStatus">正在啟動鏡頭…</p>
+    <main class="game_stage">
+      <div class="menu-scene">
+        <div class="menu-art">
+          <img class="menu-background" src="./img/D_menu.gif" alt="菜單" />
+          <div class="menu-hover-target" aria-hidden="true"></div>
+          <img class="menu-default" src="./img/D_menu_default.png" alt="" />
+          <img class="menu-hover" src="./img/D_menu_hover.gif" alt="" />
+          <a class="make-link" href="./1_2.html">點此製作</a>
+          <button
+            class="turn-button turn-button-left"
+            type="button"
+            aria-label="上一個菜單"
+          >
+            <img src="./img/turn_button_default.png" alt="" />
+          </button>
+          <button
+            class="turn-button turn-button-right"
+            type="button"
+            aria-label="下一個菜單"
+          >
+            <img src="./img/turn_button_default.png" alt="" />
+          </button>
+          <img class="menu-transition" alt="" aria-hidden="true" />
         </div>
-        <button
-          class="shutter_button"
-          id="shutterButton"
-          type="button"
-          disabled
-        >
-          拍照
-        </button>
-        <form class="name_form" id="nameForm" hidden>
-          <label for="playerName">請登記你的早餐店商業行號</label>
-          <input
-            id="playerName"
-            name="playerName"
-            type="text"
-            maxlength="30"
-            autocomplete="name"
-            placeholder="你的名字"
-            required
-          />
-          <button type="submit">完成</button>
-        </form>
       </div>
-    </section>
+      <section
+        class="camera_modal menu_camera_modal"
+        id="cameraModal"
+        aria-labelledby="modalTitle"
+        aria-hidden="true"
+        hidden
+      >
+        <div class="modal_backdrop"></div>
+        <div class="camera_panel">
+          <h1 id="modalTitle">▼一位蛋餅大師的誕生...▼</h1>
+          <div class="camera_frame">
+            <video id="cameraVideo" autoplay playsinline muted></video>
+            <canvas id="photoCanvas" hidden></canvas>
+            <div class="face_guide" aria-hidden="true"></div>
+            <div
+              class="countdown"
+              id="countdown"
+              aria-live="assertive"
+              hidden
+            ></div>
+            <p class="camera_status" id="cameraStatus">正在啟動鏡頭…</p>
+          </div>
+          <button
+            class="shutter_button"
+            id="shutterButton"
+            type="button"
+            disabled
+          >
+            拍照
+          </button>
+          <form class="name_form" id="nameForm" hidden>
+            <label for="playerName">請登記你的早餐店商業行號</label>
+            <input
+              id="playerName"
+              name="playerName"
+              type="text"
+              maxlength="30"
+              autocomplete="name"
+              placeholder="你的名字"
+              required
+            />
+            <button type="submit">完成</button>
+          </form>
+        </div>
+      </section>
+    </main>
     <script src="./js/scale.js"></script>
     <script src="./js/0_1_1.js"></script>
     <script type="module" src="./js/Kend_camera.js"></script>

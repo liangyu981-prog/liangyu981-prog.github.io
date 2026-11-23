@@ -8,13 +8,13 @@ body {
 }
 .menu-scene {
   position: relative;
-  width: 100vw;
-  aspect-ratio: 16 / 9;
+  width: 100%;
+  height: 100%;
 }
 .menu-art {
   position: absolute;
   top: 0;
-  left: 3%;
+  left: 0;
   width: 100%;
   height: 100%;
 }
@@ -27,6 +27,8 @@ body {
 }
 .menu-background {
   z-index: 0;
+  object-fit: cover;
+  object-position: center;
 }
 .menu-hover-target {
   position: absolute;
