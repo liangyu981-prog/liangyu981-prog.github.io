@@ -11,7 +11,7 @@ html {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: #b70600\;;
+  background-color: #ffc700;
 }
 
 .game_stage {
@@ -27,13 +27,10 @@ html {
 
 .level_background {
   position: absolute;
-  top: 0%;
-  left: 50%;
-  width: 170vw;
+  inset: 0;
+  width: 1920px;
   height: 1080px;
-  transform: translateX(-50%);
-  background: url("../img/level4_1_bg.gif") center center / cover no-repeat;
-
+  background: url("../img/cut_chicken_bg.gif") center center / cover no-repeat;
   z-index: 0;
 }
 
@@ -77,6 +74,116 @@ html {
   }
 }
 
+/* 0_5_5、0_5_7 沿用 level4_style 的原畫面樣式，維持原有版面。 */
+body.level4_legacy_page {
+  background-color: #fff;
+}
+
+.level4_legacy_page .bg_layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background-color: #ffc700;
+  z-index: 0;
+}
+
+.level4_legacy_page .level4_bg {
+  position: absolute;
+
+  width: 1920px;
+  height: 1080px;
+  background: url("../img/level_4_1_begin_bg.gif") center / cover no-repeat;
+  background-color: #ffc700;
+  z-index: 2;
+}
+
+.level4_legacy_page .opacity_half {
+  opacity: 0.5;
+}
+
+.level4_legacy_page .modal4_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  z-index: 2;
+  animation: dropDownFade 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.level4_legacy_page .popinfor4 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  background: url("../img/introduce_popupwindow_4_1.png") center / contain
+    no-repeat;
+  z-index: 1;
+}
+
+.level4_legacy_page .start_button {
+  position: absolute;
+  left: 1187px;
+  bottom: 184px;
+  width: 180px;
+  height: 80px;
+  border: none;
+  background-color: transparent;
+  background: url("../img/start_button_default.png") center / contain no-repeat;
+  cursor: pointer;
+  outline: none;
+  z-index: 2;
+  opacity: 0;
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+
+.level4_legacy_page .start_button:active {
+  background-image: url("../img/start_button_active.png");
+}
+
+.level4_legacy_page .modal5_container {
+  position: absolute;
+  top: 81px;
+  left: 144px;
+  width: 1632px;
+  height: 918px;
+  z-index: 3;
+}
+
+.level4_legacy_page .popwidow5 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1632px;
+  height: 918px;
+  background: url("../img/end_popupwindow5.png") center / contain no-repeat;
+  transform: scale(1);
+  animation: popendBounceIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.level4_legacy_page .modal5_container .next_button {
+  position: absolute;
+  left: 1221px;
+  bottom: 202px;
+  width: 180px;
+  height: 80px;
+  border: none;
+  background-color: transparent;
+  background: url("../img/next-button-default.png") center / contain no-repeat;
+  cursor: pointer;
+  outline: none;
+  z-index: 3;
+  opacity: 0;
+  animation: buttonFadeIn 0.3s ease 1s forwards;
+}
+
+.level4_legacy_page .modal5_container .next_button:active {
+  background-image: url("../img/next-button-active.png");
+}
+
 /* 縮小雞肉背景並維持置中、等比例顯示。 */
 .chicken_background {
   position: absolute;
@@ -95,7 +202,8 @@ html {
 .guide_canvas {
   position: absolute;
   inset: 0;
-  top: 13%;
+  top: 10%;
+  left: -1%;
   width: 1920px;
   height: 1080px;
 }
@@ -117,25 +225,6 @@ html {
   opacity: 1;
   pointer-events: none;
   transition: opacity 0.08s linear;
-}
-
-.instruction {
-  position: absolute;
-  z-index: 3;
-  left: 50%;
-  bottom: 70px;
-  transform: translateX(-50%);
-  padding: 20px 38px;
-  border: 5px solid #fff0bd;
-  border-radius: 24px;
-  background: rgba(64, 32, 15, 0.88);
-  color: #fff8df;
-  font-size: 34px;
-  font-weight: 700;
-  white-space: nowrap;
-  text-shadow: 2px 3px 2px #3f1b08;
-  transition: opacity 0.25s ease;
-  pointer-events: none;
 }
 
 .instruction.is_hidden {

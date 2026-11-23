@@ -43,8 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const radius = 250;
   // 每次進入關卡都生成輕微起伏，並以內插保持輪廓平順。
   const shapeVariation = Array.from(
-    { length: 36 },
-    () => Math.random() * 36 - 18,
+    { length: 50 },
+    () => Math.random() * 72 - 30,
   );
   const points = [];
   let totalPathLength = 0;
@@ -83,8 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     guideContext.setLineDash([18, 13]);
     guideContext.lineWidth = 10;
-    guideContext.strokeStyle = "rgba(255, 246, 189, 0.9)";
-    guideContext.shadowColor = "rgba(65, 27, 8, 0.85)";
+    guideContext.strokeStyle = "#ffffff";
+    guideContext.shadowColor = "#b84100";
     guideContext.shadowBlur = 12;
     guideContext.stroke();
     guideContext.restore();
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     context.lineWidth = 12;
     context.lineCap = "round";
     context.lineJoin = "round";
-    context.strokeStyle = "#e93618";
+    context.strokeStyle = "#b70600";
     context.stroke();
     context.restore();
   }
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
     context.lineWidth = 12;
     context.lineCap = "round";
     context.lineJoin = "round";
-    context.strokeStyle = "#e93618";
+    context.strokeStyle = "#b70600";
 
     if (!hasStarted) {
       hasStarted = true;
@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
       drawingTimer = window.setTimeout(() => {
         drawingTimeElapsed = true;
         if (hasClosedPath) finishDrawing();
-      }, 5000);
+      }, 4000);
       promptTimer = window.setTimeout(
         () => instruction.classList.add("is_hidden"),
         8000,
@@ -254,10 +254,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const similarity = calculateSimilarity();
     const percentage = Math.round(similarity * 100);
     const score = Math.max(-5, Math.min(10, Math.round(similarity * 15 - 5)));
-    result.textContent = `相似度 ${percentage}%`;
+    result.textContent = `準確
+    度 ${percentage}%`;
     result.classList.add("is_visible");
     localStorage.setItem("cutChickenScore", String(score));
-    const levelScore = Number(localStorage.getItem("level4Score") || "0") + score;
+    const levelScore =
+      Number(localStorage.getItem("level4Score") || "0") + score;
     const totalScore = Number(localStorage.getItem("totalScore") || "0");
     localStorage.setItem("level4Score", String(levelScore));
     localStorage.setItem("totalScore", String(totalScore + score));
