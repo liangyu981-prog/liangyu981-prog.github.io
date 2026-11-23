@@ -35,29 +35,22 @@ document.addEventListener("DOMContentLoaded", () => {
   guard.setAttribute("aria-label", "請將螢幕畫面轉為橫向使用");
   guard.innerHTML = "<p>請將螢幕畫面轉為橫向使用</p>";
   guard.hidden = true;
+  // 先同步套用遮罩必要版型，避免外部 CSS 載入時序延遲而漏顯示提示。
+  guard.style.cssText =
+    "position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;width:100vw;height:100vh;height:100dvh;pointer-events:auto;touch-action:none;";
   document.body.append(guard);
 
   const scaleScriptUrl = document.currentScript?.src || new URL("./js/scale.js", document.baseURI).href;
   const guardStyles = document.createElement("link");
   guardStyles.rel = "stylesheet";
   guardStyles.href = new URL("../css/portrait_guard.css", scaleScriptUrl).href;
-  let guardStylesLoaded = false;
-  guardStyles.addEventListener("load", () => {
-    guardStylesLoaded = true;
-    updateOrientationGuard();
-  });
-  guardStyles.addEventListener("error", () => {
-    // 即使樣式檔載入失敗，也保持遮罩可見並阻擋遊戲操作。
-    guardStylesLoaded = true;
-    updateOrientationGuard();
-  });
   document.head.append(guardStyles);
 
   const originalStageInert = stage?.inert ?? false;
   function updateOrientationGuard() {
     const shouldBlock = isPhoneOrTablet && orientationQuery.matches;
     if (stage) stage.inert = originalStageInert || shouldBlock;
-    guard.hidden = !(guardStylesLoaded && shouldBlock);
+    guard.hidden = !shouldBlock;
   }
 
   function handleOrientationChange() {
