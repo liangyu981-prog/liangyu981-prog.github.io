@@ -117,7 +117,7 @@ body {
   width: 250px;
   height: 181px;
   overflow: hidden;
-  will-change: left;
+  will-change: transform;
 }
 
 .cow_art {
@@ -146,6 +146,7 @@ body {
   filter: drop-shadow(0 0 4px rgba(100, 34, 0, 0.8));
   pointer-events: none;
   transform: translateX(-50%);
+  will-change: transform;
 }
 
 .cow_guide.is_following {
@@ -189,6 +190,7 @@ body {
   pointer-events: none;
   transform: translate(-50%, -50%);
   transform-origin: center;
+  will-change: transform;
 }
 
 .camera_status {

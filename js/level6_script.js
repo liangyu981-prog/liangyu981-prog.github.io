@@ -148,8 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const movePreview = (point) => {
     if (!activeDrag) return;
-    activeDrag.preview.style.left = `${point.x - activeDrag.grabX}px`;
-    activeDrag.preview.style.top = `${point.y - activeDrag.grabY}px`;
+    activeDrag.preview.style.transform = `translate3d(${point.x - activeDrag.grabX}px, ${point.y - activeDrag.grabY}px, 0)`;
   };
 
   const cancelDrag = () => {
@@ -184,6 +183,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const preview = document.createElement("div");
       preview.className = "drag_preview";
       preview.setAttribute("aria-hidden", "true");
+      preview.style.left = "0px";
+      preview.style.top = "0px";
       preview.style.width = `${settings.artwork.width * assembly.scale}px`;
       preview.style.height = `${settings.artwork.height * assembly.scale}px`;
       preview.style.backgroundImage = `url("./img/big_${item}.PNG")`;

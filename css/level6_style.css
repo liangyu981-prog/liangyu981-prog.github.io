@@ -502,4 +502,5 @@ html {
   z-index: 20;
   pointer-events: none;
   background-repeat: no-repeat;
+  will-change: transform;
 }

@@ -35,6 +35,7 @@
   let index = 0;
   let transitioning = false;
   let transitionTimer;
+  const preloadedImages = new Map();
 
   function slideDurationMs() {
     const value = getComputedStyle(document.querySelector(".selector-stage"))
@@ -48,8 +49,38 @@
 
   function imageMarkup(option) {
     return option.image
-      ? `<span class="card-art"><img src="${option.image}" alt=""></span>`
+      ? `<span class="card-art"><img src="${option.image}" alt="" decoding="async" fetchpriority="high"></span>`
       : "";
+  }
+
+  function preloadImage(option) {
+    if (!option.image || preloadedImages.has(option.image)) return;
+    const visibleImage = [...document.images].find(
+      (image) => image.getAttribute("src") === option.image,
+    );
+    if (visibleImage) {
+      preloadedImages.set(option.image, visibleImage);
+      if (typeof visibleImage.decode === "function") {
+        visibleImage.decode().catch(() => {});
+      }
+      return;
+    }
+    const image = new Image();
+    image.decoding = "async";
+    image.src = option.image;
+    if (typeof image.decode === "function") image.decode().catch(() => {});
+    preloadedImages.set(option.image, image);
+  }
+
+  function scheduleBackgroundPreload() {
+    const preloadRemaining = () => {
+      options.forEach((option) => preloadImage(option));
+    };
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(preloadRemaining, { timeout: 1800 });
+    } else {
+      window.setTimeout(preloadRemaining, 300);
+    }
   }
 
   function updatePreviews() {
@@ -64,6 +95,7 @@
   function renderPreview(id, option, direction) {
     const preview = document.getElementById(id);
     if (!preview) return;
+    if (preview.dataset.id === option.id) return;
     preview.className = `character-card-preview preview-${direction} character-card-${option.id}`;
     preview.dataset.id = option.id;
     preview.innerHTML = imageMarkup(option);
@@ -282,4 +314,5 @@
   });
 
   render(false);
+  scheduleBackgroundPreload();
 })();

@@ -109,14 +109,15 @@ function animateMarker(now) {
     if (markerX >= maxX) {
       markerX = maxX;
       direction = -1;
-      cow.style.transform = "none";
+      cow.style.transform = `translate3d(${markerX}px, 0, 0)`;
     } else if (markerX <= 0) {
       markerX = 0;
       direction = 1;
-      cow.style.transform = "scaleX(-1)";
+      cow.style.transform = `translate3d(${markerX}px, 0, 0) scaleX(-1)`;
+    } else {
+      cow.style.transform = `translate3d(${markerX}px, 0, 0)${direction === 1 ? " scaleX(-1)" : ""}`;
     }
-    cow.style.left = `${markerX}px`;
-    cowGuide.style.left = `${markerX + cow.clientWidth / 2}px`;
+    cowGuide.style.transform = `translate3d(${markerX + cow.clientWidth / 2 - 56}px, 0, 0) translateX(-50%)`;
   }
   lastFrame = now;
   animationId = requestAnimationFrame(animateMarker);
@@ -173,9 +174,8 @@ function startGame() {
   running = true;
   renderScore();
   if (timerDisplay) timerDisplay.textContent = `剩餘時間：${secondsLeft} 秒`;
-  cow.style.left = "0px";
-  cow.style.transform = "scaleX(-1)";
-  cowGuide.style.left = `${cow.clientWidth / 2}px`;
+  cow.style.transform = "translate3d(0, 0, 0) scaleX(-1)";
+  cowGuide.style.transform = `translate3d(${cow.clientWidth / 2 - 56}px, 0, 0) translateX(-50%)`;
   animationId = requestAnimationFrame(animateMarker);
   timerId = setInterval(() => {
     secondsLeft -= 1;
@@ -265,8 +265,7 @@ function detectHands() {
         const target = mapHandToStage(palmX, palmY);
         handX = handX === null ? target.x : handX * 0.72 + target.x * 0.28;
         handY = handY === null ? target.y : handY * 0.72 + target.y * 0.28;
-        pestle.style.left = `${handX}px`;
-        pestle.style.top = `${handY}px`;
+        pestle.style.transform = `translate3d(${handX}px, ${handY - 350}px, 0) translate(-50%, -50%)`;
         status.textContent = "已偵測手掌，左右移動控制杵子";
       } else {
         handX = null;

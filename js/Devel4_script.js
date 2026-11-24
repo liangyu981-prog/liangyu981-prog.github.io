@@ -119,8 +119,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // 不限制在舞台範圍內；拖曳到畫布外的部分由舞台 overflow 裁切。
     bottle_x = x;
     bottle_y = y;
-    bottle.style.left = `${bottle_x}px`;
-    bottle.style.top = `${bottle_y}px`;
+    if (bottle.dataset.positionInitialized !== "true") {
+      bottle.style.left = `${CONFIG.bottle.startX}px`;
+      bottle.style.top = `${CONFIG.bottle.startY}px`;
+      bottle.dataset.positionInitialized = "true";
+    }
+    bottle.style.transform = `translate3d(${bottle_x - CONFIG.bottle.startX}px, ${bottle_y - CONFIG.bottle.startY}px, 0)`;
   };
 
   const persist_score = () => {
@@ -224,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const animate = (now) => {
       if (ended || !drop.isConnected) return;
       const y = start_y + ((now - started_at) / 1000) * CONFIG.drop.speed;
-      drop.style.top = `${y}px`;
+      drop.style.transform = `translate3d(0, ${y - start_y}px, 0)`;
       const current_gap = y + drop.offsetHeight - (bottle_y + catch_line);
       if (!has_passed_catch_line && previous_gap < 0 && current_gap >= 0) {
         has_passed_catch_line = true;

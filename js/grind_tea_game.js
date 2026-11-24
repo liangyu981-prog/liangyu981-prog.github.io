@@ -52,8 +52,7 @@
     const x = (event.clientX - bounds.left) / scaleX;
     const y = (event.clientY - bounds.top) / scaleY;
     playerX = x;
-    pestle.style.left = `${x}px`;
-    pestle.style.top = `${y}px`;
+    pestle.style.transform = `translate3d(${x}px, ${y - 350}px, 0) translate(-50%, -50%)`;
   };
 
   const animateMarker = (now) => {
@@ -69,14 +68,15 @@
       if (markerX >= maxX) {
         markerX = maxX;
         direction = -1;
-        cow.style.transform = "none";
+        cow.style.transform = `translate3d(${markerX}px, 0, 0)`;
       } else if (markerX <= 0) {
         markerX = 0;
         direction = 1;
-        cow.style.transform = "scaleX(-1)";
+        cow.style.transform = `translate3d(${markerX}px, 0, 0) scaleX(-1)`;
+      } else {
+        cow.style.transform = `translate3d(${markerX}px, 0, 0)${direction === 1 ? " scaleX(-1)" : ""}`;
       }
-      cow.style.left = `${markerX}px`;
-      cowGuide.style.left = `${markerX + cow.clientWidth / 2}px`;
+      cowGuide.style.transform = `translate3d(${markerX + cow.clientWidth / 2 - 56}px, 0, 0) translateX(-50%)`;
     }
     lastFrame = now;
     animationId = window.requestAnimationFrame(animateMarker);
@@ -131,9 +131,8 @@
     renderScore();
     if (timerDisplay) timerDisplay.textContent = `剩餘時間：${secondsLeft} 秒`;
     feedback.textContent = "準備開始";
-    cow.style.left = "0px";
-    cow.style.transform = "scaleX(-1)";
-    cowGuide.style.left = `${cow.clientWidth / 2}px`;
+    cow.style.transform = "translate3d(0, 0, 0) scaleX(-1)";
+    cowGuide.style.transform = `translate3d(${cow.clientWidth / 2 - 56}px, 0, 0) translateX(-50%)`;
     animationId = window.requestAnimationFrame(animateMarker);
     timerId = window.setInterval(() => {
       secondsLeft -= 1;
