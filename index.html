@@ -4,62 +4,177 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>卡啦卡啦煎起來！</title>
-    <link href="./css/index.css" rel="stylesheet" />
     <link href="./img/icon.png" rel="icon" />
+    <style>
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #e57b0b;
+      }
+
+      #game-frame {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+    </style>
   </head>
   <body>
-    <main class="game_stage">
-      <img
-        id="animation"
-        class="animation-frame is-active is-visible"
-        src="./img/door_animation.gif"
-        alt="動畫"
-      />
-      <img
-        id="animation-buffer"
-        class="animation-frame"
-        alt=""
-        aria-hidden="true"
-      />
-      <div id="parallax-scene" class="parallax-scene" hidden aria-hidden="true">
+    <iframe
+      id="game-frame"
+      title="卡啦卡啦煎起來！遊戲"
+      allow="autoplay; camera"
+    ></iframe>
+
+    <!-- 首頁原本的開場畫面放在模板中，iframe 內部導頁時由外層保留音訊播放器。 -->
+    <template id="opening-page">
+      <main class="game_stage">
         <img
-          class="parallax-layer"
-          data-src="./img/begin_zindex_0.gif"
-          data-depth="0.25"
-          alt=""
+          id="animation"
+          class="animation-frame is-active is-visible"
+          src="./img/door_animation.gif"
+          alt="動畫"
         />
         <img
-          class="parallax-layer"
-          data-src="./img/begin_zindex_1.gif"
-          data-depth="0.5"
+          id="animation-buffer"
+          class="animation-frame"
           alt=""
+          aria-hidden="true"
         />
-        <img
-          class="parallax-layer"
-          id="yummy"
-          data-src="./img/begin_zindex_2.gif"
-          data-depth="0.75"
-          alt=""
-        />
-        <img
-          class="parallax-layer"
-          data-src="./img/begin_zindex_3.gif"
-          data-depth="1"
-          alt=""
-        />
-      </div>
-      <button
-        id="begin-button"
-        class="begin-button"
-        type="button"
-        hidden
-        aria-label="循環"
-      >
-        <img src="./img/begin_button_default.png" alt="" />
-      </button>
-    </main>
-    <script src="./js/index.js"></script>
-    <script src="./js/scale.js"></script>
-    <script src="./js/global_bgm.js"></script>
+        <div id="parallax-scene" class="parallax-scene" hidden aria-hidden="true">
+          <img
+            class="parallax-layer"
+            data-src="./img/begin_zindex_0.gif"
+            data-depth="0.25"
+            alt=""
+          />
+          <img
+            class="parallax-layer"
+            data-src="./img/begin_zindex_1.gif"
+            data-depth="0.5"
+            alt=""
+          />
+          <img
+            class="parallax-layer"
+            id="yummy"
+            data-src="./img/begin_zindex_2.gif"
+            data-depth="0.75"
+            alt=""
+          />
+          <img
+            class="parallax-layer"
+            data-src="./img/begin_zindex_3.gif"
+            data-depth="1"
+            alt=""
+          />
+        </div>
+        <button
+          id="begin-button"
+          class="begin-button"
+          type="button"
+          hidden
+          aria-label="開始營業"
+        >
+          <img src="./img/begin_button_default.png" alt="" />
+        </button>
+      </main>
+      <script src="./js/index.js"></script>
+      <script src="./js/scale.js"></script>
+      <script src="./js/global_bgm.js"></script>
+    </template>
+
+    <script>
+      (() => {
+        const frame = document.getElementById("game-frame");
+        const openingPage = document.getElementById("opening-page");
+        const bgm = new Audio();
+        let bgmStarted = false;
+        let retryTimer = null;
+
+        bgm.preload = "none";
+        bgm.loop = true;
+        bgm.volume = 0.5;
+
+        const clearRetry = () => {
+          window.clearInterval(retryTimer);
+          retryTimer = null;
+        };
+
+        const keepBgmPlaying = () => {
+          if (!bgmStarted || !bgm.paused || retryTimer !== null) return;
+          retryTimer = window.setInterval(() => {
+            if (!bgmStarted) {
+              clearRetry();
+              return;
+            }
+            if (!bgm.paused) {
+              clearRetry();
+              return;
+            }
+            bgm.play().catch(() => {});
+          }, 1000);
+        };
+
+        window.startGlobalBgm = () => {
+          if (bgmStarted) return;
+          bgmStarted = true;
+          sessionStorage.setItem("globalBgmActive", "1");
+          sessionStorage.setItem("globalBgmPosition", "0");
+          bgm.preload = "auto";
+          bgm.src = "./audio/BGM.mp3";
+          bgm.play().catch(keepBgmPlaying);
+        };
+
+        window.stopGlobalBgm = () => {
+          bgmStarted = false;
+          sessionStorage.removeItem("globalBgmActive");
+          sessionStorage.removeItem("globalBgmPosition");
+          clearRetry();
+          bgm.pause();
+          bgm.currentTime = 0;
+        };
+
+        bgm.addEventListener("playing", clearRetry);
+        bgm.addEventListener("pause", () => {
+          if (bgmStarted) keepBgmPlaying();
+        });
+        bgm.addEventListener("timeupdate", () => {
+          if (bgmStarted) {
+            sessionStorage.setItem("globalBgmPosition", String(bgm.currentTime));
+          }
+        });
+        window.addEventListener("focus", keepBgmPlaying);
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) keepBgmPlaying();
+        });
+
+        frame.addEventListener("load", () => {
+          try {
+            if (frame.contentDocument?.title) {
+              document.title = frame.contentDocument.title;
+            }
+          } catch {
+            // Keep the shell title if the embedded document is unavailable.
+          }
+        });
+
+        const openingMarkup = openingPage.innerHTML;
+        frame.srcdoc = `<!doctype html>
+          <html lang="zh-Hant">
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <title>卡啦卡啦煎起來！</title>
+              <link href="./css/index.css" rel="stylesheet" />
+              <link href="./img/icon.png" rel="icon" />
+            </head>
+            <body>${openingMarkup}</body>
+          </html>`;
+      })();
+    </script>
   </body>
 </html>

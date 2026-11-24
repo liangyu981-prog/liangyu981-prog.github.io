@@ -4,8 +4,24 @@
   const is_embedded = window.self !== window.top;
   const is_feedback_page = location.pathname.endsWith("/0_8_1.html");
 
-  // 結果頁會先以 iframe 預載；背景音樂只由最上層頁面管理。
-  if (is_embedded) return;
+  // 網站外層頁面持有唯一的 BGM 播放器，遊戲 iframe 換頁時不會中斷音訊。
+  if (is_embedded) {
+    const begin_button = document.getElementById("begin-button");
+    begin_button?.addEventListener("click", () => {
+      sessionStorage.setItem(active_key, "1");
+      sessionStorage.setItem(position_key, "0");
+      if (typeof window.parent.startGlobalBgm === "function") {
+        window.parent.startGlobalBgm();
+      }
+    });
+    window.addEventListener("global-bgm-stop", () => {
+      if (typeof window.parent.stopGlobalBgm === "function") {
+        window.parent.stopGlobalBgm();
+      }
+    });
+    return;
+  }
+
   if (is_feedback_page) {
     sessionStorage.removeItem(active_key);
     sessionStorage.removeItem(position_key);

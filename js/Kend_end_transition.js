@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.setTimeout(async () => {
     const canShowPreloadedPage = await feedbackPage.ready;
     if (!canShowPreloadedPage) {
+      window.dispatchEvent(new Event("global-bgm-stop"));
       window.location.href = "./0_8_1.html";
       return;
     }
