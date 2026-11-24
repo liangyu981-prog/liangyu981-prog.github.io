@@ -100,16 +100,18 @@ body {
   bottom: 14%;
   padding: 10px 16px;
   color: #b70600;
-  font-size: clamp(1px, 5vw, 70px);
+  font-size: clamp(70px, 6vw, 90px);
   font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
   font-family: iti;
-
+  opacity: 0;
+  transform-origin: center;
+}
+.make-link.is-entering {
   animation:
     make-link-fade-in 1s ease-in-out both,
     make-link-pulse 900ms ease-in-out infinite alternate;
-  transform-origin: center;
 }
 
 .menu-checkbox {
@@ -197,6 +199,7 @@ html {
 }
 @media (prefers-reduced-motion: reduce) {
   .make-link {
+    opacity: 1;
     animation: none;
   }
 }

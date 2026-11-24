@@ -14,6 +14,13 @@ let transitionRequest = 0;
 let transitionTimer;
 let transitionRunning = false;
 
+const makeLink = document.querySelector(".make-link");
+if (makeLink) {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => makeLink.classList.add("is-entering"));
+  });
+}
+
 document.querySelectorAll(".menu-checkbox").forEach((checkbox) => {
   const image = checkbox.querySelector("img");
   checkbox.addEventListener("click", () => {

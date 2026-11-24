@@ -99,9 +99,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let drawingTimeElapsed = false;
   let hasClosedPath = false;
   let drawingTimer;
-  let promptTimer;
   let guideTimer;
   let guideFlashInterval;
+  instruction.textContent = "按下左鍵畫下第一刀吧！";
 
   function getTargetRadius(angle) {
     const position =
@@ -185,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!hasStarted) {
       hasStarted = true;
+      instruction.textContent = "繼續維持在提示線上";
       // 圓形提示在開始作畫 1.5 秒後閃爍三次，再於 3 秒時消失。
       guideTimer = window.setTimeout(() => {
         let flashCount = 0;
@@ -198,14 +199,15 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }, 250);
       }, 1500);
-      // 至少作畫五秒；時間到收起提示，並檢查筆跡是否已經首尾相連。
+      // 四秒後提示玩家連回起點，並檢查筆跡是否已經首尾相連。
       drawingTimer = window.setTimeout(() => {
         drawingTimeElapsed = true;
+        instruction.textContent = "和起點相連結束切切過程吧";
         if (hasClosedPath) finishDrawing();
-      }, 100);
+      }, 4000);
       promptTimer = window.setTimeout(
         () => instruction.classList.add("is_hidden"),
-        8000,
+        9000,
       );
     }
   }

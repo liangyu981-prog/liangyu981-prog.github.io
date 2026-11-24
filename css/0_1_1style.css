@@ -109,7 +109,7 @@ body {
   bottom: 12%;
   padding: 10px 16px;
   color: #b70600;
-  font-size: clamp(1px, 5vw, 70px);
+  font-size: clamp(70px, 6vw, 90px);
   font-weight: 700;
 
   text-decoration: none;

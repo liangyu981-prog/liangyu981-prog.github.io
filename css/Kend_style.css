@@ -105,6 +105,7 @@ html.preload-transition .feedback_decoration {
   margin-top: 5px;
   padding: 10px 42px;
   font-size: 28px;
+  height: 70px;
 }
 .menu_camera_modal .name_form {
   width: min(620px, 90%);
@@ -115,6 +116,7 @@ html.preload-transition .feedback_decoration {
   inset: 0;
   background: #ffc700;
 }
+
 /* Change this image URL to replace the editable popup artwork. */
 .camera_panel {
   --popup-art: url("../img/KALAKALA_bg.gif");
@@ -143,16 +145,33 @@ html.preload-transition .feedback_decoration {
   }
 }
 .camera_panel h1 {
+  position: relative;
   height: 10vh;
   width: 45vw;
   padding: 4px;
-  margin: 10px 0 24px;
+  padding-top: 20px;
   color: #b70600;
   font-size: 48px;
   text-align: center;
   background-color: #ffffff;
-  border: #b70600 5px dashed;
 }
+.camera_panel h1::before,
+.camera_panel h1::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border: 14px dotted;
+  pointer-events: none;
+}
+.camera_panel h1::before {
+  border-color: #ffc700;
+  transform: translate(-3px, 3px);
+}
+.camera_panel h1::after {
+  border-color: #b70600;
+  transform: translate(3px, 3px);
+}
+
 .camera_frame {
   position: relative;
   width: 700px;
@@ -206,9 +225,8 @@ html.preload-transition .feedback_decoration {
   inset: auto 14px 12px;
   margin: 0;
   color: white;
-  font-size: 25px;
+  font-size: 30px;
   text-align: center;
-  text-shadow: 0 1px 5px #000;
 }
 .shutter_button,
 .name_form button {
@@ -233,11 +251,11 @@ html.preload-transition .feedback_decoration {
 }
 .name_form {
   position: absolute;
-  bottom: 20%;
   z-index: 4;
-  inset: auto 0 42px;
+  inset: auto 0 200px;
   width: 620px;
   margin: auto;
+  transform: translateY(-100px);
   padding: 24px 30px;
   display: flex;
   flex-wrap: wrap;
@@ -253,8 +271,8 @@ html.preload-transition .feedback_decoration {
 }
 .name_form label {
   flex-basis: 100%;
-  color: #52331e;
-  font-size: 25px;
+  color: #b70600;
+  font-size: 30px;
   font-weight: 700;
   text-align: center;
 }
@@ -288,6 +306,8 @@ html.preload-transition .feedback_decoration {
 }
 .menu_camera_modal .shutter_button {
   background-image: url("../img/cam_button_default.png");
+  width: 180px;
+  height: 90px;
 }
 .menu_camera_modal .shutter_button:active {
   background-image: url("../img/cam_button_active.png");
@@ -479,4 +499,11 @@ body.feedback-page {
   .feedback_stage > .feedback_photo {
     transition: none;
   }
+}
+#playerName {
+  border: 2px solid #b84100;
+}
+#playerName:focus {
+  border-color: #8f3300;
+  outline-offset: 2px;
 }

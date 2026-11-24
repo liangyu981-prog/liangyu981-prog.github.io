@@ -246,8 +246,24 @@ body.level4_legacy_page {
   transition: opacity 0.08s linear;
 }
 
-.instruction.is_hidden {
-  opacity: 0;
+.instruction {
+  position: absolute;
+  z-index: 3;
+  top: 24px;
+  left: 50%;
+  width: max-content;
+  max-width: 90%;
+  padding: 12px 28px;
+  transform: translateX(-50%);
+  color: #b84100;
+  font-family: "iti";
+  font-size: 56px;
+  font-weight: 800;
+  text-align: center;
+  background: #fff8df;
+  border: 6px solid #b70600;
+  border-radius: 12px;
+  pointer-events: none;
 }
 
 .result {

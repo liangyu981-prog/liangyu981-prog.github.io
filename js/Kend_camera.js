@@ -91,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       video.srcObject = cameraStream;
       await video.play();
+      shutter.disabled = false;
       status.textContent = "正在載入臉部偵測…";
       await loadDetectors();
     } catch (error) {
@@ -154,7 +155,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function detectionLoop() {
-    if (!cameraModeActive || !faceDetector || video.hidden || !video.srcObject || capturedPhoto)
+    if (
+      !cameraModeActive ||
+      !faceDetector ||
+      video.hidden ||
+      !video.srcObject ||
+      capturedPhoto
+    )
       return;
 
     const now = performance.now();
@@ -188,8 +195,10 @@ document.addEventListener("DOMContentLoaded", () => {
       centeredFrames = 0;
       faceIsAligned = false;
       guide.classList.remove("is_aligned");
-      status.textContent = "臉呢？";
-      shutter.disabled = Boolean(gestureRecognizer);
+      if (!captureInProgress) {
+        status.textContent = "萬聖節cos無臉男是老梗了呢";
+        shutter.disabled = false;
+      }
       return;
     }
 
@@ -226,20 +235,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const ready = centeredFrames >= 3;
     faceIsAligned = ready;
     guide.classList.toggle("is_aligned", ready);
-    shutter.disabled = gestureRecognizer ? !ready : false;
 
-    if (victoryFrames >= 3) {
-      status.textContent = ready
-        ? "偵測到比耶，三秒後自動拍照！"
-        : "偵測到比耶，請先把臉對準圓框";
-    } else {
-      status.textContent = ready
-        ? "已對準，請按拍照鍵拍下照片"
-        : !faceIsLargeEnough
-          ? "請靠近鏡頭，讓臉大一點"
-          : !faceFitsGuide
-            ? "請稍微退後，讓整張臉留在圓框內"
-            : "請把臉移到圓框中央";
+    if (!captureInProgress) {
+      shutter.disabled = false;
+      if (ready) {
+        status.textContent = "按下拍照鍵拍照吧！";
+      } else {
+        status.textContent = "再不看鏡頭拍照，長大看到身分證會後悔的！";
+      }
     }
   }
 
@@ -252,12 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     victoryFrames = isVictory ? victoryFrames + 1 : 0;
 
-    if (
-      victoryFrames >= 3 &&
-      faceIsAligned &&
-      !autoCaptureStarted &&
-      !shutter.disabled
-    ) {
+    if (victoryFrames >= 3 && !autoCaptureStarted && !shutter.disabled) {
       autoCaptureStarted = true;
       shutter.click();
     }
@@ -268,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
     captureInProgress = true;
     shutter.disabled = true;
     window.dispatchEvent(new Event("character-name-entry"));
-    status.textContent = "準備拍照…";
+    status.textContent = "請看鏡頭";
     countdown.hidden = false;
     for (let number = 3; number > 0; number -= 1) {
       countdown.textContent = String(number);

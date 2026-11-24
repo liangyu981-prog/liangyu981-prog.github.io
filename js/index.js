@@ -7,7 +7,8 @@ beginButtonAudio.preload = "auto";
 const menuAudio = new Audio("./audio/menu.mp3");
 menuAudio.preload = "auto";
 const doorOpenAnimation = "./img/door_open.gif";
-const doorOpenDuration = 8790; // Total duration of one door_open.gif cycle at 0.9x speed.
+const doorOpenDuration = 7720;
+const doorOpenFinalFrameStart = 7720;
 const doorAnimation = "./img/door.gif";
 const doorAnimationDuration = 1960;
 const openingAnimation = "./img/door_animation.gif";
@@ -17,9 +18,7 @@ const buttonPressDuration = 200;
 const buttonBounceDuration = 450;
 const buttonFeedbackDuration = buttonPressDuration + buttonBounceDuration;
 const parallaxScene = document.querySelector("#parallax-scene");
-const parallaxLayers = Array.from(
-  document.querySelectorAll(".parallax-layer"),
-);
+const parallaxLayers = Array.from(document.querySelectorAll(".parallax-layer"));
 const gameStage = document.querySelector(".game_stage");
 let openingAnimationActive = true;
 let parallaxIdleTimer;
@@ -64,6 +63,36 @@ function showAnimation(source, onShown = () => {}, onError = () => {}) {
     onError();
   };
   preload.src = source;
+}
+
+function playAnimationOnce(image, freezeAt) {
+  const frame = document.createElement("canvas");
+  frame.className = "animation-frame";
+  frame.setAttribute("aria-hidden", "true");
+  frame.width = image.naturalWidth;
+  frame.height = image.naturalHeight;
+  const context = frame.getContext("2d");
+  if (!context) {
+    console.error("Could not create a canvas context for the door animation.");
+    return;
+  }
+  gameStage.append(frame);
+
+  let frameRequest;
+  const drawFrame = () => {
+    context.drawImage(image, 0, 0, frame.width, frame.height);
+    frameRequest = requestAnimationFrame(drawFrame);
+  };
+  drawFrame();
+
+  window.setTimeout(() => {
+    cancelAnimationFrame(frameRequest);
+    requestAnimationFrame(() => {
+      context.drawImage(image, 0, 0, frame.width, frame.height);
+      image.classList.remove("is-active");
+      frame.classList.add("is-active");
+    });
+  }, freezeAt);
 }
 
 function showBeginButton() {
@@ -244,6 +273,7 @@ beginButton.addEventListener("click", () => {
   showAnimation(
     doorOpenAnimation,
     () => {
+      playAnimationOnce(animation, doorOpenFinalFrameStart + 20);
       setTimeout(
         hideBeginButton,
         Math.max(0, buttonFeedbackDuration - (performance.now() - pressedAt)),
