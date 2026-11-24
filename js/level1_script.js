@@ -2,6 +2,50 @@
 document.addEventListener("DOMContentLoaded", () => {
   const startBtn = document.getElementById("startBtn");
   const nextBtn = document.getElementById("nextBtn");
+  const gameIntroButton = document.getElementById("gameIntroButton");
+  const gameIntroOverlay = document.getElementById("gameIntroOverlay");
+  const gameIntroConfirm = document.getElementById("gameIntroConfirm");
+
+  if (
+    gameIntroButton &&
+    gameIntroOverlay &&
+    gameIntroConfirm
+  ) {
+    const closeGameIntro = () => {
+      gameIntroOverlay.hidden = true;
+      gameIntroButton.setAttribute("aria-expanded", "false");
+      gameIntroButton.focus();
+    };
+
+    gameIntroButton.setAttribute("aria-expanded", "false");
+    gameIntroButton.addEventListener("click", () => {
+      gameIntroOverlay.hidden = false;
+      gameIntroButton.setAttribute("aria-expanded", "true");
+    });
+    gameIntroConfirm.addEventListener("click", closeGameIntro);
+    gameIntroOverlay.addEventListener("click", (event) => {
+      if (event.target === gameIntroOverlay) closeGameIntro();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !gameIntroOverlay.hidden) {
+        closeGameIntro();
+      }
+    });
+
+    [gameIntroButton, gameIntroConfirm].forEach((button) => {
+      button.addEventListener("pointerdown", () => {
+        button.classList.add("is-active");
+      });
+      ["pointerup", "pointercancel", "pointerleave", "blur"].forEach(
+        (eventName) => {
+          button.addEventListener(eventName, () => {
+            button.classList.remove("is-active");
+          });
+        },
+      );
+    });
+  }
+
   const startButtonClock = new Audio("./audio/clock.mp3");
   const startButtonRing = new Audio("./audio/Gtimer_begin_ring.mp3");
   startButtonClock.preload = "auto";
