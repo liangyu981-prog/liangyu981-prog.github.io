@@ -12,7 +12,7 @@
       <img
         id="animation"
         class="animation-frame is-active is-visible"
-        src="./img/begin_animation.gif"
+        src="./img/door_animation.gif"
         alt="動畫"
       />
       <img
@@ -21,6 +21,33 @@
         alt=""
         aria-hidden="true"
       />
+      <div id="parallax-scene" class="parallax-scene" hidden aria-hidden="true">
+        <img
+          class="parallax-layer"
+          data-src="./img/begin_zindex_0.gif"
+          data-depth="0.25"
+          alt=""
+        />
+        <img
+          class="parallax-layer"
+          data-src="./img/begin_zindex_1.gif"
+          data-depth="0.5"
+          alt=""
+        />
+        <img
+          class="parallax-layer"
+          id="yummy"
+          data-src="./img/begin_zindex_2.gif"
+          data-depth="0.75"
+          alt=""
+        />
+        <img
+          class="parallax-layer"
+          data-src="./img/begin_zindex_3.gif"
+          data-depth="1"
+          alt=""
+        />
+      </div>
       <button
         id="begin-button"
         class="begin-button"
