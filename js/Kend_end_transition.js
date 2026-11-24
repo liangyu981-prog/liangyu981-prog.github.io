@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    window.dispatchEvent(new Event("global-bgm-stop"));
     feedbackPage.frame.inert = false;
     feedbackPage.frame.setAttribute("aria-hidden", "false");
     feedbackPage.frame.classList.add("is_active");
