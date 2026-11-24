@@ -7,6 +7,7 @@
     <link href="./css/Kend_style.css" rel="stylesheet" />
     <link href="./img/icon.png" rel="icon" />
     <link href="./css/0_1_1style.css" rel="stylesheet" />
+    <link href="./css/character_selector.css" rel="stylesheet" />
   </head>
   <body>
     <main class="game_stage">
@@ -44,26 +45,50 @@
         <div class="modal_backdrop"></div>
         <div class="camera_panel">
           <h1 id="modalTitle">▼一位蛋餅大師的誕生...▼</h1>
-          <div class="camera_frame">
-            <video id="cameraVideo" autoplay playsinline muted></video>
-            <canvas id="photoCanvas" hidden></canvas>
-            <div class="face_guide" aria-hidden="true"></div>
+          <div class="selector-stage" id="selectorStage">
             <div
-              class="countdown"
-              id="countdown"
-              aria-live="assertive"
-              hidden
+              class="character-card-preview preview-previous"
+              id="previewPrev"
+              aria-hidden="true"
             ></div>
-            <p class="camera_status" id="cameraStatus">正在啟動鏡頭…</p>
+            <button
+              class="turn-button turn-button-left selector-arrow"
+              id="selectorPrev"
+              type="button"
+              aria-label="上一張角色卡"
+            >
+              <img src="./img/turn_button_default.png" alt="" />
+            </button>
+            <div class="carousel-window" id="carouselWindow">
+              <div class="character-card" id="characterCard" role="img" aria-label="目前角色"></div>
+              <div class="camera_frame" id="cameraFrame" hidden>
+                <video id="cameraVideo" autoplay playsinline muted></video>
+                <canvas id="photoCanvas" hidden></canvas>
+                <div class="face_guide" aria-hidden="true"></div>
+                <div
+                  class="countdown"
+                  id="countdown"
+                  aria-live="assertive"
+                  hidden
+                ></div>
+                <p class="camera_status" id="cameraStatus">正在啟動鏡頭…</p>
+              </div>
+            </div>
+            <button
+              class="turn-button turn-button-right selector-arrow"
+              id="selectorNext"
+              type="button"
+              aria-label="下一張角色卡"
+            >
+              <img src="./img/turn_button_default.png" alt="" />
+            </button>
+            <div
+              class="character-card-preview preview-next"
+              id="previewNext"
+              aria-hidden="true"
+            ></div>
           </div>
-          <button
-            class="shutter_button"
-            id="shutterButton"
-            type="button"
-            disabled
-          >
-            拍照
-          </button>
+          <button class="shutter_button" id="shutterButton" type="button" disabled>拍照</button>
           <form class="name_form" id="nameForm" hidden>
             <label for="playerName">請登記你的早餐店商業行號</label>
             <input
@@ -82,6 +107,7 @@
     </main>
     <script src="./js/scale.js"></script>
     <script src="./js/0_1_1.js"></script>
+    <script src="./js/character_selector.js"></script>
     <script type="module" src="./js/Kend_camera.js"></script>
     <script src="./js/global_bgm.js"></script>
   </body>

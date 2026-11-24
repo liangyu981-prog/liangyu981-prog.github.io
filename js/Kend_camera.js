@@ -41,17 +41,36 @@ document.addEventListener("DOMContentLoaded", () => {
   let autoCaptureStarted = false;
   let captureInProgress = false;
   let capturedPhoto = false;
+  let cameraModeActive = false;
 
   document.querySelectorAll(".make-link").forEach((makeLink) => {
     makeLink.addEventListener("click", (event) => {
       event.preventDefault();
       localStorage.setItem("cameraReturnHref", makeLink.href);
-      openCamera();
+      modal.hidden = false;
+      modal.setAttribute("aria-hidden", "false");
     });
+  });
+  window.addEventListener("start-selected-camera", openCamera);
+  window.addEventListener("start-character-name-entry", () => {
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    window.dispatchEvent(new Event("character-name-entry"));
+    nameForm.hidden = false;
+    shutter.disabled = true;
+    nameInput.focus();
+  });
+  window.addEventListener("pause-selected-camera", () => {
+    cameraModeActive = false;
+    cancelAnimationFrame(detectionFrame);
   });
 
   async function openCamera() {
-    if (cameraStream || modal.hidden === false) return;
+    cameraModeActive = true;
+    if (cameraStream) {
+      detectionLoop();
+      return;
+    }
     modal.hidden = false;
     modal.setAttribute("aria-hidden", "false");
     shutter.disabled = true;
@@ -135,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function detectionLoop() {
-    if (!faceDetector || video.hidden || !video.srcObject || capturedPhoto)
+    if (!cameraModeActive || !faceDetector || video.hidden || !video.srcObject || capturedPhoto)
       return;
 
     const now = performance.now();
@@ -248,6 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (shutter.disabled || !video.videoWidth || captureInProgress) return;
     captureInProgress = true;
     shutter.disabled = true;
+    window.dispatchEvent(new Event("character-name-entry"));
     status.textContent = "準備拍照…";
     countdown.hidden = false;
     for (let number = 3; number > 0; number -= 1) {
@@ -336,8 +356,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    const selectedCharacter = sessionStorage.getItem("selectedCharacter");
+    const isCharacterMode = /^play[1-4]$/.test(selectedCharacter || "");
     localStorage.setItem("playerName", playerName);
-    localStorage.setItem("playerPhoto", canvas.toDataURL("image/jpeg", 0.88));
+    if (!isCharacterMode) {
+      localStorage.setItem("playerPhoto", canvas.toDataURL("image/jpeg", 0.88));
+      sessionStorage.setItem("selectedCharacter", "camera");
+    }
     const nextPage = localStorage.getItem("cameraReturnHref") || "./0_8_1.html";
     localStorage.removeItem("cameraReturnHref");
 

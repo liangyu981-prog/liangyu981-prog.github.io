@@ -1,6 +1,6 @@
 const menuArt = document.querySelector(".menu-art");
 const transitionImage = document.querySelector(".menu-transition");
-const turnButtons = document.querySelectorAll(".turn-button");
+const turnButtons = document.querySelectorAll(".menu-art > .turn-button");
 const turnButtonDefault = "./img/turn_button_default.png";
 const turnButtonActive = "./img/turn_button_active.png";
 // 兩個翻頁按鈕共用同一個翻頁音效

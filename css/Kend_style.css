@@ -47,6 +47,7 @@ html.preload-transition .feedback_score,
 html.preload-transition .feedback_pic,
 html.preload-transition .feedback_body,
 html.preload-transition .feedback_photo,
+html.preload-transition .feedback_character,
 html.preload-transition .feedback_hat,
 html.preload-transition .feedback_decoration {
   animation-play-state: paused !important;
@@ -370,6 +371,18 @@ body.feedback-page {
   transform-origin: center;
   animation: feedback-fade-in 650ms ease-out 1500ms forwards;
   transition: transform 180ms ease-out;
+}
+.feedback_stage > .feedback_character {
+  position: absolute;
+  z-index: 3;
+  inset: auto;
+  left: 800px;
+  top: 195px;
+  width: 190px;
+  height: 240px;
+  object-fit: contain;
+  opacity: 0;
+  animation: feedback-fade-in 650ms ease-out 1500ms forwards;
 }
 .feedback_stage > .feedback_photo:hover {
   transform: scale(1.06);

@@ -2,11 +2,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const photoCanvas = document.getElementById("feedbackPhoto");
   const nameElement = document.getElementById("feedbackName");
   const scoreElement = document.getElementById("feedbackScore");
+  const characterElement = document.getElementById("feedbackCharacter");
+  const selectedCharacter = sessionStorage.getItem("selectedCharacter");
+  const characterImages = {
+    play1: "./img/play1.gif",
+    play2: "./img/play2.gif",
+    play3: "./img/play1.gif", // 暫代角色圖：正式素材替換位置
+    play4: "./img/play2.gif", // 暫代角色圖：正式素材替換位置
+  };
   const photoData = localStorage.getItem("playerPhoto");
 
   nameElement.textContent = localStorage.getItem("playerName") || "煎蛋高手";
   const totalScore = Number(localStorage.getItem("totalScore") || 0);
   scoreElement.textContent = `${Number.isFinite(totalScore) ? totalScore : 0} `;
+
+  if (characterImages[selectedCharacter]) {
+    characterElement.src = characterImages[selectedCharacter];
+    characterElement.hidden = false;
+    photoCanvas.hidden = true;
+    drawCrossedArms([224, 169, 137]);
+    signalFeedbackReady();
+    return;
+  }
 
   if (!photoData) {
     drawCrossedArms([224, 169, 137]);
