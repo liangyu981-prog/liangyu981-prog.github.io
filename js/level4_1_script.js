@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     endingPopup.style.backgroundImage = `url("${ending_assets.background}")`;
     endingPopupOverlay.src = ending_assets.overlay;
+    endingPopupOverlay.classList.toggle("is-bad-ending", result_type === "bad");
     console.log(
       `[切雞肉結尾] 準確度 ${accuracy}%，顯示 ${ending_assets.background}`,
     );

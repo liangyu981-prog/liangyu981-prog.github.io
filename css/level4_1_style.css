@@ -178,6 +178,11 @@ body.level4_legacy_page {
   pointer-events: none;
 }
 
+.level4_legacy_page .popwidow5_overlay.is-bad-ending {
+  transform: translateX(90px);
+  transform: translateY(70px);
+}
+
 .level4_legacy_page .modal5_container .next_button {
   position: absolute;
   left: 1221px;

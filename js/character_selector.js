@@ -144,30 +144,12 @@
     incomingPreview.style.opacity = "1";
     if (newIsCamera) window.dispatchEvent(new Event("start-selected-camera"));
 
-    // Let the browser paint the starting positions before moving every card container.
-    requestAnimationFrame(() => {
-      moveContainerTo(carouselWindow, sideCenterX, previewWidth, previewHeight);
-      moveContainerTo(incomingPreview, centerX, windowWidth, windowHeight);
-
-      const outgoingRect = outgoingPreview.getBoundingClientRect();
-      const exitCenterX = movingLeft
-        ? stageRect.left - outgoingRect.width
-        : stageRect.right + outgoingRect.width;
-      moveContainerTo(
-        outgoingPreview,
-        exitCenterX,
-        outgoingRect.width,
-        outgoingRect.height,
-      );
-      outgoingPreview.style.opacity = "0";
-    });
-
     let finished = false;
     const finish = () => {
       if (finished) return;
       finished = true;
       clearTimeout(transitionTimer);
-      carouselWindow.removeEventListener("transitionend", onTransitionEnd);
+      incomingPreview.removeEventListener("transitionend", onTransitionEnd);
       const oldWindow = carouselWindow;
       const promotedPreview = incomingPreview;
       const remainingPreview = outgoingPreview;
@@ -197,6 +179,7 @@
       carouselWindow = promotedPreview;
       previewPrev = nextPreviewPrev;
       previewNext = nextPreviewNext;
+
       render(false);
       transitioning = false;
       void carouselWindow.offsetWidth;
@@ -210,12 +193,37 @@
       });
     };
     const onTransitionEnd = (event) => {
-      if (event.target !== carouselWindow || event.propertyName !== "transform")
+      if (event.target !== incomingPreview || event.propertyName !== "transform")
         return;
       finish();
     };
-    carouselWindow.addEventListener("transitionend", onTransitionEnd);
-    transitionTimer = window.setTimeout(finish, slideDurationMs() + 100);
+    incomingPreview.addEventListener("transitionend", onTransitionEnd);
+    // Wait for a full paint at the starting positions before applying the targets.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (finished) return;
+        moveContainerTo(carouselWindow, sideCenterX, previewWidth, previewHeight);
+        moveContainerTo(incomingPreview, centerX, windowWidth, windowHeight);
+
+        const outgoingRect = outgoingPreview.getBoundingClientRect();
+        const exitCenterX = movingLeft
+          ? stageRect.left - outgoingRect.width
+          : stageRect.right + outgoingRect.width;
+        moveContainerTo(
+          outgoingPreview,
+          exitCenterX,
+          outgoingRect.width,
+          outgoingRect.height,
+        );
+        outgoingPreview.style.opacity = "0";
+        // transitionend is the normal completion signal. Keep only a generous
+        // watchdog for browsers that omit it; it must never cut off the slide.
+        transitionTimer = window.setTimeout(
+          finish,
+          Math.max(slideDurationMs() * 2 + 500, 1500),
+        );
+      });
+    });
   }
 
   document
