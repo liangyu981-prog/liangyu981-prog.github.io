@@ -23,9 +23,9 @@
 
   const options = [
     { id: "play1", image: "./img/play1.gif" },
-    { id: "play2", image: "./img/play2.gif" },
-    { id: "play3", image: "" },
-    { id: "play4", image: "" },
+    { id: "play2", image: "./img/play2.PNG" },
+    { id: "play3", image: "./img/play3.PNG" },
+    { id: "play4", image: "./img/play4.PNG" },
     { id: "camera", image: "" },
   ];
   const gameHref = location.pathname.endsWith("0_1_1.html")
@@ -104,8 +104,7 @@
       targetWidth / container.offsetWidth,
       targetHeight / container.offsetHeight,
     );
-    container.style.transform =
-      `translate3d(${targetCenterX - (rect.left + rect.width / 2)}px, 0, 0) scale3d(${scale}, ${scale}, 1)`;
+    container.style.transform = `translate3d(${targetCenterX - (rect.left + rect.width / 2)}px, 0, 0) scale3d(${scale}, ${scale}, 1)`;
   }
 
   function transitionTo(nextIndex, direction, arrow) {
@@ -141,15 +140,22 @@
     const windowHeight = carouselWindow.offsetHeight;
 
     incomingPreview.style.zIndex = "4";
-    incomingPreview.style.opacity = "1";
     if (newIsCamera) window.dispatchEvent(new Event("start-selected-camera"));
 
     let finished = false;
+    const transitionTargets = [
+      carouselWindow,
+      incomingPreview,
+      outgoingPreview,
+    ];
+    const movingContainers = new Set(transitionTargets);
     const finish = () => {
       if (finished) return;
       finished = true;
       clearTimeout(transitionTimer);
-      incomingPreview.removeEventListener("transitionend", onTransitionEnd);
+      transitionTargets.forEach((container) => {
+        container.removeEventListener("transitionend", onTransitionEnd);
+      });
       const oldWindow = carouselWindow;
       const promotedPreview = incomingPreview;
       const remainingPreview = outgoingPreview;
@@ -162,18 +168,15 @@
       containers.forEach((container) => {
         container.style.transition = "none";
         container.style.transform = "";
-        container.style.opacity = "";
         container.style.zIndex = "";
       });
 
       promotedPreview.innerHTML = "";
       promotedPreview.append(card, frame);
       oldWindow.id = movingLeft ? "previewPrev" : "previewNext";
-      oldWindow.className =
-        `character-card-preview ${movingLeft ? "preview-previous" : "preview-next"} character-card-${oldOption.id}`;
+      oldWindow.className = `character-card-preview ${movingLeft ? "preview-previous" : "preview-next"} character-card-${oldOption.id}`;
       remainingPreview.id = movingLeft ? "previewNext" : "previewPrev";
-      remainingPreview.className =
-        `character-card-preview ${movingLeft ? "preview-next" : "preview-previous"}`;
+      remainingPreview.className = `character-card-preview ${movingLeft ? "preview-next" : "preview-previous"}`;
       promotedPreview.id = "carouselWindow";
       promotedPreview.className = "carousel-window";
       carouselWindow = promotedPreview;
@@ -193,16 +196,23 @@
       });
     };
     const onTransitionEnd = (event) => {
-      if (event.target !== incomingPreview || event.propertyName !== "transform")
-        return;
-      finish();
+      if (event.propertyName !== "transform") return;
+      movingContainers.delete(event.target);
+      if (movingContainers.size === 0) finish();
     };
-    incomingPreview.addEventListener("transitionend", onTransitionEnd);
+    movingContainers.forEach((container) => {
+      container.addEventListener("transitionend", onTransitionEnd);
+    });
     // Wait for a full paint at the starting positions before applying the targets.
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (finished) return;
-        moveContainerTo(carouselWindow, sideCenterX, previewWidth, previewHeight);
+        moveContainerTo(
+          carouselWindow,
+          sideCenterX,
+          previewWidth,
+          previewHeight,
+        );
         moveContainerTo(incomingPreview, centerX, windowWidth, windowHeight);
 
         const outgoingRect = outgoingPreview.getBoundingClientRect();
@@ -215,7 +225,6 @@
           outgoingRect.width,
           outgoingRect.height,
         );
-        outgoingPreview.style.opacity = "0";
         // transitionend is the normal completion signal. Keep only a generous
         // watchdog for browsers that omit it; it must never cut off the slide.
         transitionTimer = window.setTimeout(

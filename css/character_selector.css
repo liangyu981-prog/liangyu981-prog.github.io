@@ -15,6 +15,7 @@
   z-index: 2;
   width: 500px;
   height: 500px;
+  aspect-ratio: 1 / 1;
   box-sizing: border-box;
   flex: 0 0 500px;
   overflow: hidden; /* 紅框輪播容器：裁切滑出框外的卡片 */
@@ -82,9 +83,6 @@
 .character-card-play1 {
   --card-bg: #ffc700;
 }
-.character-card-play1 .card-art {
-  transform: translateY(-20px);
-}
 .character-card-play2 {
   --card-bg: #ffc700;
 }
@@ -114,6 +112,7 @@
   top: 0;
   width: 500px;
   height: 500px;
+  aspect-ratio: 1 / 1; /* 閒置框與中央主卡同尺寸、同為正方形比例 */
   box-sizing: border-box;
   padding: 24px;
   display: grid;
@@ -123,13 +122,12 @@
   border-radius: 18px;
   background: #ffc700;
   opacity: 0.66;
-  transform: scale(0.5632);
+  transform: scale(0.5632); /* 還原原本左右閒置卡片的縮小排列 */
   transform-origin: center;
   backface-visibility: hidden;
-  transition:
-    transform var(--carousel-slide-duration) cubic-bezier(0.4, 0, 0.2, 1),
-    opacity var(--carousel-slide-duration) ease;
-  will-change: transform, opacity;
+  transition: transform var(--carousel-slide-duration)
+    cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 .character-card-preview.preview-previous {
   left: -55px;

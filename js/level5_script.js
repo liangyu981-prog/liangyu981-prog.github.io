@@ -6,6 +6,45 @@ document.addEventListener("DOMContentLoaded", () => {
   const frying_sound = new Audio("./audio/G_frying.mp3");
   frying_sound.preload = "auto";
 
+  const ending_popup = document.querySelector(".popwidow6");
+  const ending_popup_overlay = document.getElementById("level5EndingPopupOverlay");
+  if (ending_popup && ending_popup_overlay) {
+    const score_param = new URLSearchParams(window.location.search).get("score");
+    const query_score = score_param === null ? NaN : Number(score_param);
+    const session_score = Number(sessionStorage.getItem("level5EndingScore"));
+    const saved_level_score = Number(localStorage.getItem("level5Score"));
+    const valid_scores = [5, 10, 15];
+    const level_score = [query_score, session_score, saved_level_score].find((score) =>
+      valid_scores.includes(score),
+    );
+    // 色帶結算：上下橘色 5 分 bad、白色 10 分 normal、中央黃色 15 分 good。
+    const ending_assets_by_score = {
+      5: {
+        result: "bad",
+        background: "./img/5_end_popupwindow_bad.png",
+        overlay: "./img/small_bad_endpop.GIF",
+      },
+      10: {
+        result: "normal",
+        background: "./img/5_end_popupwindow_normal.png",
+        overlay: "./img/small_normal_endpop.GIF",
+      },
+      15: {
+        result: "good",
+        background: "./img/5_end_popupwindow_good.png",
+        overlay: "./img/small_good_endpop.GIF",
+      },
+    };
+    const ending_assets = ending_assets_by_score[level_score] ?? ending_assets_by_score[5];
+    ending_popup.classList.remove("is_bad", "is_normal", "is_good");
+    ending_popup.classList.add(`is_${ending_assets.result}`);
+    ending_popup.style.backgroundImage = `url("${ending_assets.background}")`;
+    ending_popup_overlay.src = ending_assets.overlay;
+    console.log(
+      `[Level 5 結尾] 本關 ${level_score} 分，底圖 ${ending_assets.background}，GIF ${ending_assets.overlay}`,
+    );
+  }
+
   function save_frying_sound_position() {
     if (frying_sound.paused) return;
     sessionStorage.setItem("level5FryingResume", "1");
@@ -23,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     start_button.addEventListener("click", (event) => {
       event.preventDefault();
       localStorage.setItem("level5Score", "0");
+      sessionStorage.removeItem("level5EndingScore");
       frying_sound.currentTime = 0;
       sessionStorage.setItem("level5FryingResume", "1");
       sessionStorage.setItem("level5FryingTime", "0");
@@ -111,8 +151,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const saved_total = Number(localStorage.getItem("totalScore") ?? "0");
     const current_total = Number.isFinite(saved_total) ? saved_total : 0;
     const new_total = current_total + earned_score;
-    const level_score = Number(localStorage.getItem("level5Score") ?? "0") + earned_score;
+    // 本關在此按鈕結算一次，結尾分數就是本次命中的色帶分數。
+    const level_score = earned_score;
     localStorage.setItem("level5Score", String(level_score));
+    sessionStorage.setItem("level5EndingScore", String(level_score));
     localStorage.setItem("totalScore", String(new_total));
     console.log(`[Level 5] 本關得分 ${level_score} 分（本次 +${earned_score}），累計總分 ${new_total} 分`);
 
@@ -136,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stop_frying_sound();
     }, 2000);
     setTimeout(() => {
-      window.location.href = "./0_6_2.html";
+      window.location.href = `./0_6_2.html?score=${level_score}`;
     }, 2000);
   });
 });

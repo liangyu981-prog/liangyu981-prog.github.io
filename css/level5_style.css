@@ -221,6 +221,7 @@ html {
   pointer-events: none;
 }
 
+/* 對應 catchEgg_line.gif 色帶：兩端橘色 5 分、中段白色 10 分、中央黃色 15 分。 */
 .score_zone_1 {
   width: var(--score-zone-1-width);
 }
@@ -348,6 +349,29 @@ html {
   background-size: contain;
   transform: scale(1);
   animation: popendBounceIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.popwidow6.is_bad {
+  background-image: url("./../img/5_end_popupwindow_bad.png");
+}
+
+.popwidow6.is_normal {
+  background-image: url("./../img/5_end_popupwindow_normal.png");
+}
+
+.popwidow6.is_good {
+  background-image: url("./../img/5_end_popupwindow_good.png");
+}
+
+.popwidow6_overlay {
+  position: absolute;
+  top: -50px;
+  left: 160px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .modal6_container .next_button {

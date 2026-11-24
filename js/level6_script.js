@@ -2,10 +2,46 @@ document.addEventListener("DOMContentLoaded", () => {
   const startButton = document.getElementById("startBtn");
   const nextButton = document.getElementById("nextBtn");
 
+  const endingPopup = document.querySelector(".popwidow7");
+  const endingPopupOverlay = document.getElementById("level6EndingPopupOverlay");
+  if (endingPopup && endingPopupOverlay) {
+    const scoreParam = new URLSearchParams(window.location.search).get("score");
+    const queryScore = scoreParam === null ? NaN : Number(scoreParam);
+    const sessionScore = Number(sessionStorage.getItem("level6EndingScore"));
+    const savedScore = Number(localStorage.getItem("level6Score"));
+    const validScores = [17, 10, 5, 0];
+    const earnedScore = [queryScore, sessionScore, savedScore].find((score) =>
+      validScores.includes(score),
+    );
+    const result = earnedScore === 17 ? "good" : earnedScore === 10 ? "normal" : "bad";
+    const endingAssets = {
+      bad: {
+        background: "./img/6_end_popupwindow_bad.png",
+        overlay: "./img/small_bad_endpop.GIF",
+      },
+      normal: {
+        background: "./img/6_end_popupwindow_normal.png",
+        overlay: "./img/small_normal_endpop.GIF",
+      },
+      good: {
+        background: "./img/6_end_popupwindow_good.png",
+        overlay: "./img/small_good_endpop.GIF",
+      },
+    }[result];
+    endingPopup.classList.remove("is_bad", "is_normal", "is_good");
+    endingPopup.classList.add(`is_${result}`);
+    endingPopup.style.backgroundImage = `url("${endingAssets.background}")`;
+    endingPopupOverlay.src = endingAssets.overlay;
+    console.log(
+      `[Level 6 結尾] 讀取本關 ${earnedScore} 分，顯示 ${result}：${endingAssets.background} + ${endingAssets.overlay}`,
+    );
+  }
+
   if (startButton) {
     startButton.addEventListener("click", (event) => {
       event.preventDefault();
       localStorage.setItem("level6Score", "0");
+      sessionStorage.removeItem("level6EndingScore");
       window.setTimeout(() => {
         window.location.href = "./0_7_1.html";
       }, 200);
@@ -55,7 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
         flash.hidden = true;
         stage.querySelector(".transition_decorations").classList.add("is_visible");
         window.setTimeout(() => {
-          window.location.href = "./0_7_3.html";
+          const scoreParam = new URLSearchParams(window.location.search).get("score");
+          window.location.href = scoreParam === null
+            ? "./0_7_3.html"
+            : `./0_7_3.html?score=${encodeURIComponent(scoreParam)}`;
         }, getDurationMs("--level6-fini-hold"));
       },
       { once: true },
@@ -221,11 +260,11 @@ document.addEventListener("DOMContentLoaded", () => {
     completedCount += 1;
     if (completedCount === Object.keys(itemSettings).length) {
       const elapsedSeconds = (performance.now() - assemblyStartedAt) / 1000;
-      // 門檻依序判斷：10 秒內 17 分、10–15 秒 10 分、15–20 秒 5 分，超過 20 秒 0 分。
+      // 10 秒內 17 分、10 至未滿 15 秒 10 分、15 至 20 秒 5 分、超過 20 秒 0 分。
       const earnedScore =
         elapsedSeconds <= 10
           ? 17
-          : elapsedSeconds <= 15
+          : elapsedSeconds < 15
             ? 10
             : elapsedSeconds <= 20
               ? 5
@@ -234,12 +273,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const currentTotal = Number.isFinite(savedTotal) ? savedTotal : 0;
       const newTotal = currentTotal + earnedScore;
       localStorage.setItem("level6Score", String(earnedScore));
+      sessionStorage.setItem("level6EndingScore", String(earnedScore));
       localStorage.setItem("totalScore", String(newTotal));
       console.log(
         `[Level 6] 本關得分 ${earnedScore} 分（組裝耗時 ${elapsedSeconds.toFixed(2)} 秒），累計總分 ${newTotal} 分`,
       );
       window.setTimeout(() => {
-        window.location.href = "./0_7_2.html";
+        window.location.href = `./0_7_2.html?score=${earnedScore}`;
       }, 1000);
     }
   });

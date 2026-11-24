@@ -9,6 +9,35 @@ document.addEventListener("DOMContentLoaded", () => {
   startButtonClock.load();
   startButtonRing.load();
 
+  const ending_popup = document.querySelector(".popend");
+  const ending_popup_overlay = document.getElementById("endingPopupOverlay");
+  if (ending_popup && ending_popup_overlay) {
+    const score_param = new URLSearchParams(window.location.search).get("score");
+    const query_score = Number(score_param);
+    const saved_level_score = Number(localStorage.getItem("level1Score") ?? "0");
+    const level_score =
+      score_param !== null && Number.isFinite(query_score)
+        ? query_score
+        : Number.isFinite(saved_level_score)
+          ? saved_level_score
+          : 0;
+    // 分數 18 同時出現在 normal 與 good 的指定範圍，依較高級距顯示 good。
+    const ending_result =
+      level_score >= 18
+        ? "good"
+        : level_score >= 15 && level_score <= 17
+          ? "normal"
+          : "bad";
+    const ending_gifs = {
+      bad: "./img/small_bad_endpop.GIF",
+      normal: "./img/small_normal_endpop.GIF",
+      good: "./img/small_good_endpop.GIF",
+    };
+    ending_popup.classList.add(`is_${ending_result}`);
+    ending_popup_overlay.src = ending_gifs[ending_result];
+    console.log(`[Level 1 結尾] 本關 ${level_score} 分，顯示 ${ending_result} 結尾`);
+  }
+
   if (startBtn) {
     startBtn.addEventListener("click", (e) => {
       // Prevent the default action so navigation can happen after the press feedback.
