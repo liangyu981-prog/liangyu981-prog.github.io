@@ -7,6 +7,8 @@
   let previewPrev = document.getElementById("previewPrev");
   let previewNext = document.getElementById("previewNext");
   const shutter = document.getElementById("shutterButton");
+  const nameForm = document.getElementById("nameForm");
+  const nameInput = document.getElementById("playerName");
   const title = document.getElementById("modalTitle");
   const arrows = [...document.querySelectorAll(".selector-arrow")];
   if (
@@ -17,7 +19,9 @@
     !carouselWindow ||
     !previewPrev ||
     !previewNext ||
-    !shutter
+    !shutter ||
+    !nameForm ||
+    !nameInput
   )
     return;
 
@@ -285,6 +289,11 @@
     sessionStorage.setItem("selectedCharacter", selected.id);
     localStorage.setItem("cameraReturnHref", gameHref);
     window.dispatchEvent(new Event("start-character-name-entry"));
+    // Keep character name entry independent from camera initialization.
+    modal.hidden = false;
+    modal.setAttribute("aria-hidden", "false");
+    nameForm.hidden = false;
+    nameInput.focus();
   });
 
   document.querySelectorAll(".make-link").forEach((link) =>

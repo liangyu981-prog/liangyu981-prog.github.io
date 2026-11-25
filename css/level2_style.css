@@ -374,6 +374,10 @@ body {
   height: 1080px;
   object-fit: contain; /* 確保透明 GIF 不變形 */
 }
+<<<<<<< Updated upstream
+=======
+/* 遊戲介紹按鈕的位置、尺寸與圖檔。 */
+>>>>>>> Stashed changes
 .game_intro_button {
   position: absolute;
   bottom: 100px;
@@ -394,7 +398,10 @@ body {
 }
 
 .game_intro_button:focus-visible,
+<<<<<<< Updated upstream
 .game_intro_close:focus-visible,
+=======
+>>>>>>> Stashed changes
 .game_intro_confirm:focus-visible {
   outline: 4px solid #b70600;
   outline-offset: 4px;
@@ -416,7 +423,11 @@ body {
   pointer-events: none !important;
 }
 
+<<<<<<< Updated upstream
 /* 視窗容器的座標與大小可在此微調；底圖為 img/1_game_intro.png。 */
+=======
+/* 視窗容器的座標與大小可在此微調；底圖為 img/2_game_intro.png.png。 */
+>>>>>>> Stashed changes
 .game_intro_dialog {
   position: absolute;
   top: 50%;
@@ -449,7 +460,11 @@ body {
   pointer-events: none;
 }
 
+<<<<<<< Updated upstream
 /* 遊戲示意圖 img/1_small_game_intro.png 的座標與尺寸可在此微調。 */
+=======
+/* 遊戲示意圖 img/2_small_game_intro.png.png 的座標與尺寸可在此微調。 */
+>>>>>>> Stashed changes
 .game_intro_demo {
   position: absolute;
   top: 180px;

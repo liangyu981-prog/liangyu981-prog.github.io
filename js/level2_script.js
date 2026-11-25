@@ -3,6 +3,33 @@ document.addEventListener("DOMContentLoaded", () => {
   const next_button = document.getElementById("nextBtn");
   const start_button = document.getElementById("startBtn");
   const stop_button = document.getElementById("stopBtn");
+  const game_intro_button = document.getElementById("gameIntroButton");
+  const game_intro_overlay = document.getElementById("gameIntroOverlay");
+  const game_intro_confirm = document.getElementById("gameIntroConfirm");
+
+  if (game_intro_button && game_intro_overlay && game_intro_confirm) {
+    const close_game_intro = () => {
+      game_intro_overlay.hidden = true;
+      game_intro_button.setAttribute("aria-expanded", "false");
+      game_intro_button.focus();
+    };
+
+    game_intro_button.setAttribute("aria-expanded", "false");
+    game_intro_button.addEventListener("click", () => {
+      game_intro_overlay.hidden = false;
+      game_intro_button.setAttribute("aria-expanded", "true");
+      game_intro_confirm.focus();
+    });
+    game_intro_confirm.addEventListener("click", close_game_intro);
+    game_intro_overlay.addEventListener("click", (event) => {
+      if (event.target === game_intro_overlay) close_game_intro();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !game_intro_overlay.hidden) {
+        close_game_intro();
+      }
+    });
+  }
 
   if (next_button) {
     next_button.addEventListener("click", (event) => {

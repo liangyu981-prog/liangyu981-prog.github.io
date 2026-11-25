@@ -471,7 +471,11 @@ html {
 .modal5_container .next_button {
   position: absolute;
   left: 1210px;
+<<<<<<< Updated upstream
   bottom: 2px;
+=======
+  bottom: 200px;
+>>>>>>> Stashed changes
   width: 180px;
   height: 80px;
   border: none;

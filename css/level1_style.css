@@ -201,8 +201,13 @@ html {
 .start_button {
   position: absolute;
   /* 按鈕在彈跳視窗內的位置 */
+<<<<<<< Updated upstream
   left: 1155px;
   bottom: 165px;
+=======
+  left: 1140px;
+  bottom: 160px;
+>>>>>>> Stashed changes
   width: 180px;
   height: 80px;
   border: none;
@@ -387,8 +392,13 @@ html {
 
 .next_button {
   position: absolute;
+<<<<<<< Updated upstream
   left: 1255px;
   bottom: 230px;
+=======
+  left: 1245px;
+  bottom: 225px;
+>>>>>>> Stashed changes
   width: 180px;
   height: 80px;
   border: none;
