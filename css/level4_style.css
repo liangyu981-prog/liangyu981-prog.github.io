@@ -463,6 +463,7 @@ html {
   left: 180px;
   width: 100%;
   height: 100%;
+    opacity: 70%;
   object-fit: contain;
   z-index: 1;
   pointer-events: none;

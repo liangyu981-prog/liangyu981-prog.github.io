@@ -45,7 +45,12 @@
           alt=""
           aria-hidden="true"
         />
-        <div id="parallax-scene" class="parallax-scene" hidden aria-hidden="true">
+        <div
+          id="parallax-scene"
+          class="parallax-scene"
+          hidden
+          aria-hidden="true"
+        >
           <img
             class="parallax-layer"
             data-src="./img/begin_zindex_0.gif"
@@ -144,7 +149,10 @@
         });
         bgm.addEventListener("timeupdate", () => {
           if (bgmStarted) {
-            sessionStorage.setItem("globalBgmPosition", String(bgm.currentTime));
+            sessionStorage.setItem(
+              "globalBgmPosition",
+              String(bgm.currentTime),
+            );
           }
         });
         window.addEventListener("focus", keepBgmPlaying);
@@ -163,6 +171,7 @@
         });
 
         const openingMarkup = openingPage.innerHTML;
+        const srcdocClosingBody = "</" + "body>";
         frame.srcdoc = `<!doctype html>
           <html lang="zh-Hant">
             <head>
@@ -172,7 +181,7 @@
               <link href="./css/index.css" rel="stylesheet" />
               <link href="./img/icon.png" rel="icon" />
             </head>
-            <body>${openingMarkup}</body>
+            <body>${openingMarkup}${srcdocClosingBody}
           </html>`;
       })();
     </script>

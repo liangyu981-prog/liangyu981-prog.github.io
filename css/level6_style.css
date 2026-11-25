@@ -231,6 +231,7 @@ html {
   object-fit: contain;
   z-index: 1;
   pointer-events: none;
+  opacity: 70%;
 }
 
 .modal7_container .next_button {

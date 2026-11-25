@@ -152,6 +152,7 @@ html.preload-transition .feedback_decoration {
   padding-top: 20px;
   color: #b70600;
   font-size: 48px;
+  letter-spacing: 5px;
   text-align: center;
   background-color: #ffffff;
 }
@@ -264,7 +265,7 @@ html.preload-transition .feedback_decoration {
   gap: 12px;
   border-radius: 2px;
   background: #ffffff;
-  border: 5px solid #b70600;
+  border: 7px double #b70600;
 }
 .name_form[hidden] {
   display: none;

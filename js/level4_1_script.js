@@ -99,8 +99,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let drawingTimeElapsed = false;
   let hasClosedPath = false;
   let drawingTimer;
+  let encouragementTimer;
   let guideTimer;
   let guideFlashInterval;
+  let guidePulseInterval;
   instruction.textContent = "按下左鍵畫下第一刀吧！";
 
   function getTargetRadius(angle) {
@@ -186,7 +188,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!hasStarted) {
       hasStarted = true;
       instruction.textContent = "繼續維持在提示線上";
-      // 圓形提示在開始作畫 1.5 秒後閃爍三次，再於 3 秒時消失。
+      encouragementTimer = window.setTimeout(() => {
+        instruction.textContent = "加油！繼續保持";
+      }, 5000);
+      // 提示線開始閃爍並在 3 秒時消失；消失後每半秒閃兩下。
       guideTimer = window.setTimeout(() => {
         let flashCount = 0;
         guideFlashInterval = window.setInterval(() => {
@@ -196,19 +201,27 @@ document.addEventListener("DOMContentLoaded", () => {
           if (flashCount === 6) {
             window.clearInterval(guideFlashInterval);
             guideCanvas.style.opacity = "0";
+            guidePulseInterval = window.setInterval(() => {
+              let pulseCount = 0;
+              const pulse = window.setInterval(() => {
+                guideCanvas.style.opacity =
+                  guideCanvas.style.opacity === "0" ? "1" : "0";
+                pulseCount += 1;
+                if (pulseCount === 4) {
+                  window.clearInterval(pulse);
+                  guideCanvas.style.opacity = "0";
+                }
+              }, 400);
+            }, 2000);
           }
-        }, 250);
+        }, 1000);
       }, 1500);
-      // 四秒後提示玩家連回起點，並檢查筆跡是否已經首尾相連。
+      // 六秒後允許結算，並提示玩家連回起點。
       drawingTimer = window.setTimeout(() => {
         drawingTimeElapsed = true;
-        instruction.textContent = "和起點相連結束切切過程吧";
+        instruction.textContent = "只要和起點相連就切下雞肉了！";
         if (hasClosedPath) finishDrawing();
-      }, 4000);
-      promptTimer = window.setTimeout(
-        () => instruction.classList.add("is_hidden"),
-        9000,
-      );
+      }, 6000);
     }
   }
 
@@ -296,8 +309,11 @@ document.addEventListener("DOMContentLoaded", () => {
     isFinished = true;
     isDrawing = false;
     window.clearTimeout(drawingTimer);
+    window.clearTimeout(encouragementTimer);
     window.clearTimeout(guideTimer);
     window.clearInterval(guideFlashInterval);
+    window.clearInterval(guidePulseInterval);
+    instruction.classList.add("is_hidden");
     const similarity = calculateSimilarity();
     const percentage = Math.round(similarity * 100);
     const score = Math.max(-5, Math.min(10, Math.round(similarity * 15 - 5)));
