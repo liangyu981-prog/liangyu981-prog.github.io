@@ -107,9 +107,13 @@ function scoreDestination(destination) {
   return `${destination}${separator}score=${score}&correct=${correctAnswers}`;
 }
 
-let startQ1StopTransition = () => false;
-let startQ2StopTransition = () => false;
-let startQ3StopTransition = () => false;
+function restartGifAnimation(image, source = image.getAttribute("src")) {
+  if (!source) return false;
+  const animationUrl = new URL(source, window.location.href);
+  animationUrl.searchParams.set("restart", String(Date.now()));
+  image.src = animationUrl.href;
+  return true;
+}
 
 if (mouseBtn) {
   mouseBtn.addEventListener("click", (e) => {
@@ -130,31 +134,274 @@ if (cameraBtn) {
   });
 }
 
-// 接下一頁的自己改
+const activeQuestion = [
+  {
+    selector: ".findtea_btn_Q1",
+    correctId: "btn_up",
+    points: 8,
+    nextPage: "1_2_2_1.html",
+  },
+  {
+    selector: ".findtea_btn_Q2",
+    correctId: "btn_left",
+    points: 8,
+    nextPage: "1_2_3_1.html",
+  },
+  {
+    selector: ".findtea_btn_Q3",
+    correctId: "btn_down",
+    points: 9,
+    nextPage: "1_2_4.html",
+  },
+].find((question) => document.querySelector(question.selector));
 
-document.querySelectorAll(".findtea_btn_Q1").forEach((button) => {
-  button.addEventListener("click", () => {
-    if (startQ1StopTransition()) {
-      updateScore(button, "btn_up", 8);
-    }
-  });
-});
+if (activeQuestion) {
+  const timerGif = document.querySelector(".timer_intro_gif");
+  const timerIntro = document.querySelector(".timer_intro");
+  const gameTimer = document.querySelector(".Gtimer");
+  const questionTimerGif = document.querySelector(".question_timer_gif");
+  const questionButtons = Array.from(
+    document.querySelectorAll(activeQuestion.selector),
+  );
+  const durationMs = 3000; // 計時器 GIF 顯示後完整倒數 3 秒。
+  let questionFinished = false;
+  let countdownInterval = null;
+  let countdownStarted = false;
+  let preludeStarted = false;
+  let introStillFrame = null;
+  let endAt = 0;
+  let firstQuestionStarting = false;
+  let frozenQuestionBackground = null;
+  let questionBackgroundImage = null;
+  let questionBackgroundImageSource = null;
 
-document.querySelectorAll(".findtea_btn_Q2").forEach((button) => {
-  button.addEventListener("click", () => {
-    if (startQ2StopTransition()) {
-      updateScore(button, "btn_left", 8);
-    }
-  });
-});
+  const freezeQuestionBackground = async () => {
+    const image = document.querySelector(".devel1_Q1_bg img");
+    if (!image || frozenQuestionBackground) return;
 
-document.querySelectorAll(".findtea_btn_Q3").forEach((button) => {
-  button.addEventListener("click", () => {
-    if (startQ3StopTransition()) {
-      updateScore(button, "btn_down", 9);
+    try {
+      await image.decode();
+    } catch (error) {
+      console.warn("Could not freeze the Question 1 background GIF.", error);
+      return;
     }
+
+    if (questionFinished || !image.isConnected) return;
+    const width = image.naturalWidth;
+    const height = image.naturalHeight;
+    if (!width || !height) {
+      console.error("The Question 1 background GIF has no decoded frame.");
+      return;
+    }
+
+    const frame = document.createElement("canvas");
+    frame.className = "question_background_frame";
+    frame.width = width;
+    frame.height = height;
+    const context = frame.getContext("2d");
+    if (!context) {
+      console.error("Could not create a canvas to freeze the Question 1 background.");
+      return;
+    }
+
+    const imageStyle = window.getComputedStyle(image);
+    Object.assign(frame.style, {
+      position: imageStyle.position,
+      top: imageStyle.top,
+      left: imageStyle.left,
+      width: imageStyle.width,
+      height: imageStyle.height,
+      transform: imageStyle.transform,
+      objectFit: imageStyle.objectFit,
+      pointerEvents: "none",
+    });
+    context.drawImage(image, 0, 0);
+    questionBackgroundImage = image;
+    questionBackgroundImageSource = image.getAttribute("src") || image.src;
+    image.replaceWith(frame);
+    frozenQuestionBackground = frame;
+  };
+
+  const questionBackgroundFreeze = freezeQuestionBackground();
+  const resumeQuestionBackground = () => {
+    if (
+      !frozenQuestionBackground ||
+      !questionBackgroundImage ||
+      !questionBackgroundImageSource
+    ) {
+      return;
+    }
+
+    restartGifAnimation(questionBackgroundImage, questionBackgroundImageSource);
+    frozenQuestionBackground.replaceWith(questionBackgroundImage);
+    frozenQuestionBackground = null;
+  };
+
+  const stopCountdown = () => {
+    questionFinished = true;
+    window.clearInterval(countdownInterval);
+  };
+  const goToNextQuestion = (answerButton = null) => {
+    if (questionFinished) return;
+    stopCountdown();
+    if (answerButton) {
+      updateScore(
+        answerButton,
+        activeQuestion.correctId,
+        activeQuestion.points,
+      );
+    }
+    questionButtons.forEach((button) => {
+      button.disabled = true;
+    });
+    window.location.href = scoreDestination(activeQuestion.nextPage);
+  };
+  const updateCountdown = () => {
+    const remaining = Math.max(
+      0,
+      Math.ceil((endAt - performance.now()) / 1000),
+    );
+    if (remaining === 0) goToNextQuestion();
+  };
+  const startCountdown = () => {
+    if (questionFinished || countdownStarted) return;
+    countdownStarted = true;
+    endAt = performance.now() + durationMs;
+    countdownInterval = window.setInterval(updateCountdown, 50);
+    updateCountdown();
+  };
+  const startPreludeShake = () => {
+    if (preludeStarted || questionFinished) return;
+    preludeStarted = true;
+    timerIntro?.classList.add("is_ready");
+  };
+  const showSideTimer = () => {
+    if (questionFinished || !gameTimer) return;
+    // 大時鐘使用靜態畫格；側邊小時鐘使用原始 GIF，正常持續轉動。
+    if (questionTimerGif) {
+      gameTimer.appendChild(questionTimerGif);
+    } else if (introStillFrame) {
+      gameTimer.appendChild(introStillFrame);
+    } else if (timerGif) {
+      gameTimer.appendChild(timerGif);
+    }
+    gameTimer.classList.add("visible");
+  };
+  const restartVisibleTimer = () => {
+    if (!questionTimerGif) {
+      startCountdown();
+      return;
+    }
+    if (!questionTimerGif.getAttribute("src")) {
+      console.error("The question timer GIF has no source.");
+      startCountdown();
+      return;
+    }
+
+    questionTimerGif.addEventListener("load", startCountdown, { once: true });
+    questionTimerGif.addEventListener(
+      "error",
+      () => {
+        console.error("Could not load the question timer GIF.");
+        startCountdown();
+      },
+      { once: true },
+    );
+    restartGifAnimation(questionTimerGif);
+  };
+  questionButtons.forEach((button) => {
+    button.addEventListener(
+      "click",
+      () => goToNextQuestion(button),
+      { once: true },
+    );
   });
-});
+  if (timerIntro) {
+    timerIntro.addEventListener("animationend", (event) => {
+      if (event.animationName !== "timerIntroShake") return;
+      showSideTimer();
+      resumeQuestionBackground();
+      restartVisibleTimer();
+    });
+  }
+  if (timerGif && timerIntro) {
+    const startFirstQuestion = async () => {
+      if (firstQuestionStarting || questionFinished) return;
+      firstQuestionStarting = true;
+      await questionBackgroundFreeze;
+      if (questionFinished) return;
+
+      // 在開始搖晃前擷取 GIF 畫格，避免 GIF 動畫在計時期間循環重播。
+      if (!introStillFrame && timerGif.complete && timerGif.naturalWidth > 0) {
+        const stillFrame = document.createElement("canvas");
+        stillFrame.className = "question_timer_frame";
+        stillFrame.width = timerGif.naturalWidth;
+        stillFrame.height = timerGif.naturalHeight;
+        const context = stillFrame.getContext("2d");
+        if (context) {
+          context.drawImage(timerGif, 0, 0);
+          introStillFrame = stillFrame;
+          timerGif.replaceWith(stillFrame);
+        }
+      }
+      startPreludeShake();
+    };
+    timerGif.addEventListener("load", startFirstQuestion, { once: true });
+    timerGif.addEventListener("error", startFirstQuestion, { once: true });
+    if (timerGif.complete) startFirstQuestion();
+  } else if (gameTimer && questionTimerGif) {
+    // 第二、三題只顯示小時鐘，不播放大時鐘前導。
+    showSideTimer();
+    restartVisibleTimer();
+  } else {
+    startCountdown();
+  }
+}
+
+// 鏡頭模式只同步顯示計時器，不介入 camera_game.js 的辨識、計分或跳頁流程。
+if (!activeQuestion && document.querySelector(".camera_game_background")) {
+  const timerIntro = document.querySelector(".timer_intro");
+  const timerGif = document.querySelector(".timer_intro_gif");
+  const gameTimer = document.querySelector(".Gtimer");
+  const questionTimerGif = document.querySelector(".question_timer_gif");
+
+  if (timerIntro && timerGif && gameTimer) {
+    let introStillFrame = null;
+    const startCameraTimerIntro = () => {
+      if (!introStillFrame && timerGif.complete && timerGif.naturalWidth > 0) {
+        const stillFrame = document.createElement("canvas");
+        stillFrame.className = "question_timer_frame";
+        stillFrame.width = timerGif.naturalWidth;
+        stillFrame.height = timerGif.naturalHeight;
+        const context = stillFrame.getContext("2d");
+        if (context) {
+          context.drawImage(timerGif, 0, 0);
+          introStillFrame = stillFrame;
+          timerGif.replaceWith(stillFrame);
+        }
+      }
+      timerIntro.classList.add("is_ready");
+    };
+    timerIntro.addEventListener("animationend", (event) => {
+      if (event.animationName !== "timerIntroShake") return;
+      if (questionTimerGif) {
+        gameTimer.appendChild(questionTimerGif);
+        if (!restartGifAnimation(questionTimerGif)) {
+          console.error("The question timer GIF has no source.");
+        }
+      } else if (introStillFrame) {
+        gameTimer.appendChild(introStillFrame);
+      }
+      gameTimer.classList.add("visible");
+    });
+    timerGif.addEventListener("load", startCameraTimerIntro, { once: true });
+    timerGif.addEventListener("error", startCameraTimerIntro, { once: true });
+    if (timerGif.complete) startCameraTimerIntro();
+  } else if (gameTimer && questionTimerGif) {
+    gameTimer.classList.add("visible");
+  }
+}
+
 document.querySelectorAll(".next_button").forEach((button) => {
   button.addEventListener("click", () => {
     setTimeout(() => {
@@ -230,22 +477,3 @@ function navigateAfterHold(destination, holdDuration) {
     window.location.href = scoreDestination(destination);
   }, holdDuration);
 }
-
-startQ1StopTransition = freezeBackgroundAfterPlayback(
-  ".devel1_Q1_bg",
-  "1_2_2_1.html",
-  null,
-  800,
-);
-startQ2StopTransition = freezeBackgroundAfterPlayback(
-  ".devel1_Q2_bg",
-  "1_2_3_1.html",
-  null,
-  800,
-);
-startQ3StopTransition = freezeBackgroundAfterPlayback(
-  ".devel1_Q3_bg",
-  "1_2_4.html",
-  null,
-  800,
-);

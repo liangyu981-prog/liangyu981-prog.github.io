@@ -12,6 +12,7 @@ html {
   height: 100%;
   overflow: hidden;
   background-color: #ffc700;
+  background-image: url(../img/teapark.png);
 }
 .game_stage {
   position: absolute;
@@ -59,7 +60,7 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url(../img/findTea_bg.gif);
+  background-image: url(../img/teapark.png);
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100%;
@@ -294,7 +295,7 @@ html {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 10;
+  z-index: 30;
 
   display: grid;
   grid-template-columns: repeat(3, 70px);
@@ -303,6 +304,100 @@ html {
   align-items: center;
 }
 
+/* 第一題大時鐘：尺寸為原 timer_intro 的 2 倍，保持舞台中央搖晃。 */
+.timer_intro {
+  position: absolute;
+  top: 540px;
+  left: 960px;
+  width: 1152px;
+  height: 1152px;
+  transform: translate(-576px, -576px);
+  z-index: 2147483647;
+  pointer-events: none;
+}
+.timer_intro.is_ready {
+  animation: timerIntroShake 1s ease-in-out both;
+  animation-iteration-count: 1;
+}
+.timer_intro_gif {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.timer_intro .question_timer_frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.Gtimer {
+  position: absolute;
+  top: -25px;
+  right: 650px;
+  width: 576px;
+  height: 576px;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 2147483647; /* 計時器圖層保持最上方。 */
+  pointer-events: none;
+}
+.Gtimer img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 576px;
+  height: 576px;
+  object-fit: contain;
+}
+.Gtimer .question_timer_frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 576px;
+  height: 576px;
+  object-fit: contain;
+}
+.Gtimer.visible {
+  opacity: 1;
+  visibility: visible;
+  animation: popendBounceIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes timerIntroShake {
+  0% {
+    opacity: 0;
+    transform: translate(-576px, -576px) scale(0.2) rotate(0);
+  }
+  12% {
+    opacity: 1;
+    transform: translate(-576px, -576px) scale(1.8) rotate(-18deg);
+  }
+  24% {
+    transform: translate(-576px, -576px) scale(1.8) rotate(18deg);
+  }
+  36% {
+    transform: translate(-576px, -576px) scale(1.8) rotate(-15deg);
+  }
+  48% {
+    transform: translate(-576px, -576px) scale(1.8) rotate(13deg);
+  }
+  60% {
+    transform: translate(-576px, -576px) scale(1.8) rotate(-9deg);
+  }
+  76% {
+    transform: translate(-576px, -576px) scale(1.8) rotate(5deg);
+  }
+  88% {
+    opacity: 1;
+    transform: translate(-576px, -576px) scale(1.8) rotate(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-576px, -576px) scale(1.8) rotate(0);
+  }
+}
 .score_display {
   display: none;
   position: fixed;
@@ -447,8 +542,8 @@ html {
 
 /* 按鈕共同基礎設定 */
 .findtea_btn_Q1 {
-  width: 90px;
-  height: 90px;
+  width: 150px;
+  height: 150px;
   border: none;
   background-color: transparent;
   background-size: contain;
@@ -458,8 +553,8 @@ html {
 }
 
 .findtea_btn_Q2 {
-  width: 90px;
-  height: 90px;
+  width: 150px;
+  height: 150px;
   border: none;
   background-color: transparent;
   background-size: contain;
@@ -468,8 +563,8 @@ html {
   cursor: pointer;
 }
 .findtea_btn_Q3 {
-  width: 90px;
-  height: 90px;
+  width: 150px;
+  height: 150px;
   border: none;
   background-color: transparent;
   background-size: contain;
@@ -478,14 +573,6 @@ html {
   cursor: pointer;
 }
 /* --- 分別指定四個方向的手繪圖片 --- */
-#btn_up {
-  grid-column: 2;
-  grid-row: 1;
-  transform: translateY(25px);
-  z-index: 2;
-  background-image: url("../img/up_arrow_default.png"); /* 你的上方按鈕圖片路徑 */
-}
-
 #btn_left {
   grid-column: 1;
   grid-row: 2;
@@ -502,28 +589,14 @@ html {
   background-image: url("../img/right_arrow_default.png"); /* 你的右方按鈕圖片路徑 */
 }
 
-#btn_down {
-  grid-column: 2;
-  grid-row: 3;
-  transform: translateY(-25px);
-  z-index: 2;
-  background-image: url("../img/down_arrow_default.png"); /* 你的下方按鈕圖片路徑 */
-}
-
 /* ==========================================
    每一顆按鈕共同的 `:active` 點擊特效
    ========================================== */
-#btn_up:active {
-  background-image: url("../img/up_arrow_active.png");
-}
 #btn_left:active {
   background-image: url("../img/left_arrow_active.png");
 }
 #btn_right:active {
   background-image: url("../img/right_arrow_active.png");
-}
-#btn_down:active {
-  background-image: url("../img/down_arrow_active.png");
 }
 
 @keyframes popendBounceIn {

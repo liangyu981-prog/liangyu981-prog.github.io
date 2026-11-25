@@ -8,6 +8,7 @@
     <link href="./img/icon.png" rel="icon" />
   </head>
   <body>
+    <main class="game_stage">
     <div class="score_display" id="score_display" aria-live="polite">
       本次得分：0 分｜累計積分：0 分
     </div>
@@ -77,7 +78,16 @@
         正在啟動鏡頭，請允許攝影機權限。
       </p>
     </section>
+    <!-- 鏡頭模式同樣先播放大時鐘搖晃，再顯示側邊計時器。 -->
+    <div class="timer_intro" aria-hidden="true">
+      <img class="timer_intro_gif" src="./img/Ctimer_3s.gif" alt="" />
+    </div>
+    <div class="Gtimer" aria-label="三秒計時器">
+      <img class="question_timer_gif" src="./img/Ctimer_3s.gif" alt="三秒計時器" />
+    </div>
+    </main>
     <script src="./js/scale.js"></script>
+    <script src="./js/devel1_script.js"></script>
     <script type="module" src="./js/camera_game.js"></script>
   </body>
 </html>

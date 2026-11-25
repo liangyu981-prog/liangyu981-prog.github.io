@@ -15,6 +15,7 @@ const statusMessage = document.getElementById("camera_status");
 const directionGuide = document.getElementById("face_direction_guide");
 const scoreDisplay = document.getElementById("score_display");
 const background = document.querySelector(".camera_game_background");
+const timerIntro = document.querySelector(".timer_intro");
 const stopBackgroundImage = new Image();
 const correctDirection = background.dataset.correctDirection;
 const nextPage = background.dataset.nextPage;
@@ -39,6 +40,9 @@ let transitionStarted = false;
 let noMovementTimeout;
 let turnDetectionEnabled = false;
 let backgroundAnimationSource;
+let backgroundPausePromise = Promise.resolve();
+let timerIntroFinished = !timerIntro;
+let backgroundResumeRequested = false;
 let fisheyeCanvas;
 let fisheyeContext;
 let fisheyeSourceCanvas;
@@ -47,6 +51,16 @@ let fisheyeSourceMap;
 let fisheyeOutputFrame;
 let previewFrameRequest;
 let lastPreviewRenderAt = 0;
+
+timerIntro?.addEventListener(
+  "animationend",
+  (event) => {
+    if (event.animationName !== "timerIntroShake") return;
+    timerIntroFinished = true;
+    resumeBackgroundAnimation();
+  },
+  { once: true },
+);
 
 if (background.dataset.stopImage) {
   stopBackgroundImage.src = background.dataset.stopImage;
@@ -335,7 +349,13 @@ async function pauseBackgroundAnimation() {
   }
 }
 
-function resumeBackgroundAnimation() {
+async function resumeBackgroundAnimation() {
+  backgroundResumeRequested = true;
+  if (!timerIntroFinished) return;
+
+  await backgroundPausePromise;
+  if (!backgroundResumeRequested || !timerIntroFinished) return;
+
   const frozenFrame = background.querySelector(".camera_game_frozen_frame");
   if (!frozenFrame || !backgroundAnimationSource) return;
 
@@ -508,11 +528,16 @@ function processFrame() {
 }
 
 async function startCameraGame() {
+  backgroundPausePromise = pauseBackgroundAnimation();
+  await backgroundPausePromise;
+  if (backgroundResumeRequested && timerIntroFinished) {
+    await resumeBackgroundAnimation();
+  }
+
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     throw new Error("請透過 localhost 或 HTTPS 開啟頁面，才能使用攝影機。");
   }
 
-  await pauseBackgroundAnimation();
   statusMessage.textContent = "等待攝影機權限...";
   cameraStream = await navigator.mediaDevices.getUserMedia({
     audio: false,
