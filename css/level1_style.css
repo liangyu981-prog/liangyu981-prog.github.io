@@ -201,8 +201,8 @@ html {
 .start_button {
   position: absolute;
   /* 按鈕在彈跳視窗內的位置 */
-  left: 1187px;
-  bottom: 184px;
+  left: 1155px;
+  bottom: 165px;
   width: 180px;
   height: 80px;
   border: none;
@@ -387,8 +387,8 @@ html {
 
 .next_button {
   position: absolute;
-  left: 1258px;
-  bottom: 184px;
+  left: 1255px;
+  bottom: 230px;
   width: 180px;
   height: 80px;
   border: none;

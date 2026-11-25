@@ -3,7 +3,67 @@ document.addEventListener("DOMContentLoaded", () => {
   const start_button = document.getElementById("mouseBtn");
   const camera_button = document.getElementById("cameraBtn");
   const stop_button = document.getElementById("stopBtn");
-
+  const introButton = document.getElementById("gameIntroButton");
+  const introPages = Array.from(document.querySelectorAll(".game_intro_page"));
+  const introPrev = document.getElementById("gameIntroPrev");
+  const introNext = document.getElementById("gameIntroNext");
+  const introOverlay = document.getElementById("gameIntroOverlay");
+  const introConfirm = document.getElementById("gameIntroConfirm");
+  if (
+    introButton &&
+    introPages.length &&
+    introPrev &&
+    introNext &&
+    introOverlay &&
+    introConfirm
+  ) {
+    let introPageIndex = 0;
+    const showIntroPage = (index) => {
+      introPageIndex = (index + introPages.length) % introPages.length;
+      introPages.forEach((page, pageIndex) => {
+        page.hidden = pageIndex !== introPageIndex;
+      });
+    };
+    const closeIntro = () => {
+      introOverlay.hidden = true;
+      introButton.setAttribute("aria-expanded", "false");
+      introButton.focus();
+    };
+    introButton.setAttribute("aria-expanded", "false");
+    introButton.addEventListener("click", () => {
+      showIntroPage(0);
+      introOverlay.hidden = false;
+      introButton.setAttribute("aria-expanded", "true");
+    });
+    introPrev.addEventListener("click", () =>
+      showIntroPage(introPageIndex - 1),
+    );
+    introNext.addEventListener("click", () =>
+      showIntroPage(introPageIndex + 1),
+    );
+    introConfirm.addEventListener("click", closeIntro);
+    introOverlay.addEventListener("click", (event) => {
+      if (event.target === introOverlay) closeIntro();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (introOverlay.hidden) return;
+      if (event.key === "ArrowLeft") showIntroPage(introPageIndex - 1);
+      if (event.key === "ArrowRight") showIntroPage(introPageIndex + 1);
+      if (event.key === "Escape") closeIntro();
+    });
+    [introButton, introConfirm].forEach((button) => {
+      button.addEventListener("pointerdown", () =>
+        button.classList.add("is-active"),
+      );
+      ["pointerup", "pointercancel", "pointerleave", "blur"].forEach(
+        (eventName) => {
+          button.addEventListener(eventName, () =>
+            button.classList.remove("is-active"),
+          );
+        },
+      );
+    });
+  }
   if (start_button) {
     start_button.addEventListener("click", (event) => {
       event.preventDefault();
@@ -75,15 +135,23 @@ document.addEventListener("DOMContentLoaded", () => {
       return false;
     }
 
-    const current_saved_total = Number(localStorage.getItem("totalScore") ?? "0");
-    const current_total = Number.isFinite(current_saved_total) ? current_saved_total : 0;
-    const level_score = Number(localStorage.getItem("level3Score") ?? "0") + earned_score;
+    const current_saved_total = Number(
+      localStorage.getItem("totalScore") ?? "0",
+    );
+    const current_total = Number.isFinite(current_saved_total)
+      ? current_saved_total
+      : 0;
+    const level_score =
+      Number(localStorage.getItem("level3Score") ?? "0") + earned_score;
     const new_score = current_total + earned_score;
     localStorage.setItem("level3Score", String(level_score));
     localStorage.setItem("totalScore", String(new_score));
-    console.log(`[Devel3] 本關累計 ${level_score} 分（本次 +${earned_score}）；遊戲總分 ${new_score} 分`);
+    console.log(
+      `[Devel3] 本關累計 ${level_score} 分（本次 +${earned_score}）；遊戲總分 ${new_score} 分`,
+    );
 
-    if (stop_button) stop_button.setAttribute("aria-label", `已獲得 ${earned_score} 分`);
+    if (stop_button)
+      stop_button.setAttribute("aria-label", `已獲得 ${earned_score} 分`);
     game_background.style.backgroundImage = `url("${result.image}")`;
     feedback_pair.classList.add("is_active");
     if (camera_mode) {

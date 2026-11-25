@@ -7,15 +7,19 @@ document.addEventListener("DOMContentLoaded", () => {
   frying_sound.preload = "auto";
 
   const ending_popup = document.querySelector(".popwidow6");
-  const ending_popup_overlay = document.getElementById("level5EndingPopupOverlay");
+  const ending_popup_overlay = document.getElementById(
+    "level5EndingPopupOverlay",
+  );
   if (ending_popup && ending_popup_overlay) {
-    const score_param = new URLSearchParams(window.location.search).get("score");
+    const score_param = new URLSearchParams(window.location.search).get(
+      "score",
+    );
     const query_score = score_param === null ? NaN : Number(score_param);
     const session_score = Number(sessionStorage.getItem("level5EndingScore"));
     const saved_level_score = Number(localStorage.getItem("level5Score"));
     const valid_scores = [5, 10, 15];
-    const level_score = [query_score, session_score, saved_level_score].find((score) =>
-      valid_scores.includes(score),
+    const level_score = [query_score, session_score, saved_level_score].find(
+      (score) => valid_scores.includes(score),
     );
     // 色帶結算：上下橘色 5 分 bad、白色 10 分 normal、中央黃色 15 分 good。
     const ending_assets_by_score = {
@@ -35,7 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
         overlay: "./img/small_good_endpop.GIF",
       },
     };
-    const ending_assets = ending_assets_by_score[level_score] ?? ending_assets_by_score[5];
+    const ending_assets =
+      ending_assets_by_score[level_score] ?? ending_assets_by_score[5];
     ending_popup.classList.remove("is_bad", "is_normal", "is_good");
     ending_popup.classList.add(`is_${ending_assets.result}`);
     ending_popup.style.backgroundImage = `url("${ending_assets.background}")`;
@@ -48,7 +53,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function save_frying_sound_position() {
     if (frying_sound.paused) return;
     sessionStorage.setItem("level5FryingResume", "1");
-    sessionStorage.setItem("level5FryingTime", String(frying_sound.currentTime));
+    sessionStorage.setItem(
+      "level5FryingTime",
+      String(frying_sound.currentTime),
+    );
   }
 
   function stop_frying_sound() {
@@ -70,15 +78,23 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Failed to play Level 5 frying sound:", error);
       });
       frying_sound.addEventListener("timeupdate", save_frying_sound_position);
-      window.addEventListener("pagehide", save_frying_sound_position, { once: true });
+      window.addEventListener("pagehide", save_frying_sound_position, {
+        once: true,
+      });
       setTimeout(() => {
         window.location.href = "./0_6_1.html";
       }, 200);
     });
   }
 
-  if (!start_button && stop_button && sessionStorage.getItem("level5FryingResume") === "1") {
-    frying_sound.currentTime = Number(sessionStorage.getItem("level5FryingTime") || 0);
+  if (
+    !start_button &&
+    stop_button &&
+    sessionStorage.getItem("level5FryingResume") === "1"
+  ) {
+    frying_sound.currentTime = Number(
+      sessionStorage.getItem("level5FryingTime") || 0,
+    );
     frying_sound.play().catch((error) => {
       console.error("Failed to resume Level 5 frying sound:", error);
     });
@@ -156,7 +172,9 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("level5Score", String(level_score));
     sessionStorage.setItem("level5EndingScore", String(level_score));
     localStorage.setItem("totalScore", String(new_total));
-    console.log(`[Level 5] 本關得分 ${level_score} 分（本次 +${earned_score}），累計總分 ${new_total} 分`);
+    console.log(
+      `[Level 5] 本關得分 ${level_score} 分（本次 +${earned_score}），累計總分 ${new_total} 分`,
+    );
 
     feedback_images_by_id.forEach((image) => {
       image?.classList.remove("is_active");
@@ -182,3 +200,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 2000);
   });
 });
+const game_intro_button = document.getElementById("gameIntroButton");
+const game_intro_overlay = document.getElementById("gameIntroOverlay");
+const game_intro_confirm = document.getElementById("gameIntroConfirm");
+const jane_dan_sound = new Audio("./audio/janeDan.mp3");
+jane_dan_sound.preload = "auto";
+// 修改音檔開頭裁切秒數：調整此數值；0.8 代表跳過前 0.8 秒。
+const jane_dan_start_offset_seconds = 0.8;
+
+if (game_intro_button && game_intro_overlay && game_intro_confirm) {
+  const close_game_intro = () => {
+    game_intro_overlay.hidden = true;
+    game_intro_button.setAttribute("aria-expanded", "false");
+    game_intro_button.focus();
+  };
+
+  game_intro_button.setAttribute("aria-expanded", "false");
+  game_intro_button.addEventListener("click", () => {
+    game_intro_overlay.hidden = false;
+    game_intro_button.setAttribute("aria-expanded", "true");
+    game_intro_confirm.focus();
+  });
+  game_intro_confirm.addEventListener("click", close_game_intro);
+  game_intro_overlay.addEventListener("click", (event) => {
+    if (event.target === game_intro_overlay) close_game_intro();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !game_intro_overlay.hidden) {
+      close_game_intro();
+    }
+  });
+}

@@ -30,6 +30,66 @@
           aria-label="mouse_button"
         ></button>
       </div>
+      <button
+        class="game_intro_button"
+        id="gameIntroButton"
+        type="button"
+        aria-label="遊戲介紹"
+        aria-haspopup="dialog"
+        aria-controls="gameIntroDialog"
+      ></button>
+      <!-- 遊戲介紹視窗預設隱藏；按下遊戲介紹按鈕才開啟。 -->
+      <div class="game_intro_overlay" id="gameIntroOverlay" hidden>
+        <section
+          class="game_intro_dialog"
+          id="gameIntroDialog"
+          role="dialog"
+          aria-modal="true"
+          aria-label="遊戲介紹"
+        >
+          <!-- 每頁各有底圖與示意圖，切換時一起顯示。 -->
+          <div class="game_intro_page" data-intro-page="0">
+            <img class="game_intro_paper" src="./img/1_game_intro.png" alt="" />
+            <img
+              class="game_intro_demo"
+              src="./img/1_small_game_intro.png"
+              alt="遊戲介紹第 1 頁"
+            />
+          </div>
+          <div class="game_intro_page" data-intro-page="1" hidden>
+            <!-- 請將第二頁的 game_intro 底圖檔名填在下方路徑，並保留 ./img/ 相對路徑及正確大小寫。 -->
+            <img class="game_intro_paper" src="./img/2_game_intro.png" alt="" />
+            <!-- 請將第二頁的 small_game_intro 示意圖檔名填在下方路徑。 -->
+            <img
+              class="game_intro_demo"
+              src="./img/2_small_game_intro.png"
+              alt="遊戲介紹第 2 頁"
+            />
+          </div>
+          <button
+            class="game_intro_arrow game_intro_arrow_prev"
+            id="gameIntroPrev"
+            type="button"
+            aria-label="上一頁介紹"
+          >
+            <
+          </button>
+          <button
+            class="game_intro_arrow game_intro_arrow_next"
+            id="gameIntroNext"
+            type="button"
+            aria-label="下一頁介紹"
+          >
+            >
+          </button>
+          <button
+            class="game_intro_confirm"
+            id="gameIntroConfirm"
+            type="button"
+            aria-label="我雞道了，關閉遊戲介紹"
+          ></button>
+        </section>
+      </div>
     </main>
     <script src="./js/scale.js"></script>
     <script src="./js/devel1_script.js"></script>

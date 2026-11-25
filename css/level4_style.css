@@ -463,7 +463,6 @@ html {
   left: 180px;
   width: 100%;
   height: 100%;
-    opacity: 70%;
   object-fit: contain;
   z-index: 1;
   pointer-events: none;
@@ -471,8 +470,8 @@ html {
 
 .modal5_container .next_button {
   position: absolute;
-  left: 1221px;
-  bottom: 202px;
+  left: 1210px;
+  bottom: 2px;
   width: 180px;
   height: 80px;
   border: none;

@@ -95,6 +95,129 @@ html {
   background-size: contain;
   z-index: 1;
 }
+/* 遊戲介紹按鈕：沿用專案既有圖檔；與原本開場彈窗分開顯示。 */
+.game_intro_button {
+  position: absolute;
+  right: 82px;
+  bottom: 100px;
+  width: 220px;
+  height: 100px;
+  z-index: 10;
+  border: 0;
+  padding: 0;
+  background: transparent url("../img/game_intor_button_default.png") center /
+    contain no-repeat;
+  cursor: pointer;
+}
+.game_intro_button:active,
+.game_intro_button.is-active {
+  background-image: url("../img/game_intro_begin_button_active.png");
+}
+.game_intro_overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: rgba(70, 58, 34, 0.42);
+}
+.game_intro_overlay[hidden] {
+  display: none !important;
+  pointer-events: none !important;
+}
+.game_intro_dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1360px;
+  height: 866px;
+  transform: translate(-50%, -50%);
+  z-index: 21;
+  animation: develIntroPop 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes develIntroPop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+.game_intro_page {
+  position: absolute;
+  inset: 0;
+}
+.game_intro_page[hidden] {
+  display: none !important;
+}
+.game_intro_paper {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+/* 介紹主圖位置與尺寸；底圖視窗為 img/1_game_intro.png。 */
+.game_intro_demo {
+  position: absolute;
+  top: 180px;
+  left: 54%;
+  width: 770px;
+  height: auto;
+  transform: translateX(-50%);
+  object-fit: contain;
+  z-index: 2;
+}
+/* 介紹頁箭頭微調區：獨立調整 top、left/right、font-size、width、height。 */
+.game_intro_arrow {
+  position: absolute;
+  top: 440px;
+  width: 64px;
+  height: 80px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #e70600;
+  font: inherit;
+  font-size: 64px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 3;
+}
+.game_intro_arrow_prev {
+  left: 200px;
+}
+.game_intro_arrow_next {
+  right: 95px;
+}
+/* 確認按鈕沿用專案預設／按住圖檔設定，尺寸 214×110。 */
+.game_intro_confirm {
+  position: absolute;
+  right: 88px;
+  bottom: 95px;
+  width: 214px;
+  height: 110px;
+  border: 0;
+  padding: 0;
+  background: transparent url("../img/iknow_button_default.png") center /
+    contain no-repeat;
+  color: transparent;
+  cursor: pointer;
+  z-index: 4;
+}
+.game_intro_confirm:active,
+.game_intro_confirm.is-active {
+  background-image: url("../img/iknow_button_active.png");
+}
+.game_intro_button:focus-visible,
+.game_intro_confirm:focus-visible {
+  outline: 4px solid #b70600;
+  outline-offset: 4px;
+}
 /* 圖片按鈕程式 */
 .mouse_button,
 .camera_button {

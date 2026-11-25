@@ -3,7 +3,67 @@ document.addEventListener("DOMContentLoaded", () => {
   const start_button = document.getElementById("mouseBtn");
   const camera_button = document.getElementById("cameraBtn");
   const next_button = document.getElementById("nextBtn");
-
+  const introButton = document.getElementById("gameIntroButton");
+  const introPages = Array.from(document.querySelectorAll(".game_intro_page"));
+  const introPrev = document.getElementById("gameIntroPrev");
+  const introNext = document.getElementById("gameIntroNext");
+  const introOverlay = document.getElementById("gameIntroOverlay");
+  const introConfirm = document.getElementById("gameIntroConfirm");
+  if (
+    introButton &&
+    introPages.length &&
+    introPrev &&
+    introNext &&
+    introOverlay &&
+    introConfirm
+  ) {
+    let introPageIndex = 0;
+    const showIntroPage = (index) => {
+      introPageIndex = (index + introPages.length) % introPages.length;
+      introPages.forEach((page, pageIndex) => {
+        page.hidden = pageIndex !== introPageIndex;
+      });
+    };
+    const closeIntro = () => {
+      introOverlay.hidden = true;
+      introButton.setAttribute("aria-expanded", "false");
+      introButton.focus();
+    };
+    introButton.setAttribute("aria-expanded", "false");
+    introButton.addEventListener("click", () => {
+      showIntroPage(0);
+      introOverlay.hidden = false;
+      introButton.setAttribute("aria-expanded", "true");
+    });
+    introPrev.addEventListener("click", () =>
+      showIntroPage(introPageIndex - 1),
+    );
+    introNext.addEventListener("click", () =>
+      showIntroPage(introPageIndex + 1),
+    );
+    introConfirm.addEventListener("click", closeIntro);
+    introOverlay.addEventListener("click", (event) => {
+      if (event.target === introOverlay) closeIntro();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (introOverlay.hidden) return;
+      if (event.key === "ArrowLeft") showIntroPage(introPageIndex - 1);
+      if (event.key === "ArrowRight") showIntroPage(introPageIndex + 1);
+      if (event.key === "Escape") closeIntro();
+    });
+    [introButton, introConfirm].forEach((button) => {
+      button.addEventListener("pointerdown", () =>
+        button.classList.add("is-active"),
+      );
+      ["pointerup", "pointercancel", "pointerleave", "blur"].forEach(
+        (eventName) => {
+          button.addEventListener(eventName, () =>
+            button.classList.remove("is-active"),
+          );
+        },
+      );
+    });
+  }
   start_button?.addEventListener("click", () => {
     window.location.href = "1_5_1_1.html";
   });
@@ -19,7 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "./1_5_1.html";
     }, 200);
   });
-
 });
 document.addEventListener("DOMContentLoaded", () => {
   /*
@@ -46,7 +105,13 @@ document.addEventListener("DOMContentLoaded", () => {
       { x: 1450, y: 450 }, // 奶頭 4
     ],
     // 牛奶進入杯口後再往下約 35px 才消失。
-    bottle: { startX: 765, startY: 650, width: 390, height: 430, catchLine: 90 },
+    bottle: {
+      startX: 765,
+      startY: 650,
+      width: 390,
+      height: 430,
+      catchLine: 90,
+    },
     drop: { width: 200, height: 300, speed: 430 },
     waves: [
       {
@@ -137,7 +202,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       // 私密瀏覽等環境可能停用儲存；本局仍以記憶體變數正常計分。
     }
-    console.log(`[Devel4] 本關分數：${score}；第 3、4 關累計：${total_score_before_level + score}`);
+    console.log(
+      `[Devel4] 本關分數：${score}；第 3、4 關累計：${total_score_before_level + score}`,
+    );
   };
 
   const stage_point = (event) => {
@@ -173,7 +240,8 @@ document.addEventListener("DOMContentLoaded", () => {
   stage.addEventListener("bottlecontrolmove", (event) => {
     const x = event.detail && event.detail.x;
     const y = event.detail && event.detail.y;
-    if (!camera_mode || ended || !Number.isFinite(x) || !Number.isFinite(y)) return;
+    if (!camera_mode || ended || !Number.isFinite(x) || !Number.isFinite(y))
+      return;
     set_bottle_position(x, y);
   });
 
@@ -185,7 +253,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const bottle_opening_right = bottle_x + CONFIG.bottle.width - 25;
     const drop_left = drop.offsetLeft;
     const drop_right = drop_left + drop.offsetWidth;
-    return drop_right >= bottle_opening_left && drop_left <= bottle_opening_right;
+    return (
+      drop_right >= bottle_opening_left && drop_left <= bottle_opening_right
+    );
   };
 
   const create_drop = (wave) => {
@@ -193,7 +263,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const milk_type = choose(wave.milk);
     const source = CONFIG.milk[milk_type];
     const catch_line =
-      CONFIG.bottle.catchLine + (milk_type === "+3" || milk_type === "-1" ? 70 : 0);
+      CONFIG.bottle.catchLine +
+      (milk_type === "+3" || milk_type === "-1" ? 70 : 0);
     const position = choose(wave.xPositions);
     const x =
       Number.isInteger(position) &&
@@ -207,9 +278,11 @@ document.addEventListener("DOMContentLoaded", () => {
       position < CONFIG.teats.length
         ? CONFIG.teats[position].y
         : 450;
-    const drop_width = milk_type === "+1" ? CONFIG.drop.width / 2 : CONFIG.drop.width;
+    const drop_width =
+      milk_type === "+1" ? CONFIG.drop.width / 2 : CONFIG.drop.width;
     const drop = document.createElement("img");
-    drop.className = milk_type === "+1" ? "milk_drop milk_drop--small" : "milk_drop";
+    drop.className =
+      milk_type === "+1" ? "milk_drop milk_drop--small" : "milk_drop";
     drop.src = source.src;
     drop.alt = "";
     drop.draggable = false;
@@ -268,8 +341,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const finish_game = () => {
     if (ended) return;
     clear_game();
-    const total = Number(localStorage.getItem(CONFIG.totalScoreStorageKey) ?? "0");
-    console.log(`[Devel4] 本關結束，得分 ${score} 分；最終累計總分 ${Number.isFinite(total) ? total : 0} 分`);
+    const total = Number(
+      localStorage.getItem(CONFIG.totalScoreStorageKey) ?? "0",
+    );
+    console.log(
+      `[Devel4] 本關結束，得分 ${score} 分；最終累計總分 ${Number.isFinite(total) ? total : 0} 分`,
+    );
     window.location.href = "./1_5_1.html";
   };
 
@@ -277,7 +354,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (game_started || ended) return;
     game_started = true;
     try {
-      const saved_total = Number(localStorage.getItem(CONFIG.totalScoreStorageKey) ?? "0");
+      const saved_total = Number(
+        localStorage.getItem(CONFIG.totalScoreStorageKey) ?? "0",
+      );
       total_score_before_level = Number.isFinite(saved_total) ? saved_total : 0;
     } catch (error) {
       total_score_before_level = 0;

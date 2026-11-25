@@ -20,6 +20,44 @@
           aria-label="start_button"
         ></button>
       </div>
+
+      <button
+        class="game_intro_button"
+        id="gameIntroButton"
+        type="button"
+        aria-label="遊戲介紹"
+        aria-haspopup="dialog"
+        aria-controls="gameIntroDialog"
+      ></button>
+
+      <!-- 遊戲介紹遮罩預設隱藏；關閉後不攔截主畫面或開始按鈕的操作。 -->
+      <div class="game_intro_overlay" id="gameIntroOverlay" hidden>
+        <section
+          class="game_intro_dialog"
+          id="gameIntroDialog"
+          role="dialog"
+          aria-modal="true"
+          aria-label="遊戲介紹"
+        >
+          <!-- 視窗底圖：img/6_game_intro.png；位置與尺寸見 CSS。 -->
+          <img class="game_intro_paper" src="./img/6_game_intro.png" alt="" />
+
+          <!-- 遊戲示意圖：img/6_small_game_intro.png；位置與尺寸見 CSS。 -->
+          <img
+            class="game_intro_demo"
+            src="./img/6_small_game_intro.png"
+            alt="雞群從洞穴中出現的遊戲示意圖"
+          />
+
+          <!-- 確認按鈕：img/iknow_button_default.png 與 iknow_button_active.png。 -->
+          <button
+            class="game_intro_confirm"
+            id="gameIntroConfirm"
+            type="button"
+            aria-label="我雞道了，關閉遊戲介紹"
+          ></button>
+        </section>
+      </div>
     </main>
     <script src="./js/scale.js"></script>
     <script src="./js/level6_script.js"></script>
