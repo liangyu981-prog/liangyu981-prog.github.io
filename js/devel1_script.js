@@ -51,11 +51,34 @@ const scoreParam = new URLSearchParams(window.location.search).get("score");
 const parsedScore = Number(scoreParam);
 let score =
   scoreParam !== null && Number.isFinite(parsedScore) ? parsedScore : 0;
+const correctParam = new URLSearchParams(window.location.search).get("correct");
+const parsedCorrectCount = Number(correctParam);
+let correctAnswers =
+  correctParam !== null && Number.isFinite(parsedCorrectCount)
+    ? parsedCorrectCount
+    : Number(localStorage.getItem("level1CorrectCount") ?? "0");
+
+const endingPopup = document.querySelector(".popend");
+const endingPopupOverlay = document.getElementById("endingPopupOverlay");
+if (endingPopup && endingPopupOverlay) {
+  const correctCount = Number.isFinite(correctAnswers)
+    ? correctAnswers
+    : score >= 25
+      ? 3
+      : score >= 16
+        ? 2
+        : 0;
+  const endingResult = correctCount >= 3 ? "good" : correctCount >= 2 ? "normal" : "bad";
+  endingPopup.style.backgroundImage = `url("./img/7_end_popupwindow_${endingResult}.png")`;
+  endingPopupOverlay.src = `./img/small_${endingResult}_endpop.GIF`;
+}
 
 // 第一關是整段遊戲的起點；後續題目透過網址參數接續本關分數。
 if (document.querySelector(".devel1_bg") && document.querySelector(".modal_container")) {
   localStorage.setItem("totalScore", "0");
   localStorage.setItem("level1Score", "0");
+  localStorage.setItem("level1CorrectCount", "0");
+  correctAnswers = 0;
   console.log("[Devel1] 新遊戲開始，累計總分 0 分");
 }
 
@@ -65,9 +88,11 @@ if (scoreDisplay) {
 
 function updateScore(button, correctButtonId, maxPoints) {
   const earnedPoints = button.id === correctButtonId ? maxPoints : 0;
+  if (earnedPoints > 0) correctAnswers += 1;
   score += earnedPoints;
   localStorage.setItem("level1Score", String(score));
   localStorage.setItem("totalScore", String(score));
+  localStorage.setItem("level1CorrectCount", String(correctAnswers));
   console.log(
     `[Devel1] 本題得分 ${earnedPoints} 分；第一關累計 ${score} 分；遊戲總分 ${score} 分`,
   );
@@ -78,7 +103,8 @@ function updateScore(button, correctButtonId, maxPoints) {
 }
 
 function scoreDestination(destination) {
-  return `${destination}?score=${score}`;
+  const separator = destination.includes("?") ? "&" : "?";
+  return `${destination}${separator}score=${score}&correct=${correctAnswers}`;
 }
 
 let startQ1StopTransition = () => false;

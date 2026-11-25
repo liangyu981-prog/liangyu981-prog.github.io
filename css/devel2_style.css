@@ -141,6 +141,23 @@ html {
   height: 918px;
   z-index: 2;
 }
+@keyframes popendBounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(0.94);
+  }
+  82% {
+    transform: scale(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 .popend {
   position: absolute;
   inset: 0;
@@ -150,6 +167,17 @@ html {
   background-size: contain;
   transform: scale(1);
   animation: popendBounceIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.popend_overlay {
+  position: absolute;
+  top: -50px;
+  left: 160px;
+  width: 100%;
+  height: 100%;
+  opacity: 70%;
+  object-fit: contain;
+  z-index: 1;
+  pointer-events: none;
 }
 .next_button {
   position: absolute;

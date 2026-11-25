@@ -2,6 +2,21 @@
 const mouseBtn = document.getElementById("mouseBtn");
 const cameraBtn = document.querySelector(".camera_button");
 const nextBtn = document.getElementById("nextBtn");
+const endingPopup = document.querySelector(".popend");
+const endingPopupOverlay = document.getElementById("endingPopupOverlay");
+if (endingPopup && endingPopupOverlay) {
+  const accuracyParam = new URLSearchParams(window.location.search).get("accuracy");
+  const queryAccuracy = accuracyParam === null ? NaN : Number(accuracyParam);
+  const savedAccuracy = Number(localStorage.getItem("level2Accuracy"));
+  const accuracy = Number.isFinite(queryAccuracy)
+    ? queryAccuracy
+    : Number.isFinite(savedAccuracy)
+      ? savedAccuracy
+      : 0;
+  const result = accuracy <= 30 ? "bad" : accuracy <= 60 ? "normal" : "good";
+  endingPopup.style.backgroundImage = `url("./img/8_end_popupwindow_${result}.png")`;
+  endingPopupOverlay.src = `./img/small_${result}_endpop.GIF`;
+}
 const introButton = document.getElementById("gameIntroButton");
 const introPages = Array.from(document.querySelectorAll(".game_intro_page"));
 const introPrev = document.getElementById("gameIntroPrev");

@@ -30,6 +30,8 @@
   // to stay near the moving cow.
   const followDistance = 140;
   let score = minScore;
+  let successfulTicks = 0;
+  let totalTicks = 0;
   let secondsLeft = durationSeconds;
   let playerX = null;
   let markerX = 0;
@@ -84,6 +86,7 @@
 
   const updateScore = () => {
     if (!running) return;
+    totalTicks += 1;
     const trackBounds = track.getBoundingClientRect();
     const stageBounds = stage.getBoundingClientRect();
     const scaleX = stageBounds.width / 1920;
@@ -93,6 +96,7 @@
       cow.clientWidth / 2;
     const onTarget =
       playerX !== null && Math.abs(playerX - targetX) <= followDistance;
+    if (onTarget) successfulTicks += 1;
     cowGuide.classList.toggle("is_following", onTarget);
     cowGuide.classList.toggle("is_missing", !onTarget);
     score = Math.max(minScore, Math.min(maxScore, score + (onTarget ? 1 : -1)));
@@ -115,12 +119,16 @@
     const newTotal = currentTotal + score;
     localStorage.setItem("level2Score", String(score));
     localStorage.setItem("totalScore", String(newTotal));
+    const accuracy = totalTicks > 0 ? Math.round((successfulTicks / totalTicks) * 100) : 0;
+    localStorage.setItem("level2Accuracy", String(accuracy));
     console.log(`[Devel2] 本關得分 ${score} 分；累計總分 ${newTotal} 分`);
-    window.location.href = "./1_3_2.html";
+    window.location.href = `./1_3_2.html?accuracy=${accuracy}`;
   };
 
   const startGame = () => {
     score = minScore;
+    successfulTicks = 0;
+    totalTicks = 0;
     secondsLeft = durationSeconds;
     playerX = null;
     markerX = 0;
