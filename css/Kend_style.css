@@ -423,8 +423,8 @@ body.feedback-page {
   text-align: center;
 }
 .feedback_name {
-  left: 29%;
-  top: 57%;
+  left: 23%;
+  top: 37%;
   width: 36%;
   height: 76px;
   font-size: 50px;
@@ -435,8 +435,8 @@ body.feedback-page {
   transform: rotate(3deg);
 }
 .feedback_score {
-  left: 835px;
-  top: 770px;
+  left: 563px;
+  top: 665px;
   width: 255px;
   height: 100px;
   font-size: 100px;
@@ -469,6 +469,145 @@ body.feedback-page {
   pointer-events: none;
   opacity: 0;
   animation: feedback-fade-in 650ms ease-out 1500ms forwards;
+}
+.certificate_button {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  bottom: 24px;
+  min-width: 240px;
+  padding: 18px 38px;
+  transform: translateX(-50%);
+  border: 4px solid #fff1b6;
+  border-radius: 999px;
+  background: #b70600;
+  color: #fff8dc;
+  box-shadow: 0 8px 0 #761400;
+  font: inherit;
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  cursor: pointer;
+}
+.certificate_button:hover {
+  background: #d22b13;
+}
+.certificate_button:active {
+  transform: translate(-50%, 4px);
+  box-shadow: 0 4px 0 #761400;
+}
+.certificate_button:focus-visible,
+.certificate_close:focus-visible {
+  outline: 4px solid #ffdc45;
+  outline-offset: 4px;
+}
+.certificate_modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: rgb(38 19 8 / 72%);
+  font-family: "iti", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+}
+.certificate_modal[hidden] {
+  display: none;
+}
+.certificate_panel {
+  position: relative;
+  width: min(900px, 94vw);
+  padding: 48px 56px 54px;
+  border: 8px solid #b84100;
+  border-radius: 34px;
+  background: #fff4d3;
+  color: #7c2900;
+  text-align: center;
+  box-shadow: 0 18px 60px rgb(0 0 0 / 35%);
+}
+.certificate_panel h1 {
+  margin: 0;
+  font-size: clamp(34px, 5vw, 56px);
+  letter-spacing: 8px;
+}
+.certificate_panel p {
+  margin: 10px 0 32px;
+  font-size: 25px;
+}
+.certificate_close {
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  background: #b70600;
+  color: white;
+  font: inherit;
+  font-size: 36px;
+  line-height: 1;
+  cursor: pointer;
+}
+.certificate_items {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: clamp(18px, 5vw, 56px);
+}
+.certificate_item {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  font-size: 23px;
+  font-weight: 700;
+}
+.certificate_portrait_frame,
+.certificate_art_frame {
+  display: grid;
+  place-items: center;
+  width: 170px;
+  height: 190px;
+  overflow: hidden;
+  border: 5px solid #d48c38;
+  border-radius: 18px;
+  background: #fffdf6;
+}
+.certificate_portrait_placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 14px;
+  color: #9a6a3b;
+  font-size: 20px;
+  line-height: 1.5;
+}
+.certificate_art_frame img {
+  max-width: 88%;
+  max-height: 88%;
+  object-fit: contain;
+}
+.certificate_shovel {
+  color: #ba7a35;
+  font-family: sans-serif;
+  font-size: 82px;
+}
+@media (max-width: 620px) {
+  .certificate_panel {
+    padding: 48px 18px 32px;
+  }
+  .certificate_items {
+    gap: 10px;
+  }
+  .certificate_portrait_frame,
+  .certificate_art_frame {
+    width: min(25vw, 140px);
+    height: min(31vw, 160px);
+  }
+  .certificate_item {
+    font-size: 17px;
+  }
 }
 @keyframes decoration-rock {
   0%,
