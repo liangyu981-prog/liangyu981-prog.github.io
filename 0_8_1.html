@@ -27,27 +27,70 @@
         領取證照
       </button>
     </main>
-    <div class="certificate_modal" id="certificateModal" role="dialog" aria-modal="true" aria-labelledby="certificateTitle" hidden>
+    <div
+      class="certificate_modal"
+      id="certificateModal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="證照"
+      hidden
+    >
       <div class="certificate_panel">
-        <button class="certificate_close" id="certificateClose" type="button" aria-label="關閉">×</button>
-        <h1 id="certificateTitle">領取證照</h1>
-        <p>恭喜完成挑戰！</p>
-        <div class="certificate_items">
-          <div class="certificate_item">
-            <div class="certificate_portrait_frame">
-              <div class="certificate_portrait_placeholder" id="certificatePortraitPlaceholder">證件照照片預留位置</div>
+        <button
+          class="certificate_close"
+          id="certificateClose"
+          type="button"
+          aria-label="關閉"
+        >
+          ×
+        </button>
+        <div class="certificate_card" id="certificateCard" hidden>
+          <div class="certificate_artwork">
+            <div class="certificate_paper">
+              <img class="certificate_result" id="certificateResult" alt="" />
+              <span class="certificate_shine" aria-hidden="true"></span>
             </div>
-            <span>證件照</span>
-          </div>
-          <div class="certificate_item">
-            <div class="certificate_art_frame"><img src="./img/hat.png" alt="帽子" /></div>
-            <span>帽子</span>
-          </div>
-          <div class="certificate_item">
-            <div class="certificate_art_frame certificate_shovel" aria-label="鏟子圖片預留位置">🪏</div>
-            <span>鏟子</span>
+            <span
+              class="certificate_player_name"
+              id="certificatePlayerName"
+            ></span>
+            <div
+              class="certificate_character"
+              role="img"
+              aria-label="戴帽子的廚師人物與餐具插圖"
+            >
+              <div class="character_crop">
+                <img
+                  class="character_layer character_base"
+                  src="./img/end_feedback_pic.png"
+                  alt=""
+                />
+                <img
+                  class="character_layer character_decoration"
+                  src="./img/end_feedback_decoration.png"
+                  alt=""
+                />
+              </div>
+              <div
+                class="character_photo_frame"
+                id="certificateCharacterPhotoFrame"
+                role="img"
+                aria-label="玩家照片"
+                hidden
+              >
+                <img class="character_photo" id="certificateCharacterPhoto" alt="" />
+              </div>
+              <img
+                class="character_layer character_hat"
+                id="certificateHat"
+                src="./img/end_feedback_hat.png"
+                alt=""
+              />
+            </div>
           </div>
         </div>
+        <p class="certificate_message" id="certificateMessage" hidden></p>
+        <a class="certificate_home_button" href="./index.html">回首頁</a>
       </div>
     </div>
     <script src="./js/scale.js"></script>
