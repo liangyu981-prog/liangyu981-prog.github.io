@@ -308,8 +308,8 @@ html {
 /* 確認按鈕沿用專案預設／按住圖檔設定，尺寸 214×110。 */
 .game_intro_confirm {
   position: absolute;
-  right: 88px;
-  bottom: 95px;
+  right: 55px;
+  bottom: 100px;
   width: 214px;
   height: 110px;
   border: 0;

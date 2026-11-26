@@ -137,19 +137,19 @@ if (cameraBtn) {
 const activeQuestion = [
   {
     selector: ".findtea_btn_Q1",
-    correctId: "btn_up",
+    correctId: "btn_left",
     points: 8,
     nextPage: "1_2_2_1.html",
   },
   {
     selector: ".findtea_btn_Q2",
-    correctId: "btn_left",
+    correctId: "btn_right",
     points: 8,
     nextPage: "1_2_3_1.html",
   },
   {
     selector: ".findtea_btn_Q3",
-    correctId: "btn_down",
+    correctId: "btn_right",
     points: 9,
     nextPage: "1_2_4.html",
   },

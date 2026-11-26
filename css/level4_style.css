@@ -164,7 +164,7 @@ html {
   background-position: center;
   background-size: cover;
   opacity: 1;
-  background-image: url(./../img/g_market.PNG);
+  background-image: url(./../img/market.PNG);
   z-index: 2;
 }
 .opacity_full {
@@ -173,7 +173,18 @@ html {
 .opacity_half {
   opacity: 0.5;
 }
-
+.market_layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1900px;
+  height: 1060px;
+  background-image: url(./../img/g_market.GIF);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  z-index: 3;
+}
 /* 全畫面彈窗容器；與彈窗圖片、按鈕一起播放落下動畫。 */
 .modal4_container {
   position: absolute;
@@ -287,7 +298,7 @@ html {
 
 .question_image_container {
   position: absolute;
-  top: 530px; /* 距離畫面頂部的像素 */
+  top: 555px; /* 距離畫面頂部的像素 */
   left: 50%;
   transform: translateX(-50%);
   width: 1800px;
@@ -303,8 +314,8 @@ html {
 /* 題目進度：依截圖圈選位置放置；可調整 left、top、font-size 微調。 */
 .question_progress {
   position: absolute;
-  top: 752px;
-  left: 1595px;
+  top: 770px;
+  left: 1570px;
   z-index: 11;
   transform: translate(-50%, -50%);
   color: #b70600;
@@ -317,7 +328,7 @@ html {
 /* 3️⃣ 底部三個並排按鈕容器 */
 .answers_container {
   position: absolute;
-  top: 770px; /* 如果按鈕跑出畫面，把這個數字改小一點（例如 600px 或 700px）試試 */
+  top: 795px; /* 如果按鈕跑出畫面，把這個數字改小一點（例如 600px 或 700px）試試 */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -336,8 +347,8 @@ html {
   background-position: center;
   cursor: pointer;
   outline: none;
-  margin-left: -30px;
-  margin-right: -30px;
+  margin-left: -5px;
+  margin-right: -25px;
 }
 
 .ans_button:disabled {
@@ -490,4 +501,114 @@ html {
 
 .modal5_container .next_button:active {
   background-image: url("./../img/next-button-active.png");
+}
+.game_intro_button {
+  position: absolute;
+  bottom: 100px;
+  right: 82px;
+  width: 220px;
+  height: 100px;
+  z-index: 10;
+  border: 0;
+  padding: 0;
+  background: transparent url("./../img/game_intor_button_default.png") center /
+    contain no-repeat;
+  cursor: pointer;
+}
+
+.game_intro_button:active,
+.game_intro_button.is-active {
+  background-image: url("./../img/game_intro_begin_button_active.png");
+}
+
+.game_intro_button:focus-visible,
+.game_intro_close:focus-visible,
+.game_intro_confirm:focus-visible {
+  outline: 4px solid #b70600;
+  outline-offset: 4px;
+}
+
+/* 遮罩覆蓋整個 1920×1080 舞台；hidden 時強制不顯示也不攔截點擊。 */
+.game_intro_overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: rgba(70, 58, 34, 0.42);
+  pointer-events: auto;
+}
+
+.game_intro_overlay[hidden] {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* 視窗容器的座標與大小可在此微調；底圖為 img/1_game_intro.png。 */
+.game_intro_dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1360px;
+  height: 866px;
+  transform: translate(-50%, -50%);
+  z-index: 21;
+  animation: gameIntroPop 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes gameIntroPop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.game_intro_paper {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+/* 遊戲示意圖 img/1_small_game_intro.png 的座標與尺寸可在此微調。 */
+.game_intro_demo {
+  position: absolute;
+  top: 180px;
+  left: 54%;
+  width: 770px;
+  height: auto;
+  transform: translateX(-50%);
+  object-fit: contain;
+}
+
+/* 右下「我雞道了」按鈕圖檔與 214×110 尺寸可在此微調。 */
+.game_intro_confirm {
+  position: absolute;
+  right: 88px;
+  bottom: 95px;
+  width: 214px;
+  height: 110px;
+  border: 0;
+  padding: 0;
+  background: transparent url("./../img/iknow_button_default.png") center /
+    contain no-repeat;
+  cursor: pointer;
+}
+
+.game_intro_confirm:active,
+.game_intro_confirm.is-active {
+  background-image: url("./../img/iknow_button_active.png");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game_intro_dialog {
+    animation: none;
+  }
 }

@@ -464,7 +464,7 @@ body {
 /* 右下「我雞道了」按鈕圖檔與 214×110 尺寸可在此微調。 */
 .game_intro_confirm {
   position: absolute;
-  right: 88px;
+  right: 65px;
   bottom: 95px;
   width: 214px;
   height: 110px;
