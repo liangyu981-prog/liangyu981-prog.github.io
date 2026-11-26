@@ -11,6 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const certificateCharacterPhotoFrame = document.getElementById(
     "certificateCharacterPhotoFrame",
   );
+  const certificateCharacterBase = document.getElementById(
+    "certificateCharacterBase",
+  );
   const certificatePlayerName = document.getElementById(
     "certificatePlayerName",
   );
@@ -21,15 +24,20 @@ document.addEventListener("DOMContentLoaded", () => {
   ).matches;
   certificatePlayerName.textContent =
     localStorage.getItem("playerName") || "煎蛋高手";
-  const playerPhoto = localStorage.getItem("playerPhoto");
   const selectedCharacter = sessionStorage.getItem("selectedCharacter");
+  const playerPhoto =
+    selectedCharacter === "camera" ? localStorage.getItem("playerPhoto") : null;
   const characterImages = {
-    play1: "./img/play1.gif",
-    play2: "./img/play2.gif",
-    play3: "./img/play1.gif",
-    play4: "./img/play2.gif",
+    play1: "./img/certificate_play1.PNG",
+    play2: "./img/certificate_play2.PNG",
+    play3: "./img/certificate_play3.PNG",
+    play4: "./img/certificate_play4.PNG",
   };
-  const portraitSource = playerPhoto || characterImages[selectedCharacter];
+  if (characterImages[selectedCharacter]) {
+    certificateCharacterBase.src = characterImages[selectedCharacter];
+    certificateCharacterBase.classList.add("character_selected_art");
+  }
+  const portraitSource = playerPhoto;
   if (portraitSource) {
     if (playerPhoto) {
       certificateCharacterPhoto.addEventListener("load", applyFisheyeSphere, {
@@ -130,43 +138,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function dropDebris(count, originX = 0.5, originY = 0.68) {
-    const colors = ["#f5a623", "#e64a19", "#ffd54f", "#b70600", "#fff1b6"];
-    for (let index = 0; index < count; index += 1) {
-      const piece = document.createElement("span");
-      piece.className = "certificate_debris";
-      piece.style.setProperty(
-        "--debris-top",
-        `${Math.min(96, Math.max(4, (originY + Math.random() * 0.22 - 0.11) * 100))}%`,
-      );
-      piece.style.setProperty(
-        "--debris-left",
-        `${Math.min(96, Math.max(2, (originX + Math.random() * 0.18 - 0.09) * 100))}%`,
-      );
-      piece.style.setProperty("--debris-size", `${10 + Math.random() * 14}px`);
-      piece.style.setProperty(
-        "--debris-color",
-        colors[Math.floor(Math.random() * colors.length)],
-      );
-      piece.style.setProperty(
-        "--debris-duration",
-        `${850 + Math.random() * 750}ms`,
-      );
-      piece.style.setProperty(
-        "--debris-drift",
-        `${Math.random() * 220 - 110}px`,
-      );
-      piece.style.setProperty(
-        "--debris-spin",
-        `${Math.random() * 900 - 450}deg`,
-      );
-      piece.addEventListener("animationend", () => piece.remove(), {
-        once: true,
-      });
-      certificateCard.append(piece);
-    }
-  }
-
   if (!reducedMotion) {
     certificateCard.addEventListener("pointermove", (event) => {
       if (event.pointerType !== "mouse") return;
@@ -177,13 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
       certificateCard.style.setProperty("--certificate-tilt-y", `${x * 8}deg`);
       certificateCard.classList.add("is_tilting");
 
-      if (certificateCard.classList.contains("is_bad")) {
-        const now = performance.now();
-        if (now - lastDebrisTime >= 100) {
-          lastDebrisTime = now;
-          dropDebris(4, x + 0.5, y + 0.5);
-        }
-      }
     });
 
     certificateCard.addEventListener("pointerleave", () => {
@@ -216,13 +180,43 @@ document.addEventListener("DOMContentLoaded", () => {
     message.hidden = false;
   }
 
-  let lastDebrisTime = 0;
-  certificateCard.addEventListener("click", (event) => {
-    if (!certificateCard.classList.contains("is_bad") || reducedMotion) return;
+  certificateCard.addEventListener("pointerdown", async (event) => {
+    if (
+      event.pointerType !== "mouse" ||
+      !certificateCard.classList.contains("is_bad")
+    )
+      return;
     const bounds = certificateCard.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width;
-    const y = (event.clientY - bounds.top) / bounds.height;
-    dropDebris(24, x, y);
+    const animation = document.createElement("img");
+    animation.className = "certificate_throw_egg";
+    animation.src = `./throw_egg.gif?play=${Date.now()}`;
+    animation.alt = "";
+    animation.style.width = `${20 + Math.random() * 25}%`;
+    animation.style.left = `${((event.clientX - bounds.left) / bounds.width) * 100}%`;
+    animation.style.top = `${((event.clientY - bounds.top) / bounds.height) * 100}%`;
+    animation.addEventListener(
+      "load",
+      () => window.setTimeout(() => animation.remove(), 600),
+      { once: true },
+    );
+    certificateCard.append(animation);
+  });
+
+  certificateCard.addEventListener("click", (event) => {
+    if (
+      event.detail === 0 ||
+      !certificateCard.classList.contains("is_good")
+    )
+      return;
+    const bounds = certificateCard.getBoundingClientRect();
+    const burst = document.createElement("span");
+    burst.className = "certificate_click_burst";
+    burst.style.left = `${((event.clientX - bounds.left) / bounds.width) * 100}%`;
+    burst.style.top = `${((event.clientY - bounds.top) / bounds.height) * 100}%`;
+    burst.addEventListener("animationend", (animationEvent) => {
+      if (animationEvent.target === burst) burst.remove();
+    });
+    certificateCard.append(burst);
   });
 
   function openModal() {
