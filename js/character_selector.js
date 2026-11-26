@@ -26,11 +26,11 @@
     return;
 
   const options = [
+    { id: "camera", image: "" },
+    { id: "play3", image: "./img/play3.PNG" },
     { id: "play1", image: "./img/play1.gif" },
     { id: "play2", image: "./img/play2.PNG" },
-    { id: "play3", image: "./img/play3.PNG" },
     { id: "play4", image: "./img/play4.PNG" },
-    { id: "camera", image: "" },
   ];
   const gameHref = location.pathname.endsWith("0_1_1.html")
     ? "./1_2.html"
