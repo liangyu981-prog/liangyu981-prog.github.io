@@ -5,7 +5,7 @@ const MEDIA_PIPE_WASM_URL =
 const FACE_LANDMARKER_MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
 const SCORE_STORAGE_PARAM = "score";
-const DIRECTION_NAMES = { up: "上", down: "下", left: "左", right: "右" };
+const DIRECTION_NAMES = { left: "左", right: "右" };
 const FISHEYE_PREVIEW_WIDTH = 320;
 const FISHEYE_PREVIEW_HEIGHT = 240;
 const FISHEYE_STRENGTH = 0.8;
@@ -27,6 +27,12 @@ const scoreParam = new URLSearchParams(window.location.search).get(
 const parsedScore = Number(scoreParam);
 let score =
   scoreParam !== null && Number.isFinite(parsedScore) ? parsedScore : 0;
+const correctParam = new URLSearchParams(window.location.search).get("correct");
+const parsedCorrectCount = Number(correctParam);
+let correctAnswers =
+  correctParam !== null && Number.isFinite(parsedCorrectCount)
+    ? parsedCorrectCount
+    : Number(localStorage.getItem("level1CorrectCount") ?? "0");
 let cameraStream;
 let faceLandmarker;
 let frameRequest;
@@ -272,16 +278,9 @@ function averagePose(samples) {
 
 function classifyDirection(pose) {
   const horizontalChange = pose.yaw - neutralPose.yaw;
-  const verticalChange = pose.pitch - neutralPose.pitch;
   const horizontalAmount = Math.abs(horizontalChange) / 0.1;
-  const verticalAmount = Math.abs(verticalChange) / 0.05;
 
-  if (horizontalAmount < 1 && verticalAmount < 1) {
-    return null;
-  }
-  if (verticalAmount >= horizontalAmount) {
-    return verticalChange < 0 ? "up" : "down";
-  }
+  if (horizontalAmount < 1) return null;
 
   // The preview is mirrored, so positive source-image movement is the user's left.
   return horizontalChange > 0 ? "left" : "right";
@@ -289,9 +288,7 @@ function classifyDirection(pose) {
 
 function setGuideDirection(direction) {
   directionGuide.classList.remove(
-    "direction_up",
     "direction_right",
-    "direction_down",
     "direction_left",
   );
   if (direction) directionGuide.classList.add(`direction_${direction}`);
@@ -370,8 +367,10 @@ async function resumeBackgroundAnimation() {
 function navigateToNextPage() {
   localStorage.setItem("level1Score", String(score));
   localStorage.setItem("totalScore", String(score));
+  localStorage.setItem("level1CorrectCount", String(correctAnswers));
   const destination = new URL(nextPage, window.location.href);
   destination.searchParams.set(SCORE_STORAGE_PARAM, String(score));
+  destination.searchParams.set("correct", String(correctAnswers));
   window.location.assign(destination.href);
 }
 
@@ -385,8 +384,10 @@ function completeWithDirection(direction) {
   const questionPoints = background.classList.contains("devel1_Q3_bg") ? 9 : 8;
   const earnedPoints = direction === correctDirection ? questionPoints : 0;
   score += earnedPoints;
+  if (earnedPoints > 0) correctAnswers += 1;
   localStorage.setItem("level1Score", String(score));
   localStorage.setItem("totalScore", String(score));
+  localStorage.setItem("level1CorrectCount", String(correctAnswers));
   console.log(
     `[Devel1 鏡頭] 本題得分 ${earnedPoints} 分；第一關累計 ${score} 分；遊戲總分 ${score} 分`,
   );
@@ -492,7 +493,7 @@ function processFrame() {
             if (transitionStarted) return;
             resumeBackgroundAnimation();
             turnDetectionEnabled = true;
-            statusMessage.textContent = "請向上、下、左或右轉頭。";
+            statusMessage.textContent = "請向左或右轉頭。";
             noMovementTimeout = window.setTimeout(
               completeWithoutMovement,
               animationDurationMs,
@@ -507,7 +508,7 @@ function processFrame() {
           candidateDirection = undefined;
           candidateFrames = 0;
           setGuideDirection(undefined);
-          statusMessage.textContent = "請向上、下、左或右轉頭。";
+          statusMessage.textContent = "請向左或右轉頭。";
         } else if (direction === candidateDirection) {
           candidateFrames += 1;
           if (candidateFrames >= 5) {

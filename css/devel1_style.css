@@ -479,7 +479,7 @@ html {
 }
 
 .guide_crosshair,
-.guide_quadrant {
+.guide_direction {
   fill: none;
   stroke: #fff;
   stroke-width: 5;
@@ -491,7 +491,7 @@ html {
 }
 
 .guide_crosshair,
-.guide_quadrant {
+.guide_direction {
   stroke-dasharray: 8 10;
 }
 
@@ -502,25 +502,21 @@ html {
 }
 
 .face_direction_guide.is_calibrated .guide_crosshair,
-.face_direction_guide.is_calibrated .guide_quadrant {
+.face_direction_guide.is_calibrated .guide_direction {
   stroke: #55f17a;
 }
 
-.face_direction_guide.is_calibrated .guide_quadrant {
+.face_direction_guide.is_calibrated .guide_direction {
   stroke-dasharray: 7 6;
 }
 
-.face_direction_guide.direction_up .guide_region.guide_up,
 .face_direction_guide.direction_right .guide_region.guide_right,
-.face_direction_guide.direction_down .guide_region.guide_down,
 .face_direction_guide.direction_left .guide_region.guide_left {
   fill: rgb(0 255 76 / 30%);
 }
 
-.face_direction_guide.direction_up .guide_quadrant.guide_up,
-.face_direction_guide.direction_right .guide_quadrant.guide_right,
-.face_direction_guide.direction_down .guide_quadrant.guide_down,
-.face_direction_guide.direction_left .guide_quadrant.guide_left {
+.face_direction_guide.direction_right .guide_direction.guide_right,
+.face_direction_guide.direction_left .guide_direction.guide_left {
   stroke: #00ff4c;
   stroke-width: 8;
   stroke-opacity: 0.85;
