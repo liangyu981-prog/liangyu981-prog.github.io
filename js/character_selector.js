@@ -26,11 +26,27 @@
     return;
 
   const options = [
-    { id: "camera", image: "" },
-    { id: "play3", image: "./img/play3.PNG" },
-    { id: "play1", image: "./img/play1.gif" },
-    { id: "play2", image: "./img/play2.PNG" },
-    { id: "play4", image: "./img/play4.PNG" },
+    { id: "camera", image: "", title: "▼誰來當店長-由我親自下場▼" },
+    {
+      id: "play3",
+      image: "./img/play3.PNG",
+      title: "▼誰來當店長-和梵谷能湊齊一對耳朵的鄰居▼",
+    },
+    {
+      id: "play1",
+      image: "./img/play1.gif",
+      title: "▼誰來當店長-疑似有婚外情的隔壁洗碗工▼",
+    },
+    {
+      id: "play2",
+      image: "./img/play2.PNG",
+      title: "▼誰來當店長-嘴唇很乾的非人類物種▼",
+    },
+    {
+      id: "play4",
+      image: "./img/play4.PNG",
+      title: "▼誰來當店長-每晚傳出磨刀聲的親切奶奶▼",
+    },
   ];
   const gameHref = location.pathname.endsWith("0_1_1.html")
     ? "./1_2.html"
@@ -117,7 +133,7 @@
     frame.style.zIndex = "";
     card.hidden = cameraMode;
     frame.hidden = !cameraMode;
-    title.textContent = cameraMode ? "▼一位蛋餅大師的誕生...▼" : "▼選擇角色▼";
+    title.textContent = option.title;
     if (!cameraMode) shutter.disabled = false;
     updatePreviews();
     if (cameraMode) {
@@ -303,7 +319,7 @@
       modal.hidden = false;
       modal.setAttribute("aria-hidden", "false");
       index = 0;
-      render(false);
+      render();
     }),
   );
 
