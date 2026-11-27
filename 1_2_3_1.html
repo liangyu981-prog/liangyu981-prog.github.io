@@ -9,24 +9,29 @@
   </head>
   <body>
     <main class="game_stage">
-    <div class="score_display" id="score_display" aria-live="polite">
-      本次得分：0 分｜累計積分：0 分
-    </div>
-    <div class="devel1_Q3_bg opacity_full">
-      <img src="./img/1_2_find_tea_Q3.gif" alt="" />
-    </div>
-    <!-- 畫面正中間的按鈕區塊 -->
-    <div class="dpad_container">
-      <button class="findtea_btn_Q3" id="btn_left"></button>
-      <button class="findtea_btn_Q3" id="btn_right"></button>
-    </div>
-    <!-- 依 0_2_1 的 Gtimer 顯示結構；使用 Ctimer 單次播放，位於最上層。 -->
-    <div class="Gtimer" aria-label="三秒計時器">
-      <img class="question_timer_gif" src="./img/Ctimer_3s.gif" alt="三秒計時器" />
-    </div>
+      <div class="score_display" id="score_display" aria-live="polite">
+        本次得分：0 分｜累計積分：0 分
+      </div>
+      <div class="devel1_Q3_bg opacity_full">
+        <img src="./img/1_2_find_tea_Q3.gif" alt="" />
+      </div>
+      <!-- 畫面正中間的按鈕區塊 -->
+      <div class="dpad_container">
+        <button class="findtea_btn_Q3" id="btn_left"></button>
+        <button class="findtea_btn_Q3" id="btn_right"></button>
+      </div>
+      <!-- 依 0_2_1 的 Gtimer 顯示結構；使用 Ctimer 單次播放，位於最上層。 -->
+      <div class="Gtimer" aria-label="三秒計時器">
+        <img
+          class="question_timer_gif"
+          src="./img/Ctimer_3s.gif"
+          alt="三秒計時器"
+        />
+      </div>
     </main>
 
     <script src="./js/scale.js"></script>
     <script src="./js/devel1_script.js"></script>
+    <script src="./js/global_bgm.js"></script>
   </body>
 </html>

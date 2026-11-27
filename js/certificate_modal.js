@@ -181,15 +181,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   certificateCard.addEventListener("pointerdown", async (event) => {
-    if (
-      event.pointerType !== "mouse" ||
-      !certificateCard.classList.contains("is_bad")
-    )
-      return;
+    if (!certificateCard.classList.contains("is_bad")) return;
     const bounds = certificateCard.getBoundingClientRect();
     const animation = document.createElement("img");
     animation.className = "certificate_throw_egg";
-    animation.src = `./throw_egg.gif?play=${Date.now()}`;
+    animation.src = `./img/throw_egg.gif?play=${Date.now()}`;
     animation.alt = "";
     animation.style.width = `${20 + Math.random() * 25}%`;
     animation.style.left = `${((event.clientX - bounds.left) / bounds.width) * 100}%`;
