@@ -239,6 +239,10 @@ window.addEventListener("pointermove", (event) => {
 beginButton.addEventListener("click", () => {
   if (startRequested) return;
   startRequested = true;
+  window.parent.document
+    .getElementById("game-frame")
+    ?.requestFullscreen?.()
+    .catch(() => {});
   const pressedAt = performance.now();
   beginButton.disabled = true;
   beginButtonImage.src = "./img/begin_button_active.png";

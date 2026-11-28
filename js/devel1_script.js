@@ -358,49 +358,6 @@ if (activeQuestion) {
   }
 }
 
-// 鏡頭模式只同步顯示計時器，不介入 camera_game.js 的辨識、計分或跳頁流程。
-if (!activeQuestion && document.querySelector(".camera_game_background")) {
-  const timerIntro = document.querySelector(".timer_intro");
-  const timerGif = document.querySelector(".timer_intro_gif");
-  const gameTimer = document.querySelector(".Gtimer");
-  const questionTimerGif = document.querySelector(".question_timer_gif");
-
-  if (timerIntro && timerGif && gameTimer) {
-    let introStillFrame = null;
-    const startCameraTimerIntro = () => {
-      if (!introStillFrame && timerGif.complete && timerGif.naturalWidth > 0) {
-        const stillFrame = document.createElement("canvas");
-        stillFrame.className = "question_timer_frame";
-        stillFrame.width = timerGif.naturalWidth;
-        stillFrame.height = timerGif.naturalHeight;
-        const context = stillFrame.getContext("2d");
-        if (context) {
-          context.drawImage(timerGif, 0, 0);
-          introStillFrame = stillFrame;
-          timerGif.replaceWith(stillFrame);
-        }
-      }
-      timerIntro.classList.add("is_ready");
-    };
-    timerIntro.addEventListener("animationend", (event) => {
-      if (event.animationName !== "timerIntroShake") return;
-      if (questionTimerGif) {
-        gameTimer.appendChild(questionTimerGif);
-        if (!restartGifAnimation(questionTimerGif)) {
-          console.error("The question timer GIF has no source.");
-        }
-      } else if (introStillFrame) {
-        gameTimer.appendChild(introStillFrame);
-      }
-      gameTimer.classList.add("visible");
-    });
-    timerGif.addEventListener("load", startCameraTimerIntro, { once: true });
-    timerGif.addEventListener("error", startCameraTimerIntro, { once: true });
-    if (timerGif.complete) startCameraTimerIntro();
-  } else if (gameTimer && questionTimerGif) {
-    gameTimer.classList.add("visible");
-  }
-}
 
 document.querySelectorAll(".next_button").forEach((button) => {
   button.addEventListener("click", () => {

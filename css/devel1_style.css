@@ -4,6 +4,13 @@
   padding: 0;
   font-family: iti;
 }
+@font-face {
+  font-family: "Mantou";
+  src: url("../fonts/MantouSans-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
 body,
 html {
   padding: 0;
@@ -443,28 +450,6 @@ html {
   border: 4px solid #b70600;
 }
 
-.camera_detection_video {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform: scaleX(-1) scale(2);
-  background: #222;
-  object-fit: cover;
-}
-
-.camera_fisheye_preview {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform: scaleX(-1) scale(2);
-  background: #222;
-}
-
 .face_direction_guide {
   position: absolute;
   top: 50%;
@@ -534,6 +519,296 @@ html {
   letter-spacing: 3px;
   line-height: 1.2;
   text-align: center;
+}
+
+/* 鏡頭滿版鋪底；Q／A 動畫在鏡頭上方不透明播放。 */
+.camera_fullscreen_video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+  transform-origin: center;
+  object-fit: cover;
+  background: #111;
+}
+.camera_game_background {
+  z-index: 2;
+  opacity: 1;
+}
+.camera_game_background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.face_direction_guide {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  overflow: visible;
+  pointer-events: none;
+}
+.guide_crosshair {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 5;
+  stroke-dasharray: 14 14;
+  vector-effect: non-scaling-stroke;
+}
+.camera_person_guide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  width: 240px;
+  height: 360px;
+  transform: translate(-50%, -50%);
+  fill: none;
+  stroke: #fff;
+  stroke-width: 5;
+  stroke-dasharray: 5 9;
+  filter: drop-shadow(0 0 6px #111);
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+.camera_person_guide.is-hidden {
+  opacity: 0;
+}
+.camera_countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 7;
+  transform: translate(-50%, -50%);
+  color: #ffc700;
+  font-size: 400px;
+  font-weight: 1000;
+  font-family: "Mantou", iti, sans-serif;
+  line-height: 1;
+  -webkit-text-stroke: 8px #b70600;
+
+  pointer-events: none;
+}
+.camera_countdown.is-stamping {
+  animation: countdownStamp 850ms cubic-bezier(0.2, 0.8, 0.25, 1) both;
+}
+@keyframes countdownStamp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.8) rotate(-9deg);
+  }
+  48% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.82) rotate(2deg);
+  }
+  72% {
+    transform: translate(-50%, -50%) scale(1.12) rotate(-1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0);
+  }
+}
+.camera_live_mirror {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.camera_hit_burst {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(
+    50% 0%,
+    60% 28%,
+    84% 10%,
+    77% 38%,
+    100% 44%,
+    75% 57%,
+    94% 82%,
+    65% 73%,
+    56% 100%,
+    44% 73%,
+    17% 93%,
+    27% 64%,
+    0% 53%,
+    27% 42%,
+    9% 15%,
+    39% 29%
+  );
+  background: #ffd52a;
+  background-image: repeating-linear-gradient(
+    133deg,
+    transparent 0 7px,
+    rgb(126 74 16 / 20%) 8px 9px,
+    transparent 10px 16px
+  );
+  filter: url(#camera-hit-rough) drop-shadow(3px 4px 0 #b7192b)
+    drop-shadow(-2px -2px 0 #b7192b)
+    drop-shadow(0 0 3px #fff)
+    drop-shadow(0 0 12px rgb(255 255 255 / 90%));
+  animation: hitBurstPop 720ms cubic-bezier(0.15, 0.8, 0.25, 1) both;
+  pointer-events: none;
+}
+.camera_hit_text {
+  position: absolute;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: "Mantou", iti, sans-serif;
+  font-weight: 1000;
+  -webkit-text-stroke: 4px #c7192d;
+  text-shadow: 3px 4px 0 #a51020, 0 0 8px #fff;
+  transform-origin: center;
+  pointer-events: none;
+}
+.camera_hit_text.is-animated {
+  animation: hitTextImpact 400ms cubic-bezier(0.2, 0.7, 0.25, 1) both;
+}
+@keyframes hitBurstPop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.15);
+  }
+  22% {
+    opacity: 1;
+    transform: translate(calc(-50% - 8px), -50%) scale(1.12);
+  }
+  36% {
+    transform: translate(calc(-50% + 8px), -50%) scale(1.04);
+  }
+  48% {
+    opacity: 1;
+    transform: translate(calc(-50% - 6px), -50%) scale(0.9);
+  }
+  62% {
+    transform: translate(calc(-50% + 6px), -50%) scale(1.02);
+  }
+  76% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+@keyframes hitTextImpact {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+    transform: translate(0, 0) rotate(-8deg) scale(1.8);
+  }
+  14% {
+    opacity: 1;
+    translate: 0 0;
+    transform: translate(0, 0) rotate(-8deg) scale(0.78);
+  }
+  30% {
+    translate: -0.3em -0.2em;
+    transform: rotate(-11deg) scale(1.08);
+  }
+  54% {
+    translate: -0.85em -0.55em;
+    transform: rotate(-14deg) scale(1.02);
+  }
+  76% {
+    opacity: 1;
+    translate: -1.35em -0.75em;
+    transform: rotate(-17deg) scale(0.98);
+  }
+  88% {
+    opacity: 0.65;
+    translate: -1.58em -0.82em;
+    transform: rotate(-18deg) scale(0.96);
+  }
+  100% {
+    opacity: 0;
+    translate: -1.7em -0.8em;
+    transform: rotate(-18deg) scale(0.96);
+  }
+}
+.camera_detection_status {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  z-index: 6;
+  width: max-content;
+  max-width: 90%;
+  padding: 10px 20px;
+  transform: translateX(-50%);
+  border-radius: 12px;
+  background: rgb(0 0 0 / 55%);
+  color: white;
+  font-size: 30px;
+  text-shadow: 0 2px 4px #000;
+}
+.game_stage::after {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  content: "";
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+body.answer-correct .game_stage::after,
+body.answer-wrong .game_stage::after {
+  opacity: 1;
+}
+body.answer-correct.answer-left .game_stage::after {
+  background: linear-gradient(
+    90deg,
+    rgb(20 255 70 / 38%) 0 50%,
+    transparent 50% 100%
+  );
+}
+body.answer-correct.answer-right .game_stage::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0 50%,
+    rgb(20 255 70 / 38%) 50% 100%
+  );
+}
+body.answer-wrong.answer-left .game_stage::after {
+  background: linear-gradient(
+    90deg,
+    rgb(255 20 20 / 42%) 0 50%,
+    transparent 50% 100%
+  );
+}
+body.answer-wrong.answer-right .game_stage::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0 50%,
+    rgb(255 20 20 / 42%) 50% 100%
+  );
+}
+body.answer-wrong:not(.answer-left):not(.answer-right) .game_stage::after {
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(255 20 20 / 30%),
+    transparent 68%
+  );
+}
+body.answer-correct .guide_crosshair {
+  stroke: #28ff57;
+  filter: drop-shadow(0 0 12px #00ff48);
+}
+body.answer-wrong .guide_crosshair {
+  stroke: #ff3030;
+  filter: drop-shadow(0 0 12px #f00);
 }
 
 /* 按鈕共同基礎設定 */
